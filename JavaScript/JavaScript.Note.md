@@ -700,3 +700,17 @@
       - `screenX`：当前电脑屏幕
       - `x`：于screen一样
 200. 模版字符串—反引号(``)来替代普通字符串中的双引号和单引号。模版字符串可以包含特定语法(${expression})的占位符。在模版字符串中使用反引号(`)时需在前面加转义符(\)
+201. 如何理解 `"..."` ？
+
+      ```javascript
+      const arr = [1, 2, 3, 4]
+      const [args1, ...args2] = arr
+      // 将剩下的所有值｜参数｜属性，都合并到 args2 中
+      console.log('args2: ', args2) // [2, 3, 4]
+
+      function arr2Args(args1, args2) {
+        conosle.log('args2: ', args2)
+      }
+      // 将数组拆分成个体，每个个体为一个参数，一次传入
+      arr2Args(1, [2, 3, 4]) // args2: 2 3 4
+      ```
