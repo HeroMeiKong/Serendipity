@@ -1,6 +1,13 @@
 # JS 面试题目汇总★
 
-1. 事件代理
+1. 事件代理(事件委托)
+  
+    将自生的事件监控交由父元素监控，主要利用事件冒泡原理。
+
+    使用场景：
+    - 适合于: `click, mousedown, mouseup, keydown, keyup, keypress`
+    - `mouseover` 和 `mouseout` 要经常计算它们的位置，处理起来麻烦。
+    - 不适用于: `focu, blur` 之类的，自身没用冒泡特性。
 
 2. 请解释 JavaScript 中 `this` 是如何工作的
     - `this` 永远指向函数运行时所在的对象，而不是函数创建时所在的对象
