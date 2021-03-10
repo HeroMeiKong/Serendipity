@@ -79,3 +79,41 @@
 39. `React` 函数组件和类组件的区别
 
 40. `React Hooks`
+41. 排序两次后什么样，这个可能是什么排序算法
+42. 同源策略可能不通过的情况
+43. 优化页面加载速度的方法
+44. 跨域方法
+45. 浏览器缓存
+46. position属性
+47. 导致界面卡顿的方法
+48. defer/async区别
+49. css选择器
+50. 哪些标签可能被搜索引擎抓取收录
+51. 字符串去重
+
+    ```javascript
+    return Array.form(new Set(array));
+    ```
+
+52. 去除字符串左右空格
+
+    ```javascript
+    return str.trim();
+    // return str.trimStart(); // 也可使用别名 trimLeft() 去除字符串开头空白字
+    // return str.trimEnd(); // 也可使用别名 trimRight() 去除字符串末端空白字符
+    ```
+
+53. 字符串大小字符取反
+
+    ```javascript
+    str = str.replace(/[a-zA-Z]/g, content => {
+      return content.toUpperCase() === content ? content.toLowerCase() : content.toUpperCase();
+    }
+    return str;
+    ```
+
+54. 数字千位数
+
+    ```javascript
+    return num.toLocaleString("en-US");
+    ```
