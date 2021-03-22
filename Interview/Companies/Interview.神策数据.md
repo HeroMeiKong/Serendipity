@@ -19,7 +19,6 @@
    - flex存在两条轴：水平主轴、竖直交叉轴。
    - 默认项目不换行在主轴上水平排列，可以使用flex-direction: column;使其竖直排列。
 7. 能给讲一下原型与原型链吗？
-
 8. 手撕代码！
    - 第一道，实现一个原生表格的点击表头排列。
    - 第二道，因数分解，用了递归与非递归两种方法。
@@ -191,3 +190,35 @@
 61. 路由 hash | histroy
 62. viewport
 63. canvas
+64. 神策前端笔试题
+1. 数值格式化,以 「,」 分割
+例如：
+console.log(formatNumber(10000)) // 10,000
+console.log(formatNumber(10000.1234)) // 10,000.1234
+console.log(formatNumber(1000)) // 1000
+
+2. 实现如下方法
+/**
+ * @desc 函数 calc可将数值较大的数字（乘积）拆解为数值较小的数字（乘数）
+ * @param {number}   n，数值较大的整数（只考虑数值大于 1 的自然数）
+ * @return {array<number>}   由 n 被拆解出来的数字组成
+ */
+function calc(n) {
+ // todo
+}
+
+// 例如：
+console.log(calc(7));
+// [7]
+console.log(calc(8));
+// [2, 2, 2]
+console.log(calc(9));
+// [3，3]
+console.log(calc(12));
+// [2, 2, 3]
+console.log(calc(30));
+// [2, 3, 5]
+
+
+
+
