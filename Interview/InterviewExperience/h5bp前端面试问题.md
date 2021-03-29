@@ -50,7 +50,9 @@
 - 请解释 `<script>`、`<script async>` 和 `<script defer>` 的区别。
 - 为什么通常推荐将 `CSS <link>` 放置在 `<head></head>` 之间，而将 `JS <script>` 放置在 `</body>` 之前？你知道有哪些例外吗？
 - 什么是渐进式渲染 (`progressive rendering`)？
+- 为什么在 `<img>` 标签中使用 `srcset` 属性？请描述浏览器遇到该属性后的处理过程。
 - 你用过哪些不同的 `HTML` 模板语言？
+- HTML5 有哪些新特性？语义化标签用过哪些？
 
 ### `CSS` 相关问题
 
@@ -85,6 +87,7 @@
 - 为什么响应式设计 (`responsive design`) 和自适应设计 (`adaptive design`) 不同？
 - 你有兼容 `retina` 屏幕的经历吗？如果有，在什么地方使用了何种技术？
 - 请问为何要使用 `translate()` 而非 `absolute positioning`，或反之的理由？为什么？
+- CSS3 新特性
 
 ### JS 相关问题
 
@@ -131,6 +134,7 @@
 - 请解释同步 (`synchronous`) 和异步 (`asynchronous`) 函数的区别。
 - 什么是事件循环 (`event loop`)？请问调用栈 (`call stack`) 和任务队列 (`task queue`) 的区别是什么？
 - 解释 `function foo() {}` 与 `var foo = function() {}` 用法的区别
+- ES6-至今 新特性
 
 ### 测试相关问题
 
