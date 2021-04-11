@@ -13,3 +13,8 @@
 5. 前端优化方法
 
 6. `css3` 动画和 `js` 动画对比
+7. requestAnimationFrame 帧数控制调用
+requestIdleCallback 闲时调用
+web worker 多线程调用
+IntersectionObserver 进入可视区调用
+setState是对单个组件的合并渲染，batchedUpdates是对多个组件的合并渲染。合并渲染是React最主要的优化手段。
