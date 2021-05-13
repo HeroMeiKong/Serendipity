@@ -84,9 +84,10 @@
 - `CSS` 中字母 `C` 的意思是叠层 (`Cascading`)。请问在确定样式的过程中优先级是如何决定的 (请举例)？如何有效使用此系统？
 - 你在开发或生产环境中使用过哪些 `CSS` 框架？你觉得应该如何改善他们？
 - 请问你有尝试过 `CSS` `Flexbox` 或者 `Grid` 标准规格吗？
+- 请解释在编写网站时，响应式与移动优先的区别
 - 为什么响应式设计 (`responsive design`) 和自适应设计 (`adaptive design`) 不同？
 - 你有兼容 `retina` 屏幕的经历吗？如果有，在什么地方使用了何种技术？
-- 请问为何要使用 `translate()` 而非 `absolute positioning`，或反之的理由？为什么？
+- 什么情况下，用 `translate()` 而不用绝对定位？什么时候，情况相反?
 - CSS3 新特性
 
 ### JS 相关问题
@@ -94,6 +95,7 @@
 - 请解释事件代理 (`event delegation`)。
 - 请解释 `JavaScript` 中 `this` 是如何工作的。
 - 请解释原型继承 (`prototypal inheritance`) 的原理。
+- 拓展原型链的方法
 - 你怎么看 `AMD vs CommonJS`？
 - 请解释为什么接下来这段代码不是 `IIFE` (立即调用的函数表达式)：`function foo(){ }();`，要做哪些改动使它变成 `IIFE`?
 - 描述以下变量的区别：`null，undefined` 或 `undeclared`？该如何检测它们？

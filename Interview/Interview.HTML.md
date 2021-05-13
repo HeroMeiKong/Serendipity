@@ -12,3 +12,4 @@
 8. 什么是渐进式渲染(`progressive rendering`)?
 9. `HTML` 和 `XHTML` 有什么区别？
 10. `HMTL5` 新标签
+11. `addEventListener()`

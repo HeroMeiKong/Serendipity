@@ -838,9 +838,9 @@
     - **取值：**
       - `static`：默认定位属性值。该元素使用正常的布局行为，即元素在文档常规流中当前的布局位置。此时 `top, right, bottom, left` 和 `z-index` 属性无效。
       - `relative`：元素先放置在未添加定位时的位置，再在不改变页面布局的前提下调整元素位置（因此会在此元素未添加定位时所在位置留下空白）；`table-*-group, table-row, table-column, table-cell, table-caption` 元素无效。
-      - `absolute`：不为元素预留空间，通过指定元素相对于最近的非 static 定位祖先元素的偏移，来确定元素位置。绝对定位的元素可以设置外边距（margins），且不会与其他边距合并。
-      - `fixed`：不为元素预留空间，而是通过指定元素相对于屏幕视口（viewport）的位置来指定元素位置。元素的位置在屏幕滚动时不会改变。打印时，元素会出现在的每页的固定位置。fixed 属性会创建新的层叠上下文。当元素祖先的 transform 属性非 none 时，容器由视口改为该祖先。
-      - `sticky`：盒位置根据正常流计算(这称为正常流动中的位置)，然后相对于该元素在流中的 flow root（BFC）和 containing block（最近的块级祖先元素）定位。在所有情况下（即便被定位元素为 table 时），该元素定位均不对后续元素造成影响。当元素 B 被粘性定位时，后续元素的位置仍按照 B 未定位时的位置来确定。position: sticky 对 table 元素的效果与 position: relative 相同。
+      - `absolute`：元素会被移出正常文档流，不为元素预留空间，通过指定元素相对于最近的非 `static` 定位祖先元素的偏移，来确定元素位置。绝对定位的元素可以设置外边距（`margins`），且不会与其他边距合并。
+      - `fixed`：元素会被移出正常文档流，不为元素预留空间，而是通过指定元素相对于屏幕视口（`viewport`）的位置来指定元素位置。元素的位置在屏幕滚动时不会改变。**打印时，元素会出现在的每页的固定位置。`fixed` 属性会创建新的层叠上下文。当元素祖先的 `transform` 属性非 `none` 时，容器由视口改为该祖先**。
+      - `sticky`：盒位置根据正常流计算(这称为正常流动中的位置)，然后相对于该元素在流中的 `flow root(BFC)` 和 `containing block`（最近的块级祖先元素）定位。在所有情况下（即便被定位元素为 `table` 时），该元素定位均不对后续元素造成影响。当元素 `B` 被粘性定位时，后续元素的位置仍按照 `B` 未定位时的位置来确定。`position: sticky` 对 `table` 元素的效果与 `position: relative` 相同。
 
 1. #### `CSS` 中字母 `C` 的意思是叠层 (`Cascading`)。请问在确定样式的过程中优先级是如何决定的 (请举例)？如何有效使用此系统？
 
@@ -848,21 +848,335 @@
 
 1. #### 请问你有尝试过 `CSS` `Flexbox` 或者 `Grid` 标准规格吗？
 
+    了解。`Flexbox` 主要用于一维布局，而 `Grid` 则用于二维布局。
+
+    `Flexbox` 解决了 `CSS` 中的许多常见问题，例如容器中元素的垂直居中，粘性定位（`sticky`）的页脚等。`Bootstrap` 基于 `Flexbox`，这是创建布局的推荐方式。我之前曾使用过 `Flexbox`，但在使用 `flex-grow` 时遇到了一些浏览器不兼容问题（`Safari`），我必须使用 `inline-blocks` 和手动计算百分比宽度，来重写我的代码，这种体验不是很好。
+
+    `Grid` 创建基于栅格的布局，是迄今为止最直观的方法，但目前浏览器支持并不广泛。
+
+1. #### 请解释在编写网站时，响应式与移动优先的区别
+
+    两种方法不是互斥的。
+
+    使一个网站响应意味着网站会根据设备屏幕的尺寸自行调整一些元素的尺寸和功能，通常是通过CSS媒体查询的视口宽度。
+    移动优先策略同样也指的是响应式，但是它建议我们应该默认定义移动设备的所有样式，仅仅添加特定的规则用来适配其他设备。
+
+    移动优先策略有 2 大优势：
+
+    - 在移动设备上有更好的性能，因为应用于它们的规则无需针对任何媒体查询的验证。
+    - 它让你强制编写与响应CSS规则相关的更干净的代码。
+
 1. #### 为什么响应式设计 (`responsive design`) 和自适应设计 (`adaptive design`) 不同？
+
+    响应式设计和自适应设计都以提高不同设备间的用户体验为目标，根据视窗大小、分辨率、使用环境和控制方式等参数进行优化调整。
+
+    响应式设计的适应性原则：网站应该凭借一份代码，在各种设备上都有良好的显示和使用效果。响应式网站通过使用媒体查询，自适应栅格和响应式图片，基于多种因素进行变化，创造出优良的用户体验。就像一个球通过膨胀和收缩，来适应不同大小的篮圈。
+
+    自适应设计更像是渐进式增强的现代解释。与响应式设计单一地去适配不同，自适应设计通过检测设备和其他特征，从早已定义好的一系列视窗大小和其他特性中，选出最恰当的功能和布局。与使用一个球去穿过各种的篮筐不同，自适应设计允许使用多个球，然后根据不同的篮筐大小，去选择最合适的一个。
 
 1. #### 你有兼容 `retina` 屏幕的经历吗？如果有，在什么地方使用了何种技术？
 
-1. #### 请问为何要使用 `translate()` 而非 `absolute positioning`，或反之的理由？为什么？
+    我倾向于使用更高分辨率的图形（显示尺寸的两倍）来处理视网膜显示。更好的方法是使用媒体查询，像 `@media only screen and (min-device-pixel-ratio: 2) { ... }`，然后改变 `background-image`。
+
+    对于图标类的图形，我会尽可能使用 `svg` 和图标字体，因为它们在任何分辨率下，都能被渲染得十分清晰。
+
+    还有一种方法是，在检查了 `window.devicePixelRatio` 的值后，利用 `JavaScript` 将 `<img>` 的 `src` 属性修改，用更高分辨率的版本进行替换。
+
+1. #### 什么情况下，用 `translate()` 而不用绝对定位？什么时候，情况相反?
+
+    `translate()` 是 `transform` 的一个值。改变 `transform` 或 `opacity` 不会触发浏览器重新布局（`reflow`）或重绘（`repaint`），只会触发复合（`compositions`）。而改变绝对定位会触发重新布局，进而触发重绘和复合。`transform` 使浏览器为元素创建一个 `GPU` 图层，但改变绝对定位会使用到 `CPU`。 因此 `translate()` 更高效，可以缩短平滑动画的绘制时间。
+
+    当使用 `translate()` 时，元素仍然占据其原始空间（有点像 `position：relative`），这与改变绝对定位不同。
 
 1. #### CSS3 新特性
 
 ### JS 相关问题
 
-1. #### 请解释事件代理 (`event delegation`)
+1. #### 请解释事件代理 (`event delegation`)，有什么好处？
+
+    时间代理又称事件委托：
+    - 对“事件处理程序过多”问题的解决方案就是事件委托。
+    - 事件委托利用了事件冒泡，只指定一个事件处理程序，就可以管理某一类型的所有事件。
+    - 事件委托是将事件监听器添加到父元素，而不是每个子元素单独设置事件监听器。当触发子元素时，事件会冒泡到父元素，监听器就会触发。
+
+    事件委托的好处：
+    - `document` 对象很快就可以访问，而且可以在页面生命周期的任何时点上为它添加事件处理程序（无需等待 `DOMContentLoaded` 或
+     `load` 事件）。简言之，只要可点击的元素呈现在页面上，就可以立即具备适当的功能。即可以监听还没有出生的儿子（动态生成的
+    元素）。
+    - 无需从已删除的元素中解绑处理程序，也无需将处理程序绑定到新元素上。
+    - 在页面中设置事件处理程序所需的时间更少。即省监听器。
+    - 整个页面占用的内存空间更少，能够提升整体性能。
+
+      ```js
+      function delegate(element, eventType, selector, fn) {
+        element.addEventListener(eventType, e => {
+          let el = e.target
+          while (!el.matches(selector)) {//判断是不是监听的元素
+            if (element === el) {//判断是不是事件委托的元素即父（祖先）元素
+              el = null //没有点到监听的元素上。不执行
+              break
+            }
+            el = el.parentNode //查找父元素是否为监听对象
+          }
+          el && fn.call(el, e, el)
+          //如果el为真，那么执行fn.call(el, e, el)；为假就不执行。
+        })
+        return element
+      }
+      delegate(ul, 'click', 'li', ()=>{})
+      ul>li*5>span
+
+
+      function delegate(el, selector, type, fn) {
+        function callback(e) {
+          e = e || window.event;
+          const target = e.target || e.srcElement;
+          let selectors = el.querySelectorAll(selector);
+          selectors = [].slice.call(selectors); // 浅拷贝
+          if (selectors.includes(target)) {
+            fn.call(target, e);
+          }
+        }
+        el.addEventListener(type, callback, false);
+      }
+
+      delegate(document.querySelector('body'), 'button', 'click', function () {
+        console.log('bingo');
+      });
+      ```
 
 1. #### 请解释 `JavaScript` 中 `this` 是如何工作的
 
+    `this` 取值符合以下规则：
+    1. 在调用函数时使用 `new` 关键字，函数内的 `this` 是一个全新的对象。
+    2. 如果 `apply、call` 或 `bind` 方法用于调用、创建一个函数，函数内的 `this` 就是作为参数传入这些方法的对象。
+    3. 当函数作为对象里的方法被调用时，函数内的 `this` 是调用该函数的对象。比如当 `obj.method()` 被调用时，函数内的 `this` 将绑定到 `obj` 对象。
+    4. 如果调用函数不符合上述规则，那么 `this` 的值指向全局对象（`global object`）。浏览器环境下 `this` 的值指向 `window` 对象，但是在严格模式下(`'use strict'`)，`this` 的值为 `undefined`。
+    5. 如果符合上述多个规则，则较高的规则（1 号最高，4 号最低）将决定 `this` 的值。
+    6. 如果该函数是 `ES2015` `中的箭头函数，将忽略上面的所有规则，this` 被设置为它被创建时的上下文。
+
+    ```javascript
+    // 面试题
+    var obj = {
+      foo: function () {
+        console.log(this)
+      }
+    }
+    var bar = obj.foo
+    obj.foo() // obj.foo.call(obj) 打印出的 this 是 obj
+    bar() // bar.call(undefined) 打印出的 this 是 window
+    ```
+
+    **如果你传入的 `context` 是 `null` 或者 `undefined`，那么 `window` 对象就是默认的 `context`（严格模式下默认 `context` 是 `undefined`）**
+    - `fn()` 里面的 `this` 就是 `window`
+    - `fn()` 是 `strict mode，this` 就是 `undefined`
+    - `a.b.c.fn()` 里面的 `this` 就是 `a.b.c`
+    - `new F()` 里面的 `this` 就是新生成的实例
+    - `() => console.log(this)` 里面 `this` 跟外面的 `this` 的值一模一样
+    - 匿名函数的执行环境具有全局性，因此它的 `this` 对象通常指向 `windows`
+
 1. #### 请解释原型继承 (`prototypal inheritance`) 的原理
+
+    所有 `JS` 对象都有一个 `__proto__` 属性，指向它的原型对象。当试图访问一个对象的属性时，如果没有在该对象上找到，它还会搜寻该对象的原型，以及该对象的原型的原型，依次层层向上搜索，直到找到一个名字匹配的属性或到达原型链的末尾。这种行为是在模拟经典的继承，但是与其说是继承，不如说是委托（`delegation`）。
+
+    - `__proto__`:
+      每个JS对象一定对应一个原型对象，并从原型对象继承属性和方法。
+
+      ```javascript
+      var one = {x: 1};
+      var two = new Object();
+      one.__proto__ === Object.prototype // true
+      two.__proto__ === Object.prototype // true
+      one.toString === one.__proto__.toString // true
+      ```
+
+    - `prototype`
+      只有函数才有`prototype`
+      - 当你创建函数时，JS会为这个函数自动添加`prototype`属性，值是一个有`constructor`属性的对象，不是空对象。而一旦你把这个函数当作构造函数(`constructor`)调用(即通过`new`关键字调用)，那么JS就会帮你创建该构造函数的实例，实例继承构造函数`prototype`的所有属性和方法(实例通过设置自己的`__proto__`指向构造函数的`prototype`来实现这种继承)。
+      - 构造函数，通过`prototype`来存储要共享的属性和方法，也可以设置`prototype`指向现存的对象来继承该对象
+      - 对象的`__proto__`指向自己构造函数的`prototype`。由此产生原型链`obj.__proto__.__proto__...`，`instanceof`就是依靠原型链来判断类型的
+      - JS是单继承的，`Object.prototype`是原型链的顶端，所有对象从它继承了包括`toString`等方法和属性。
+      - 注意：
+
+      ```javascript
+      Object instanceof Function // true
+      Function instanceof Object // true
+      ```
+
+    鸡和蛋的问题，为什么？
+    - `Function`本身就是函数，`Function.__proto__`是标准的内置对象`Function.prototype`
+      `Function.prototype.__proto__`是标准的内置对象`Object.prototype`
+
+    总结：
+    - `Function.prototype`和`Function.__proto__`都指向`Function.prototype`，可是`Function.prototype.__proto__ === Object.prototype //true`，而`Function.prototype.__proto__ === Function.prototype //false`
+    - `Object.prototype.__proto__ === null`，说明原型链到`Object.prototype`终止。
+
+    结论：
+    - 原型链的尽头(root)是`Object.prototype`。**所有对象均从`Object.prototype`继承属性**
+    - `Function.prototype`和`Function.__proto__`为**同一对象**。
+    *`Object/Array/String`等等构造函数本质上和`Function`一样，均继承于`Function.prototype`*
+    - `Function.prototype`直接继承root(Object.prototype)。
+    *继承的原型链：`Object.prototype(root)<--Function.prototype<--Function|Object|Array...`*
+    - 实例的 `__proto__` 属性（原型）等于其构造函数的 `prototype` 属性。
+    此处实例的方法只能找到构造函数为止，不能再向上。
+
+1. #### 拓展原型链的方法
+
+    - `New-initialization`
+      - 例子：
+
+      ```javascript
+      function foo() {}
+
+      foo.prototype = {
+        foo_prop: "foo val"
+      };
+
+      function bar() {}
+
+      var proto = new foo;
+      proto.bar_prop = "bar val";
+      bar.prototype = proto;
+      var inst = new bar;
+      console.log(inst.foo_prop); // foo val
+      console.log(inst.bar_prop); // bar val
+      ```
+
+      - 优势：支持目前以及所有可想象到的浏览器( `IE5.5` 都可以使用)。 这种方法非常快，非常符合标准，并且充分利用 `JIT` 优化。
+      - 缺陷：为使用此方法，必须对相关函数初始化。 在初始化过程中，构造函数可以存储每个对象必须生成的唯一信息。但是，这种唯一信息只生成一次，可能会带来潜在的问题。此外，构造函数的初始化，可能会将不需要的方法放在对象上。然而，如果你只在自己的代码中使用，你也清楚（或有通过注释等写明）各段代码在做什么，这些在大体上都不是问题（事实上，通常是有益处的）。
+
+    - `Object.create`
+      - 例子：
+
+      ```javascript
+      function foo() {}
+
+      foo.prototype = {
+        foo_prop: "foo val"
+      };
+      
+      function bar() {}
+
+      var proto = Object.create(
+        foo.prototype
+      );
+      proto.bar_prop = "bar val";
+      bar.prototype = proto;
+      var inst = new bar;
+      console.log(inst.foo_prop); // foo val
+      console.log(inst.bar_prop); // bar val
+
+      --------------------------------------
+
+      function foo() {}
+
+      foo.prototype = {
+        foo_prop: "foo val"
+      };
+
+      function bar() {}
+
+      var proto = Object.create(
+        foo.prototype,
+        {
+          bar_prop: {
+            value: "bar val"
+          }
+        }
+      );
+      bar.prototype = proto;
+      var inst = new bar;
+      console.log(inst.foo_prop); // foo val
+      console.log(inst.bar_prop); // bar val
+      ```
+
+      - 优势：支持当前所有非微软版本或者 `IE9` 以上版本的浏览器。允许一次性地直接设置 `__proto__` 属性，以便浏览器能更好地优化对象。同时允许通过 `Object.create(null)` 来创建一个没有原型的对象。
+      - 缺陷：不支持 `IE8` 以下的版本。然而，随着微软不再对系统中运行的旧版本浏览器提供支持，这将不是在大多数应用中的主要问题。另外，这个慢对象初始化在使用第二个参数的时候有可能成为一个性能黑洞，因为每个对象的描述符属性都有自己的描述对象。当以对象的格式处理成百上千的对象描述的时候，可能会造成严重的性能问题。
+    - `Object.setPrototypeOf`
+      - 例子：
+
+      ```javascript
+      function foo() {}
+
+      foo.prototype = {
+        foo_prop: "foo val"
+      };
+
+      function bar() {}
+
+      var proto = {
+        bar_prop: "bar val"
+      };
+
+      Object.setPrototypeOf(
+        proto, foo.prototype
+      );
+      bar.prototype = proto;
+      var inst = new bar;
+      console.log(inst.foo_prop); // foo val
+      console.log(inst.bar_prop); // bar val
+
+      --------------------------------
+
+      function foo() {}
+
+      foo.prototype = {
+        foo_prop: "foo val"
+      };
+
+      function bar() {}
+
+      var proto;
+      proto = Object.setPrototypeOf(
+        { bar_prop: "bar val" },
+        foo.prototype
+      );
+      bar.prototype = proto;
+      var inst = new bar;
+      console.log(inst.foo_prop); // foo val
+      console.log(inst.bar_prop); // bar val
+      ```
+
+      - 优势：支持所有现代浏览器和微软 `IE9+` 浏览器。允许动态操作对象的原型，甚至能强制给通过 `Object.create(null)` 创建出来的没有原型的对象添加一个原型。
+      - 缺陷：这个方式表现并不好，应该被弃用。如果你在生产环境中使用这个方法，那么快速运行 `Javascript` 就是不可能的，因为许多浏览器优化了原型，尝试在调用实例之前猜测方法在内存中的位置，但是动态设置原型干扰了所有的优化，甚至可能使浏览器为了运行成功，使用完全未经优化的代码进行重编译。 不支持 `IE8` 及以下的浏览器版本。
+    - `__proto__`
+      - 例子：
+
+      ```javascript
+      function foo() {}
+
+      foo.prototype = {
+        foo_prop: "foo val"
+      };
+
+      function bar() {}
+
+      var proto = {
+        bar_prop: "bar val",
+        __proto__: foo.prototype
+      };
+      bar.prototype = proto;
+      var inst = new bar;
+      console.log(inst.foo_prop); // foo val
+      console.log(inst.bar_prop); // bar val
+
+      --------------------------------
+
+      var inst = {
+        __proto__: {
+          bar_prop: "bar val",
+          __proto__: {
+            foo_prop: "foo val",
+            __proto__: Object.prototype
+          }
+        }
+      };
+      console.log(inst.foo_prop); // foo val
+      console.log(inst.bar_prop); // bar val
+      ```
+
+      - 优势：支持所有现代非微软版本以及 `IE11` 以上版本的浏览器。将 `__proto__` 设置为非对象的值会静默失败，并不会抛出错误。
+      - 缺陷：应该完全将其抛弃因为这个行为完全不具备性能可言。 如果你在生产环境中使用这个方法，那么快速运行 `Javascript` 就是不可能的，因为许多浏览器优化了原型，尝试在调用实例之前猜测方法在内存中的位置，但是动态设置原型干扰了所有的优化，甚至可能使浏览器为了运行成功，使用完全未经优化的代码进行重编译。不支持 `IE10` 及以下的浏览器版本。
 
 1. #### 你怎么看 `AMD vs CommonJS`？
 

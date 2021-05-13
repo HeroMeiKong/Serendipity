@@ -9,13 +9,13 @@
     - `mouseover` 和 `mouseout` 要经常计算它们的位置，处理起来麻烦。
     - 不适用于: `focu, blur` 之类的，自身没用冒泡特性。
 
-2. 请解释 JavaScript 中 `this` 是如何工作的
+1. 请解释 JavaScript 中 `this` 是如何工作的
     - `this` 永远指向函数运行时所在的对象，而不是函数创建时所在的对象
     - 匿名函数和不处于任何对象中的函数，`this` 指向 `window`
     - `call`, `apply`, `with` 指的 `this` 是谁就是谁
     - 普通函数调用，函数被谁调用，`this` 就指向谁
 
-3. ★★★JavaScript 继承
+1. ★★★JavaScript 继承
     - 原型链
 
       ```javascript
@@ -305,24 +305,24 @@
       // }
       ```
 
-4. JavaScript 模块化
+1. JavaScript 模块化
     理解模块化发展过程，理解 `commonJS，AMD，CMD，ES6` 模块化
 
-5. `IIFE` 立即执行函数
+1. `IIFE` 立即执行函数
 
-6. `null undefined` 区别
+1. `null undefined` 区别
 
-7. ★★★闭包 与 作用域
+1. ★★★闭包 与 作用域
 
-8. 匿名函数
+1. 匿名函数
 
-9. 你是如何组织自己的代码？是使用模块模式，还是使用经典继承的方法？
+1. 你是如何组织自己的代码？是使用模块模式，还是使用经典继承的方法？
 
-10. 宿主对象 (`host objects`) 和原生对象 (`native objects`)
+1. 宿主对象 (`host objects`) 和原生对象 (`native objects`)
 
-11. 请指出以下代码的区别：`function Person() {}`、`var person = Person()`、`var person = new Person()`？
+1. 请指出以下代码的区别：`function Person() {}`、`var person = Person()`、`var person = new Person()`？
 
-12. ★★★`apply call bind`
+1. ★★★`apply call bind`
     - apply 接收的是数组，并会立即执行
     - call 接收的是用逗号隔开的参数，并会立即执行
     - bind 接收的是用逗号隔开的参数，但是不会立即执行，而是返回一个新的函数
@@ -421,79 +421,79 @@
       }
       ```
 
-13. `new`
+1. `new`
     源码如何实现的？
 
-14. `document.write()`
+1. `document.write()`
 
-15. 特性检测 特性推断 UA字符串嗅探
+1. 特性检测 特性推断 UA字符串嗅探
 
-16. Ajax 工作原理
+1. Ajax 工作原理
     着重理解 XMLHttpRequest！！
 
-17. ★★★跨域
+1. ★★★跨域
 
     图片`ping, JSONP, CORS`。
 
-18. 变量声明提升
+1. 变量声明提升
 
-19. 冒泡机制
+1. 冒泡机制
 
-20. `attribute` 和 `property`
+1. `attribute` 和 `property`
 
-21. ★★★`document load` 和 `document DOMContentLoaded`
+1. ★★★`document load` 和 `document DOMContentLoaded`
 
-22. `==` 和 `===` 有什么不同
+1. `==` 和 `===` 有什么不同
 
-23. 同源策略 (`same-origin policy`)
+1. 同源策略 (`same-origin policy`)
     `Cookie，iframe，AJAX` 同源
 
-24. `strict` 模式
+1. `strict` 模式
 
-25. 为何通常会认为保留网站现有的全局作用域 (`global scope`) 不去改变它，是较好的选择
+1. 为何通常会认为保留网站现有的全局作用域 (`global scope`) 不去改变它，是较好的选择
 
-26. 为何你会使用 `load` 之类的事件 (`event`)？此事件有缺点吗？你是否知道其他替代品，以及为何使用它们？
+1. 为何你会使用 `load` 之类的事件 (`event`)？此事件有缺点吗？你是否知道其他替代品，以及为何使用它们？
 
-27. ★★请解释什么是单页应用 (`single page app`), 以及如何使其对搜索引擎友好 (`SEO-friendly`)
+1. ★★请解释什么是单页应用 (`single page app`), 以及如何使其对搜索引擎友好 (`SEO-friendly`)
 
-28. `Promise`
+1. `Promise`
     怎么用？源码如何实现的？
     推荐文章：[xieranmaya/blog#3](https://github.com/xieranmaya/blog/issues/3)
 
-29. 使用一种可以编译成 JavaScript 的语言来写 JavaScript 代码有哪些优缺点？
+1. 使用一种可以编译成 JavaScript 的语言来写 JavaScript 代码有哪些优缺点？
 
-30. JavaScript 调试工具
+1. JavaScript 调试工具
 
-31. 对象遍历 和 数组遍历
+1. 对象遍历 和 数组遍历
 
-32. 可变对象和不可变对象
+1. 可变对象和不可变对象
 
-33. ★★★什么是事件循环 (`event loop`)
+1. ★★★什么是事件循环 (`event loop`)
     深入原理，宏任务，微任务等等
 
-34. `let var const`
+1. `let var const`
 
-35. 数组的方法
+1. 数组的方法
 
-36. `web worker`
+1. `web worker`
 
-37. 柯里化
+1. 柯里化
 
-38. 创建对象的三种方法
+1. 创建对象的三种方法
 
-39. 深拷贝和浅拷贝
+1. 深拷贝和浅拷贝
     可以实现手写深拷贝
 
-40. 图片懒加载
+1. 图片懒加载
     咋实现的？
 
-41. 网页各种高度
+1. 网页各种高度
 
-42. 实现页面加载进度条
+1. 实现页面加载进度条
 
-43. 箭头函数 ES5 如何实现
+1. 箭头函数 ES5 如何实现
     箭头函数和普通函数的区别
-44. `Object.create` 做了什么？
+1. `Object.create` 做了什么？
 
     ```javascript
     const person = {
@@ -559,3 +559,114 @@
       };
     }
     ```
+
+1. 不能使用 `__proto__` 与 `[[Prototype]]`，如何访问原型(父类)属性？
+
+    可以通过 `Object.getPrototypeOf()` 和 `Object.setPrototypeOf()` 访问器来访问
+
+1. 实现继承的方法(使用不同的方法来创建对象和生成原型链)
+
+    [参考文章](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Inheritance_and_the_prototype_chain#%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%8C%E7%9A%84%E6%96%B9%E6%B3%95%E6%9D%A5%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E5%92%8C%E7%94%9F%E6%88%90%E5%8E%9F%E5%9E%8B%E9%93%BE)
+    - 使用语法结构创建的对象
+
+      ```javascript
+      var o = { a: 1 };
+
+      // o 这个对象继承了 Object.prototype 上面的所有属性
+      // o 自身没有名为 hasOwnProperty 的属性
+      // hasOwnProperty 是 Object.prototype 的属性
+      // 因此 o 继承了 Object.prototype 的 hasOwnProperty
+      // Object.prototype 的原型为 null
+      // 原型链如下:
+      // o ---> Object.prototype ---> null
+
+      var a = ["yo", "whadup", "?"];
+
+      // 数组都继承于 Array.prototype
+      // (Array.prototype 中包含 indexOf, forEach 等方法)
+      // 原型链如下:
+      // a ---> Array.prototype ---> Object.prototype ---> null
+
+      function f() {
+        return 2;
+      }
+
+      // 函数都继承于 Function.prototype
+      // (Function.prototype 中包含 call, bind等方法)
+      // 原型链如下:
+      // f ---> Function.prototype ---> Object.prototype ---> null
+      ```
+
+    - 使用构造器创建的对象(new)
+
+      ```javascript
+      function Graph() {
+        this.vertices = [];
+        this.edges = [];
+      }
+
+      Graph.prototype = {
+        addVertex: function (v) {
+          this.vertices.push(v);
+        }
+      };
+
+      var g = new Graph();
+      // g 是生成的对象，他的自身属性有 'vertices' 和 'edges'
+      // 在 g 被实例化时，g.[[Prototype]] 指向了 Graph.prototype
+      ```
+
+    - `Object.create()`
+
+      ```javascript
+      var a = { a: 1 };
+      // a ---> Object.prototype ---> null
+
+      var b = Object.create(a);
+      // b ---> a ---> Object.prototype ---> null
+      console.log(b.a); // 1 (继承而来)
+
+      var c = Object.create(b);
+      // c ---> b ---> a ---> Object.prototype ---> null
+
+      var d = Object.create(null);
+      // d ---> null
+      console.log(d.hasOwnProperty); // undefined, 因为d没有继承Object.prototype
+      ```
+
+    - `class`
+
+      ```javascript
+      "use strict";
+
+      class Polygon {
+        constructor (height, width) {
+          this.height = height;
+          this.width = width;
+        }
+      }
+
+      class Square extends Polygon {
+        constructor (sideLength) {
+          super(sideLength, sideLength);
+        }
+        get area() {
+          return this.height * this.width;
+        }
+        set sideLength(newLength) {
+          this.height = newLength;
+          this.width = newLength;
+        }
+      }
+
+      var square = new Square(2);
+      ```
+
+1. 列举原型链上属性的方法
+    **注意：检查属性是否为 `undefined` 是不能够检查其是否存在的。该属性可能已存在，但其值恰好被设置成了 `undefined`。**
+    - `Object.prototype.hasOwnProperty()`: 返回一个布尔值，指示对象自身属性中是否具有指定的属性（键）。**不会遍历原型链，只查询自身**
+    `object1.hasOwnProperty('toString');`
+    - `Object.keys()`: 返回一个由一个给定对象的**自身可枚举属性**组成的**字符串数组**，数组中属性名的排列顺序和正常循环遍历该对象时返回的顺序一致
+    `console.log(Object.keys(arr));`
+    - `Object.getOwnPropertyNames()`: 返回一个由指定对象的**所有自身属性**的属性名（包括不可枚举属性但不包括 `Symbol` 值作为名称的属性）组成的**字符串数组**
+    `console.log(Object.getOwnPropertyNames(arr));`
