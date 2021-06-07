@@ -1178,7 +1178,20 @@
       - 优势：支持所有现代非微软版本以及 `IE11` 以上版本的浏览器。将 `__proto__` 设置为非对象的值会静默失败，并不会抛出错误。
       - 缺陷：应该完全将其抛弃因为这个行为完全不具备性能可言。 如果你在生产环境中使用这个方法，那么快速运行 `Javascript` 就是不可能的，因为许多浏览器优化了原型，尝试在调用实例之前猜测方法在内存中的位置，但是动态设置原型干扰了所有的优化，甚至可能使浏览器为了运行成功，使用完全未经优化的代码进行重编译。不支持 `IE10` 及以下的浏览器版本。
 
-1. `prototype` 和 `Object.getPrototypeOf` 的区别
+1. #### `prototype` 和 `Object.getPrototypeOf` 的区别
+
+    `var a1 = new A(); var a2 = new A();`
+    那么 `a1.doSomething` 事实上会指向 `Object.getPrototypeOf(a1).doSomething`，它就是你在 `A.prototype.doSomething` 中定义的内容。也就是说：`Object.getPrototypeOf(a1).doSomething == Object.getPrototypeOf(a2).doSomething == A.prototype.doSomething`（补充：实际上，执行 `a1.doSomething()` 相当于执行 `Object.getPrototypeOf(a1).doSomething.call(a1)==A.prototype.doSomething.call(a1)`）
+
+    简而言之，`prototype` 是用于类的，而 `Object.getPrototypeOf()` 是用于实例的（instances），两者功能一致。
+
+    当执行 `var o = new Foo();`，实际执行：
+
+    ```javascript
+    var o = new Object();
+    o.__proto__ = Foo.prototype;
+    Foo.call(o);
+    ```
 
 1. #### 你怎么看 `AMD vs CommonJS`？
 
