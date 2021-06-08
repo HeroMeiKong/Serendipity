@@ -1195,6 +1195,119 @@
 
 1. #### 你怎么看 `AMD vs CommonJS`？
 
+    `CommonJS, AMD, CMD` 都是 `Javascript` 模块化的规范。
+    `CommonJS` 是服务器端 `Javascript` 模块化的规范，`NodeJS` 是这种规范的实现。
+    `AMD`(异步模块定义)和 `CMD`(通用模块定义)都是浏览器端 `Javascript` 模块化的规范。`RequireJS` 遵循的是 `AMD，SeaJS` 遵循的是 `CMD`。
+
+    - CommonJS
+    一个单独的文件就是一个模块。加载模块使用 `require` 方法，该方法读取一个文件并执行，最后返回文件内部的 `exports` 对象。定义模块就是写新的 `Javascript` 文件，再通过 `exports` 导出。
+    `CommonJS` 加载模块是同步的，所以只有加载完成才能执行后面的操作。像 `Node.js` 主要用于服务器的编程，加载的模块文件一般都已经存在本地硬盘，所以加载起来比较快，不用考虑异步加载的方式，所以 `CommonJS` 规范比较适用。但如果是浏览器环境，要从服务器加载模块，这是就必须采用异步模式。所以就有了 `AMD、CMD` 解决方案。
+
+      ```javascript
+      // module.js
+      var A = function () {
+        console.log('我是定义的模块');
+      }
+      // 导出这个模块
+      // 1.第一种返回方式 module.exports = A; 
+      // 2.第二种返回方式 module.exports.test = A
+      // 3.第三种返回方式 exports.test = A;
+      exports.test = A;
+
+      // test.js
+      var module = require("./module"); // 加载这个模块
+
+      // 调用这个模块，不同的返回方式用不同的方式调用
+      // 1.第一种调用方式 module();
+      // 2.第二种调用方式 module.test();
+      // 3.第三种调用方式 module.test();
+      module.test();
+      ```
+
+    - AMD（异步模块定义）
+    `AMD` 规范通过 `define` 方法去定义模块，通过 `require` 方法去加载模块。`RequireJS` 实现了这种规范。
+    `AMD` 只有一个接口：`define(id?,dependencies?,factory);` 它要在声明模块的时候制定所有的依赖(`dep`)，并且还要当做形参传到 `factory` 中。要是没什么依赖，就定义简单的模块（或者叫独立的模块）
+
+      ```javascript
+      // 编写一个 module1.js 文件
+      // 定义独立的模块
+      define({
+        methodA: function () {
+          console.log('我是module1的methodA');
+        },
+        methodB: function () {
+          console.log('我是module1的methodB');
+        }
+      });
+
+      // 编写一个 module2.js 文件
+      // 另一种定义独立模块的方式
+      define(function () {
+        return {
+          methodA: function () {
+            console.log('我是module2的methodA');
+          },
+          methodB: function () {
+            console.log('我是module2的methodB');
+          }
+        };
+      });
+
+      // 编写一个 module3.js 文件
+      // 定义非独立的模块（这个模块依赖其他模块）
+      define(['module1', 'module2'], function (m1, m2) {
+        return {
+          methodC: function () {
+            m1.methodA();
+            m2.methodB();
+          }
+        };
+      });
+
+      // 再定义一个 main.js，去加载这些个模块
+      require(['module3'], function (m3) {
+        m3.methodC();
+      });
+
+      // 我们在一个 html 文件中去通过 RequireJS 加载这个 main.js
+      // 等号右边的 main 指的 main.js
+      <script data-main="main" src="require.js"></script>
+
+      //浏览器控制台输出结果
+      我是module1的methodA
+      我是module2的methodB
+      ```
+
+    - CMD（通用模块定义）
+      `CMD` 是 `SeaJS` 在推广过程中对模块定义的规范化产出。
+
+      `AMD` 和 `CMD` 的区别：
+
+      1. 对于依赖的模块，`AMD` 是提前执行，`CMD` 是延迟执行。不过 `RequireJS` 从 2.0 开始，也改成可以延迟执行（根据写法不同，处理方式不同）。`CMD` 推崇 `as lazy as possible`（尽可能的懒加载，也称为延迟加载，即在需要的时候才加载）。
+
+      2. `CMD` 推崇依赖就近，`AMD` 推崇依赖前置。虽然 `AMD` 也支持 `CMD` 的写法，同时还支持将 `require` 作为依赖项传递
+      3. `AMD` 的 `API` 默认是一个当多个用，`CMD` 的 `API` 严格区分，推崇职责单一。比如 `AMD` 里，`require` 分全局 `require` 和局部 `require`，都叫 `require`。`CMD` 里，没有全局 `require`，而是根据模块系统的完备性，提供 `seajs.use` 来实现模块系统的加载启动。`CMD` 里，每个 `API` 都简单纯粹。
+
+      ```javascript
+      // CMD
+      define(function (require, exports, module) {
+        var a = require('./a');
+        a.doSomething();
+        // 此处略去 100 行
+        var b = require('./b');   // 依赖可以就近书写
+        b.doSomething();
+        // ... 
+      })
+
+      // AMD 默认推荐的是
+      define(['./a', './b'], function (a, b) { // 依赖必须一开始就写好
+        a.doSomething();
+        // 此处略去 100 行
+        b.doSomething();
+        //...
+      })
+      ```
+
 1. #### 请解释为什么接下来这段代码不是 `IIFE` (立即调用的函数表达式)：`function foo(){ }();`，要做哪些改动使它变成 `IIFE`?
 
 1. #### 描述以下变量的区别：`null，undefined` 或 `undeclared`？该如何检测它们？
