@@ -1201,7 +1201,7 @@
 
     - CommonJS
     一个单独的文件就是一个模块。加载模块使用 `require` 方法，该方法读取一个文件并执行，最后返回文件内部的 `exports` 对象。定义模块就是写新的 `Javascript` 文件，再通过 `exports` 导出。
-    `CommonJS` 加载模块是同步的，所以只有加载完成才能执行后面的操作。像 `Node.js` 主要用于服务器的编程，加载的模块文件一般都已经存在本地硬盘，所以加载起来比较快，不用考虑异步加载的方式，所以 `CommonJS` 规范比较适用。但如果是浏览器环境，要从服务器加载模块，这是就必须采用异步模式。所以就有了 `AMD、CMD` 解决方案。
+    `CommonJS` 加载模块是同步的，所以只有加载完成才能执行后面的操作。像 `Node.js` 主要用于服务器的编程，加载的模块文件一般都已经存在本地硬盘，所以加载起来比较快，不用考虑异步加载的方式，所以 `CommonJS` 规范比较适用。**`CommonJS` 模块的设计考虑了服务器开发**。但如果是浏览器环境，要从服务器加载模块，这是就必须采用异步模式。所以就有了 `AMD、CMD` 解决方案。
 
       ```javascript
       // module.js
@@ -1224,8 +1224,21 @@
       module.test();
       ```
 
+      优点：
+      - 简单：开发人员无需查看文档即可掌握概念。
+      - 集成了依赖管理：模块需要其他模块并按所需顺序加载。
+      - `require` 可以在任何地方调用：可以以编程方式加载模块。
+      - 支持循环依赖。
+
+      缺点：
+      - 同步 `API` 使其不适合某些用途（客户端）。
+      - 每个模块一个文件。
+      - 浏览器需要加载程序库或转译。
+      - 没有模块的构造函数（尽管 `Node` 支持这个）。
+      - 静态代码分析器很难分析。
+
     - AMD（异步模块定义）
-    `AMD` 规范通过 `define` 方法去定义模块，通过 `require` 方法去加载模块。`RequireJS` 实现了这种规范。
+    `AMD` 规范通过 `define` 方法去定义模块，通过 `require` 方法去加载模块。`RequireJS` 实现了这种规范。**`AMD` 和 `CommonJS` 之间的主要区别在于它支持异步模块加载**。
     `AMD` 只有一个接口：`define(id?,dependencies?,factory);` 它要在声明模块的时候制定所有的依赖(`dep`)，并且还要当做形参传到 `factory` 中。要是没什么依赖，就定义简单的模块（或者叫独立的模块）
 
       ```javascript
@@ -1278,6 +1291,20 @@
       我是module2的methodB
       ```
 
+      优点
+      - 异步加载（更好的启动时间）。
+      - 支持循环依赖。
+      - 兼容 `exports` 和 `require`。
+      - 依赖管理完全集成。
+      - 如有必要，模块可以拆分为多个文件。
+      - 支持构造函数。
+      - 插件支持（自定义加载步骤）。
+
+      缺点
+      - 语法上稍微复杂一些。
+      - 除非转译，否则需要加载程序库。
+      - 静态代码分析器很难分析。
+
     - CMD（通用模块定义）
       `CMD` 是 `SeaJS` 在推广过程中对模块定义的规范化产出。
 
@@ -1308,11 +1335,174 @@
       })
       ```
 
+    - ES2015 模块
+
+      ```javascript
+      //------ lib.js ------
+      export const sqrt = Math.sqrt;
+      export function square(x) {
+        return x * x;
+      }
+      export function diag(x, y) {
+        return sqrt(square(x) + square(y));
+      }
+
+      //------ main.js ------
+      import { square, diag } from 'lib';
+      console.log(square(11)); // 121
+      console.log(diag(4, 3)); // 5
+      ```
+
+      优点
+      - 支持同步和异步加载。
+      - 语法简单。
+      - 支持静态分析工具。
+      - 集成在语言中（最终到处都支持，不需要库）。
+      - 支持循环依赖。
+
+      缺点
+      - 仍然不支持所有地方。
+
 1. #### 请解释为什么接下来这段代码不是 `IIFE` (立即调用的函数表达式)：`function foo(){ }();`，要做哪些改动使它变成 `IIFE`?
+
+    `IIFE（Immediately Invoked Function Expressions）`代表立即执行函数。它是一个匿名函数，在被创建然后立即调用。它不是从其他任何地方调用的（因此它是匿名的），而是在创建后立即运行。 `JavaScript` 解析器将 `function foo(){ }();` 解析成 `function foo(){ }和();`。其中，前者是函数声明；后者 `()` 是试图调用一个函数，却没有指定名称，因此它会抛出 `Uncaught SyntaxError: Unexpected token )` 的错误。
+
+    **目的：造出一个函数作用域，申请局部变量，防止污染全局变量。**
+
+    修改方法是：再添加一对括号，形式上有两种：`(function foo(){ })()` 和 `(function foo(){ }())`。以上函数不会暴露到全局作用域，如果不需要在函数内部引用自身，可以省略函数的名称。
+
+    你可能会用到 `void` 操作符：`void function foo(){ }();`。但是，这种做法是有问题的。表达式的值是 `undefined`，所以如果你的 `IIFE` 有返回值，不要用这种做法。例如：
+
+    ```javascript
+    // void 运算符 对给定的表达式进行求值，然后返回 undefined。
+    // void expression
+
+    const foo = void (function bar() {
+      return 'foo';
+    })();
+
+    console.log(foo); // undefined
+    ```
 
 1. #### 描述以下变量的区别：`null，undefined` 或 `undeclared`？该如何检测它们？
 
+    当你没有提前使用 `var、let` 或 `const` 声明变量，就为一个变量赋值时，该变量是未声明变量（`undeclared variables`）。未声明变量会脱离当前作用域，成为全局作用域下定义的变量。在严格模式下，给未声明的变量赋值，会抛出 `ReferenceError` 错误。和使用全局变量一样，使用未声明变量也是非常不好的做法，应当尽可能避免。要检查判断它们，需要将用到它们的代码放在 `try/catch` 语句中。
+
+    ```javascript
+    function foo() {
+      x = 1; // 在严格模式下，抛出 ReferenceError 错误
+    }
+
+    foo();
+    console.log(x); // 1
+    ```
+
+    当一个变量已经声明，但没有赋值时，该变量的值是 `undefined`。如果一个函数的执行结果被赋值给一个变量，但是这个函数却没有返回任何值，那么该变量的值是 `undefined`。要检查它，需要使用严格相等（`===`）；或者使用 `typeof`，它会返回 `'undefined'` 字符串。请注意，不能使用非严格相等（`==`）来检查，因为如果变量值为 `null`，使用非严格相等也会返回 `true`。
+
+    ```javascript
+    var foo;
+    console.log(foo); // undefined
+    console.log(foo === undefined); // true
+    console.log(typeof foo === 'undefined'); // true
+
+    console.log(foo == null); // true. 错误，不要使用非严格相等！
+
+    function bar() {}
+    var baz = bar();
+    console.log(baz); // undefined
+    ```
+
+    `null` 只能被显式赋值给变量。它表示空值，与被显式赋值 `undefined` 的意义不同。要检查判断 `null` 值，需要使用严格相等运算符。请注意，和前面一样，不能使用非严格相等（`==`）来检查，因为如果变量值为 `undefined`，使用非严格相等也会返回 `true`。
+
+    ```javascript
+    var foo = null;
+    console.log(foo === null); // true
+
+    console.log(foo == undefined); // true. 错误，不要使用非严格相等！
+    ```
+
+    作为一种个人习惯，我从不使用未声明变量。如果定义了暂时没有用到的变量，我会在声明后明确地给它们赋值为 `null`。
+
+    [**声明与未声明的全局变量**](https://stackoverflow.com/questions/15985875/effect-of-declared-and-undeclared-variables)
+    它们的存储和访问机制是相同的，但是在某些情况下 `JavaScript` 会根据 `configurable` 的值来处理。在正常情况下，它们的行为应该是一样的。
+    - 都存在全局对象
+
+      ```javascript
+      var declared = 1;  // 显式全局变量（新变量）
+      undeclared   = 1;  // 隐式全局变量（默认全局对象的属性）
+
+      window.hasOwnProperty('declared')    // true
+      window.hasOwnProperty('undeclared')  // true
+
+      window.propertyIsEnumerable('declared')    // true
+      window.propertyIsEnumerable('undeclared')  // true
+
+      window.declared     // 1
+      window.undeclared   // 1
+
+      window.declared   = 2;
+      window.undeclared = 2;
+
+      declared     // 2
+      undeclared   // 2
+
+      delete declared     // false
+      delete undeclared   // true
+      delete undeclared   // true (same result if delete it again)
+
+      delete window.declared     // false
+      delete window.undeclared   // true (same result if delete it yet again)
+      delete window.undeclared   // true (still true)
+      ```
+
+      已声明和未声明的全局变量都是窗口对象(默认全局对象)的属性。两者都不是通过原型链从不同的对象继承的。它们都直接存在于 `window` 对象中(`window.hasOwnProperty === true`)
+    - `The configurable attribute`
+      对于声明的全局变量，`configurable` 的值为 `false`。对于未声明的全局变量，`configurable` 的值为 `true`。可以通过 `getOwnPropertyDescriptor` 方法检索可配置属性的值，如下所示:
+
+      ```javascript
+      var declared = 1;
+      undeclared = 1;
+
+      (Object.getOwnPropertyDescriptor(window, 'declared')).configurable // false
+      (Object.getOwnPropertyDescriptor(window, 'undeclared')).configurable // true
+      ```
+
+      如果属性的基本属性（`attribute`）`configurable` 为 `true`，则可以使用 `defineProperty` 方法更改该属性的基础属性，并且可以使用 `delete` 操作符删除该属性。否则，将无法更改属性，也无法通过这种方式删除属性。
+      在非严格模式下，如果属性是可配置的，则 `delete` 操作符返回 `true`，如果属性是不可配置的，则返回 `false`。
+
+    - 总结
+      - 声明全局变量
+        - 默认全局对象（窗口）的属性
+        - 属性的基础属性（`The property attributes`）不可更改
+        - 不能使用 `delete` 删除
+      - 未声明全局变量
+        - 默认的全局对象（窗口）的属性
+        - 属性的基础属性（`The property attributes`）可更改
+        - 可以使用 `delete` 删除
+
 1. #### 什么是闭包 (`closure`)，如何使用它，为什么要使用它？
+
+    闭包是指有权访问另一个函数作用域中的变量的函数。
+
+    ```javascript
+    function F1() {
+      var n = 0;
+      return function () {
+        n += 1;
+      }
+    }
+    let adder = F1();
+    adder(); // n === 1
+    adder(); // n === 2
+    console.log(n); // n is not defined
+    ```
+
+    可概括为：「函数」和「函数内部能访问到的变量」（也叫环境）的总和，就是一个闭包。
+    闭包的作用：
+    - 闭包常常用来「间接访问一个变量」。换句话说，「隐藏一个变量」。
+    - 一个是可以读取函数内部的变量，另一个就是让这些变量的值始终保持在内存中。
+    - 利用闭包实现数据私有化或模拟私有方法。这个方式也称为[模块模式（`module pattern`）](https://addyosmani.com/resources/essentialjsdesignpatterns/book/#modulepatternjavascript)
+    - 部分参数函数（partial applications）柯里化（currying）.
 
 1. #### 请举出一个匿名函数的典型用例？
 
