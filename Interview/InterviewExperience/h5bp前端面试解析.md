@@ -1504,6 +1504,153 @@
     - 利用闭包实现数据私有化或模拟私有方法。这个方式也称为[模块模式（`module pattern`）](https://addyosmani.com/resources/essentialjsdesignpatterns/book/#modulepatternjavascript)
     - 部分参数函数（partial applications）柯里化（currying）.
 
+1. #### 请说明 `forEach()` 循环和 `map()` 循环的主要区别，它们分别在什么情况下使用？
+
+    - `forEach`：对数组的每个元素执行一次给定的函数
+      - 遍历数组中的元素。
+      - 为每个元素执行回调。
+      - 无返回值。
+
+      ```javascript
+      // 基本数据类型无法修改
+      const array1 = [1, 2, 3, 4];
+      array1.forEach(item => {
+        item = item * 3
+      });
+      console.log(array1); // [1,2,3,4]
+
+      // 引用类型（对象、数组）数据可更改（保存的地址，地址不可变，内容可变）
+      const array2 = [
+        {
+          id: 'jack',
+          value: 22
+        },
+        {
+          id: 'rose',
+          value: 21
+        }
+      ];
+      array2.forEach(item => {
+        if (item.id === 'jack') {
+          item.value = 32;
+        }
+      });
+      console.log(array2); // [{ id: "jack", value: 32 }, { id: "rose", value: 21 }]
+
+      // 不能改变单词循环的 item 值（不能改变地址）
+      const array3 = [
+        {
+          id: 'jack',
+          value: 22
+        },
+        {
+          id: 'rose',
+          value: 21
+        }
+      ];
+      array3.forEach(item => {
+        if (item.id === 'jack') {
+          item = {
+            id: 'john',
+            value: 24
+          };
+        }
+      });
+      console.log(array3); // [{ id: "jack", value: 22 }, { id: "rose", value: 21 }]
+
+      // 基本类型 => 修改原数组
+      const array4 = [33, 4, 55];
+      array4.forEach((item, index, arr) => {
+        if (item === 33) {
+          arr[index] = 999;
+        }
+      });
+      console.log(array4);  // [999, 4, 55]
+
+      // 引用类型 => 修改原数组
+      const array5 = [
+        {
+          id: 'jack',
+          value: 22
+        },
+        {
+          id: 'rose',
+          value: 21
+        }
+      ];
+      array5.forEach((item, index, arr) => {
+        if (item.id === 'jack') {
+          arr[index] = {
+            id: 'john',
+            value: 33
+          }
+        }
+      });
+      console.log(array5); // [{ id: 'john', value: 33 }, { id: 'rose', value: 21 }]
+      ```
+
+      基础类型在循环中拿到的是原元素的复制，所以重新赋值也无法改变原来数组；
+      引用类型在循环中拿到的是原元素的地址，所以重新赋地址也无法改变原来数组，但是可通过地址修改原数组中的内容；
+      对于基本数据类型：`Number, String, Boolean, Null, Undefined, Symbol` 它们在栈内存中直接存储变量与值。而 `Object` 对象的真正的数据是保存在堆内存，栈内只保存了对象的变量以及对应的堆的地址，所以操作 `Object` 其实就是直接操作了原数组/对象本身。
+
+      >注意： 除了抛出异常以外，没有办法中止或跳出 `forEach()` 循环。如果你需要中止或跳出循环，`forEach()` 方法不是应当使用的工具。
+      若你需要提前终止循环，你可以使用：
+      >
+      >- 一个简单的 `for` 循环
+      >- `for...of / for...in` 循环
+      >- `Array.prototype.every()`
+      >- `Array.prototype.some()`
+      >- `Array.prototype.find()`
+      >- `Array.prototype.findIndex()`
+      这些数组方法则可以对数组元素判断，以便确定是否需要继续遍历：
+      >- `Array.prototype.every()`
+      >- `Array.prototype.some()`
+      >- `Array.prototype.find()`
+      >- `Array.prototype.findIndex()`
+      只要条件允许，也可以使用 `filter()` 提前过滤出需要遍历的部分，再用 `forEach()` 处理。
+
+      - 应用
+        - 扁平化数组([`Array.prototype.flat()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/flat))
+
+        ```javascript
+        function flatten(arr) {
+          const result = [];
+
+          arr.forEach((i) => {
+            if (Array.isArray(i))
+              result.push(...flatten(i));
+            else
+              result.push(i);
+          })
+
+          return result;
+        }
+
+        // Usage
+        const problem = [1, 2, 3, [4, 5, [6, 7], 8, 9]];
+
+        flatten(problem); // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        ```
+
+    - `map`：创建一个新数组，其结果是该数组中的每个元素是调用一次提供的函数后的返回值
+      - 遍历数组中的元素。
+      - 通过对每个元素调用函数，将每个元素“映射（map）”到一个新元素，从而创建一个新数组。
+
+      ```javascript
+      const a = [1, 2, 3];
+      const doubled = a.map(num => {
+        return num * 2;
+      });
+
+      // doubled = [2, 4, 6]
+      ```
+
+    - 异同
+      - 共同点
+      - 区别
+        - `forEach`
+        - `map`
+
 1. #### 请举出一个匿名函数的典型用例？
 
 1. #### 你是如何组织自己的代码？是使用模块模式，还是使用经典继承的方法？
