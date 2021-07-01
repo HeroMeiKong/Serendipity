@@ -1508,10 +1508,27 @@
 
     - `forEach`：对数组的每个元素执行一次给定的函数
       - 遍历数组中的元素。
-      - 为每个元素执行回调。
+      - 为**含有效值的元素**执行回调。
       - 无返回值。
+      - 用法：`arr.forEach(callback(currentValue [, index [, array]])[, thisArg])`
 
       ```javascript
+      // 由于 forEach 的特性，常用于稀疏数组
+      const arraySparse = [1,3,,7];
+      let numCallbackRuns = 0;
+
+      arraySparse.forEach(function (element) {
+        console.log(element);
+        numCallbackRuns++;
+      });
+
+      console.log("numCallbackRuns: ", numCallbackRuns);
+
+      // 1
+      // 3
+      // 7
+      // numCallbackRuns: 3
+
       // 基本数据类型无法修改
       const array1 = [1, 2, 3, 4];
       array1.forEach(item => {
@@ -1633,8 +1650,10 @@
         ```
 
     - `map`：创建一个新数组，其结果是该数组中的每个元素是调用一次提供的函数后的返回值
-      - 遍历数组中的元素。
-      - 通过对每个元素调用函数，将每个元素“映射（map）”到一个新元素，从而创建一个新数组。
+      - 遍历数组中的元素
+      - 通过对**每个元素**调用函数，将每个元素“映射（map）”到一个新元素，从而创建一个新数组
+      - 返回新数组
+      - 用法：`arr.forEach(callback(currentValue [, index [, array]])[, thisArg])`
 
       ```javascript
       const a = [1, 2, 3];
@@ -1643,23 +1662,199 @@
       });
 
       // doubled = [2, 4, 6]
+
+      // 例题
+      ["1", "2", "3"].map(parseInt); // [1, NaN, NaN]
       ```
 
     - 异同
       - 共同点
+        - 语法一样：`arr.forEach(callback(currentValue [, index [, array]])[, thisArg])`
+        - 遍历的范围在第一次 `callback` 调用前就确定，调用 `forEach() | map()` 后添加到数组中的项不会被 `callback` 访问到。如果已经存在的值被改变，则传递给 `callback` 的值是 `forEach() | map()` 遍历到他们那一刻的值。已删除的项不会被遍历到。如果已访问的元素在迭代时被删除了，之后的元素将被跳过
+
+          ```javascript
+          var words = ['one', 'two', 'three', 'four'];
+          words.forEach(function (word) {
+            console.log(word);
+            if (word === 'two') {
+              words.shift();
+            }
+          });
+          // one
+          // two
+          // four
+          ```
+
+        - 都遍历数组
+        - 都不修改原数组（在 `callback` 的 `array` 中可以修改）
+        - 都能修改原数组
+        - 除了抛出异常以外，没有办法中止或跳出 `forEach() | map()` 循环
       - 区别
         - `forEach`
+          - 无返回值
+          - 不可链式调用
+          - 为含有效值的元素执行 `callback`
         - `map`
+          - 返回新数组
+          - 可链式调用
+          - 遍历每个元素 `callback`
 
 1. #### 请举出一个匿名函数的典型用例？
+
+    - 模块封装
+    - 不需要在其它地方使用的回调函数
+    - 立即执行函数(`IIFE`)
+
+    ```javascript
+    // 匿名函数可以在 `IIFE` 中使用，来封装局部作用域内的代码，以便其声明的变量不会暴露到全局作用域。
+    `!(function () { // do something })();`
+
+
+    // 匿名函数可以作为只用一次，不需要在其他地方使用的回调函数。当处理函数在调用它们的程序内部被定义时，代码具有更好地自闭性和可读性，可以省去寻找该处理函数的函数体位置的麻烦。
+    setTimeout(function () {
+      console.log('Hello world!');
+    }, 1000);
+
+
+    // 匿名函数可以用于函数式编程或 Lodash（类似于回调函数）。
+    const arr = [1, 2, 3];
+    const double = arr.map(function (el) {
+      return el * 2;
+    });
+    console.log(double); // [2, 4, 6]
+    ```
 
 1. #### 你是如何组织自己的代码？是使用模块模式，还是使用经典继承的方法？
 
 1. #### 请指出 `JavaScript` 宿主对象 (`host objects`) 和原生对象 (`native objects`) 的区别？
 
-1. #### 请指出以下代码的区别：`function Person(){}`、`var person = Person()`、`var person = new Person()`？
+    原生对象是由 `ECMAScript` 规范定义的 `JavaScript` 内置对象，比如 `String, Math, RegExp, Object, Function, Date, Math, parseInt, eval, indexOf` 等等。
+    宿主对象是由运行时环境（浏览器或 `Node`）提供，比如 `window, document, location, history, XMLHttpRequest, setTimeout, getElementsByTagName, querySelectorAll` 等等。
+
+1. #### 请指出以下代码的区别：`function Person() {}`、`var person = Person()`、`var person = new Person()`？
+
+    `function Person() {}` 只是一个普通的函数声明。使用驼峰式(`PascalCase`)方式命名函数作为构造函数。
+
+    `var person = Person()` 将 `Person` 以普通函数调用，而不是构造函数。如果该函数是用作构造函数的，那么这种调用方式是一种常见错误。通常情况下，构造函数不会返回任何东西，因此，像普通函数一样调用构造函数，只会返回 `undefined` 赋给用作实例的变量。
+
+    `var person = new Person()` 使用 `new` 操作符，创建 `Person` 对象的实例，该实例继承自 `Person.prototype`。
+
+    ```javascript
+    function Person(name) {
+      this.name = name;
+    }
+
+    var person1 = Person('John');
+
+    var person2 = new Person('John');
+
+
+    console.log(person1); // undefined
+    console.log(person1.name); // Uncaught TypeError: Cannot read property 'name' of undefined
+    
+    console.log(person2); // Person { name: "John" }
+    console.log(person2.name); // "john"
+    ```
 
 1. #### `.call` 和 `.apply` 的区别是什么？
+
+    - apply 接收的是数组，并会立即执行
+    - call 接收的是用逗号隔开的参数，并会立即执行
+    - bind 接收的是用逗号隔开的参数，但是不会立即执行，而是返回一个新的函数
+
+    你能讲讲它们三个的实现原理吗？能自己实现一下这三个函数吗？
+    - call:
+
+      ```javascript
+      // call 用法
+      function add(c, d) {
+        console.log(this.a + this.b + c + d);
+      }
+      var o = { a: 1, b: 2 };
+      add.call(o, 3, 4);
+
+      // 如果我们不用 call，怎么实现这样的效果？
+      function add(c, d) {
+        console.log(this.a + this.b + c + d);
+      }
+      var o = { a: 1, b: 2 };
+      o.add = add;
+      o.add(3, 4);
+      delete o.add;
+
+      // 源码实现, 用箭头函数不行，this 指向问题
+      Function.prototype.call = function (context, ...args) {
+        context = context || window;  // context 如果是 null，则指向 window
+        context.fn = this;
+        var result = context.fn(...args);
+        delete context.fn;
+        return result;
+      }
+      ```
+
+    - apply:
+
+      ```javascript
+      // apply 用法
+      function add(c, d) {
+        console.log(this.a + this.b + c + d);
+      }
+      var o = { a: 1, b: 2 };
+      var bindAdd = add.bind(o, 3);
+      bindAdd(4);
+
+      // 源码实现, 用箭头函数不行，this 指向问题
+      Function.prototype.apply = function (context, args) {
+        context = context || window;  // context 如果是 null，则指向 window
+        context.fn = this;
+        var result = context.fn(...args);
+        delete context.fn;
+        return result;
+      }
+      ```
+
+    - bind:
+
+      ```javascript
+      // bind 用法
+      function add(c, d) {
+        console.log(this.a + this.b + c + d);
+      }
+      var o = { a: 1, b: 2 };
+      add.bind(o, [3, 4]);
+
+      // 源码实现, 用箭头函数不行，this 指向问题
+      Function.prototype.bind = function (context, ...rest) {
+        var self = this;
+        return function F(...args) {
+            return self.apply(context, rest.concat(args)); // 两次的参数 rest，args 合并到一起，作为函数的参数
+        }
+      }
+
+      // 如果使用 new 结果不一样
+      // 原因：bind 返回的函数作为构造函数的时候，bind 时指定的 this 值会失效，但传入的参数依然生效
+      function add(c, d) {
+        // undefined undefined 3 4
+        console.log(this.a + this.b + c + d);
+      }
+      var o = {a: 1, b: 2};
+
+      var bindAdd = add.bind(o, 3);
+      new bindAdd(4); // NaN
+
+      // 
+      Function.prototype.bind = function (context, ...rest) {
+        var self = this;
+
+        return function F(...args) {
+            /*如果是 new 的，则不要之前的 context 啦*/
+            if (this instanceof F) {
+                return self(...rest, ...args);
+            }
+            return self.apply(context, rest.concat(args));
+        }
+      }
+      ```
 
 1. #### 请解释 `Function.prototype.bind`？
 
