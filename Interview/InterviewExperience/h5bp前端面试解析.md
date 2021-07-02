@@ -1760,9 +1760,8 @@
 
     - apply 接收的是数组，并会立即执行
     - call 接收的是用逗号隔开的参数，并会立即执行
-    - bind 接收的是用逗号隔开的参数，但是不会立即执行，而是返回一个新的函数
 
-    你能讲讲它们三个的实现原理吗？能自己实现一下这三个函数吗？
+    你能讲讲它们的实现原理吗？能自己实现一下函数吗？
     - call:
 
       ```javascript
@@ -1785,9 +1784,10 @@
       // 源码实现, 用箭头函数不行，this 指向问题
       Function.prototype.call = function (context, ...args) {
         context = context || window;  // context 如果是 null，则指向 window
-        context.fn = this;
-        var result = context.fn(...args);
-        delete context.fn;
+        var fn = Symbol();
+        context[fn] = this;
+        var result = context[fn](...args);
+        delete context[fn];
         return result;
       }
       ```
@@ -1796,67 +1796,80 @@
 
       ```javascript
       // apply 用法
-      function add(c, d) {
-        console.log(this.a + this.b + c + d);
-      }
-      var o = { a: 1, b: 2 };
-      var bindAdd = add.bind(o, 3);
-      bindAdd(4);
+      const numbers = [5, 6, 2, 3, 7];
+      const max = Math.max.apply(null, numbers);
+      console.log(max); // 7
 
-      // 源码实现, 用箭头函数不行，this 指向问题
+      const min = Math.min.apply(null, numbers);
+      console.log(min); // 2
+
+      // 源码实现, 用箭头函数不行，this 指向问题，区别在 args
       Function.prototype.apply = function (context, args) {
         context = context || window;  // context 如果是 null，则指向 window
-        context.fn = this;
-        var result = context.fn(...args);
-        delete context.fn;
+        var fn = Symbol();
+        context[fn] = this;
+        var result = context[fn](...args);
+        delete context[fn];
         return result;
       }
       ```
 
-    - bind:
+1. #### 请解释 `Function.prototype.bind`？
+
+    - bind 接收的是用逗号隔开的参数，但是不会立即执行，而是返回一个新的函数
 
       ```javascript
       // bind 用法
-      function add(c, d) {
-        console.log(this.a + this.b + c + d);
-      }
-      var o = { a: 1, b: 2 };
-      add.bind(o, [3, 4]);
-
-      // 源码实现, 用箭头函数不行，this 指向问题
-      Function.prototype.bind = function (context, ...rest) {
-        var self = this;
-        return function F(...args) {
-            return self.apply(context, rest.concat(args)); // 两次的参数 rest，args 合并到一起，作为函数的参数
+      const module = {
+        x: 42,
+        getX: function () {
+          return this.x;
         }
-      }
+      };
+
+      const unboundGetX = module.getX;
+      console.log(unboundGetX()); // undefined - The function gets invoked at the global scope
+
+      const boundGetX = unboundGetX.bind(module);
+      console.log(boundGetX()); // 42
 
       // 如果使用 new 结果不一样
       // 原因：bind 返回的函数作为构造函数的时候，bind 时指定的 this 值会失效，但传入的参数依然生效
-      function add(c, d) {
-        // undefined undefined 3 4
-        console.log(this.a + this.b + c + d);
-      }
-      var o = {a: 1, b: 2};
-
-      var bindAdd = add.bind(o, 3);
-      new bindAdd(4); // NaN
-
-      // 
       Function.prototype.bind = function (context, ...rest) {
         var self = this;
 
         return function F(...args) {
-            /*如果是 new 的，则不要之前的 context 啦*/
-            if (this instanceof F) {
-                return self(...rest, ...args);
-            }
-            return self.apply(context, rest.concat(args));
+          // 如果是 new 的，则不要之前的 context 啦
+          if (this instanceof F) {
+            return self(...rest, ...args);
+          }
+          // 两次的参数 rest，args 合并到一起，作为函数的参数
+          return self.apply(context, rest.concat(args));
         }
       }
-      ```
 
-1. #### 请解释 `Function.prototype.bind`？
+      // 尤雨溪版本
+      Function.prototype.bind = function (context) {
+        if (typeof this !== 'function') {
+          throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+        }
+        var fn    = this, // the function to bind
+            slice = Array.prototype.slice, // cache slice method
+            args  = slice.call(arguments, 1), // get the array of addtional arguments (to be curried)
+            noop = function () {}, // the intermediate function to serve as a prototype chain connector
+                                  // (assuming we don't have Object.create() here)
+            bound = function () {
+                var ctx = this instanceof noop && context
+                    ? this
+                    : context
+                return fn.apply(ctx, args.concat(slice.call(arguments)))
+            }
+        // inherit the prototype of the to-be-bound function
+        noop.prototype = fn.prototype
+        bound.prototype = new noop()
+        return bound
+      }
+      ```
 
 1. #### 在什么时候你会使用 `document.write()`？
 
