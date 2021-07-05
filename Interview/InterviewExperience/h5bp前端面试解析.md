@@ -1873,9 +1873,60 @@
 
 1. #### 在什么时候你会使用 `document.write()`？
 
-1. #### 请指出浏览器特性检测，特性推断和浏览器 `UA` 字符串嗅探的区别？
+    `Document.write()` 方法将一个文本字符串写入一个由 `document.open()` 打开的文档流（`document stream`）。
+
+    >注意: 因为 `document.write` 需要向文档流中写入内容，所以，若在一个已关闭（例如，已完成加载）的文档上调用 `document.write`，就会自动调用 `document.open`，这将清空该文档的内容。
+
+    向一个已经加载，并且没有调用过 `document.open()` 的文档写入数据时，会自动调用 `document.open`。一旦完成了数据写入，建议调用 `document.close()`，以告诉浏览器当前页面已经加载完毕。写入的数据会被解析到文档结构模型（`DOM`）里。
+
+    如果 `document.write()` 调用发生在 `HTML` 里的 `<script>` 标签中，那么它将不会自动调用 `document.open()`。详见如下例子：
+
+    ```javascript
+    <script>
+      document.write("<h1>Main title</h1>")
+    </script>
+    ```
+
+    - 注意：`document.write` 和 `document.writeln` 在 `XHTML` 文档中不可用（控制台上会显示 "`Operation is not supported`"`[NS_ERROR_DOM_NOT_SUPPORTED_ERR]` 的报错信息）。
+    - 注意：在有 `deferred` 或 `asynchronous` 属性的 `script` 中，`document.write` 会被忽略，控制台会显示 "`A call to document.write() from an asynchronously-loaded external script was ignored`" 的报错信息。
+    - 注意：在 `Edge` 中，在 `<iframe>` 内部调用 `document.write` 多于一次时会引发错误 `SCRIPT70: Permission denied`。
+    - 注意：从 `Chrome 55` 开始，`Chrome`（可能）不会运行通过 `document.write()` 注入的 `<script>`，以防止使用 `2G` 连接的用户找不到 `HTTP` 缓存.
+
+1. #### 请指出浏览器特性检测，特性推断和浏览器 `UA(User-Agent)` 字符串嗅探的区别？
+
+    - 功能检测（`feature detection`）
+
+      功能检测包括确定浏览器是否支持某段代码，以及是否运行不同的代码（取决于它是否执行），以便浏览器始终能够正常运行代码功能，而不会在某些浏览器中出现崩溃和错误。例如：
+
+      ```javascript
+      if ('geolocation' in navigator) {
+        // 可以使用 navigator.geolocation
+      } else {
+        // 处理 navigator.geolocation 功能缺失
+      }
+      ```
+
+      `Modernizr` 是处理功能检测的优秀工具。
+
+    - 功能推断（`feature inference`）
+
+      功能推断与功能检测一样，会对功能可用性进行检查，但是在判断通过后，还会使用其他功能，因为它假设其他功能也可用，例如：
+
+      ```javascript
+      if (document.getElementsByTagName) {
+        element = document.getElementById(id);
+      }
+      ```
+
+      **非常不推荐这种方式**。功能检测更能保证万无一失。
+
+    - 浏览器 `UA(User-Agent)` 字符串嗅探
+
+      这是一个浏览器报告的字符串，它允许网络协议对等方（`network protocol peers`）识别请求用户代理的应用类型、操作系统、应用供应商和应用版本。它可以通过 `navigator.userAgent` 访问。 然而，这个字符串很难解析并且很可能存在欺骗性。**不要使用这种方式。**
 
 1. #### 请尽可能详尽的解释 `Ajax` 的工作原理
+
+    `Ajax(Asynchronous JavaScript and XML)`
 
 1. #### 使用 `Ajax` 都有哪些优劣？
 
