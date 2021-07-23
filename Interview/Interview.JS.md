@@ -571,3 +571,18 @@
     `console.log(Object.keys(arr));`
     - `Object.getOwnPropertyNames()`: 返回一个由指定对象的**所有自身属性**的属性名（包括不可枚举属性但不包括 `Symbol` 值作为名称的属性）组成的**字符串数组**
     `console.log(Object.getOwnPropertyNames(arr));`
+
+1. `clearInterval(timer)` 和 `timer = null` 的区别？
+1. s
+1. s
+1. s
+1. s
+1. s
+1. s
+1. s
+1. s
+1. s
+1. s
+1. s
+1. s
+1. s

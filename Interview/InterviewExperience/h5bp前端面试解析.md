@@ -1926,39 +1926,363 @@
 
 1. #### 请尽可能详尽的解释 `Ajax` 的工作原理
 
-    `Ajax(Asynchronous JavaScript and XML)`
+    `Ajax(Asynchronous JavaScript and XML)`，其本身不是一种新技术，而是一个新术语，用来描述一种使用现有技术集合的‘新’方法，包括: `HTML`、`CSS`、`JavaScript`、`DOM`、`JSON`、`XMLHttpRequest`。网页应用能够快速地将增量更新呈现在用户界面上，而不需要重载（刷新）整个页面。这使得程序能够更快地回应用户的操作。简单点说，就是使用 `XMLHttpRequest` 对象与服务器通信。它使用`JSON，XML，HTML` 和文本文本等格式发送和接收数据。`Ajax` 最吸引人人的就是它的“异步”特性，它可以不更新/刷新页面的情况下和服务器，交换数据，或更新页面。
+    特性：
+    - 在不重加载页面的情况下发送请求给服务器。
+    - 并接受使用从服务器发来的数据。
 
-1. #### 使用 `Ajax` 都有哪些优劣？
+    ```javascript
+    // Ajax 用法
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', '/xxxx');
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          console.log(xhr.responseText);
+        }
+      }
+    };
+    xhr.send(null);
 
-1. #### 请解释 `JSONP` 的工作原理，以及它为什么不是真正的 `Ajax`
+    // 实现 jQuery.ajax
+    window.jQuery.ajax = function (method, url, body) {
+      return new Promise(function (resolve, reject) {
+        let request = new XMLHttpRequest();
+        request.open(method, url);
+        request.onreadystatechange = function () {
+          if (request.readyState === 4) {
+            if (request.status >= 200 && request.status < 300) {
+              resolve.call(undefined, request.responseText);
+            } else if (request.status >= 400) {
+              reject.call(undefined, request)
+            }
+          }
+        };
+        request.send(body);
+      });
+    };
+    ```
 
-1. #### 你使用过 `JavaScript` 模板系统吗？如有使用过，请谈谈你都使用过哪些库？
+    发送 `XMLHttpRequest` 步骤
+    1. 设置请求参数（请求方式，请求页面的相对路径，是否异步）
+       - 请求方式：`GET、POST、HEAD`...（大写字母）
+       - 是否异步（可选）：默认 `true` ，开启异步
+    2. 设置回调函数，一个处理服务器响应的函数，使用 `onreadystatechange` ，类似函数指针
+    3. 获取异步对象的 `readyState` 属性：该属性存有服务器响应的状态信息。每当
+    `readyState` 改变时，`onreadystatechange` 函数就会被执行。
+       - 0 (未初始化) or (请求还未初始化)
+       - 1 (正在加载) or (已建立服务器链接)
+       - 2 (加载成功) or (请求已接受)
+       - 3 (交互) or (正在处理请求)
+       - 4 (完成) or (请求已完成并且响应已准备好)
+    4. 判断响应报文的状态，若为 `200` 说明服务器正常运行并返回响应数据。
+    5. 读取响应数据，可以通过 `responseText` 属性来取回由服务器返回的数据。
+       - `httpRequest.responseText` – 服务器以文本字符的形式返回
+       - `httpRequest.responseXML` – 以 `XMLDocument` 对象方式返回，之后就可以使用 `JavaScript` 来处理
+
+    监控进度
+
+    ```javascript
+    var oReq = new XMLHttpRequest();
+
+    oReq.addEventListener("progress", updateProgress);
+    oReq.addEventListener("load" , transferComplete);
+    oReq.addEventListener("error", transferFailed);
+    oReq.addEventListener("abort", transferCanceled);
+    req.addEventListener("loadend", loadEnd); // 可以侦测到所有的三种加载结束条件（abort、load，或 error)
+
+    oReq.open();
+
+    // ...
+
+    // 服务端到客户端的传输进程（下载）
+    function updateProgress (oEvent) {
+      if (oEvent.lengthComputable) {
+        var percentComplete = oEvent.loaded / oEvent.total * 100;
+        // ...
+      } else {
+        // 总大小未知时不能计算进程信息
+      }
+    }
+
+    function transferComplete(evt) {
+      console.log("The transfer is complete.");
+    }
+
+    function transferFailed(evt) {
+      console.log("An error occurred while transferring the file.");
+    }
+
+    function transferCanceled(evt) {
+      console.log("The transfer has been canceled by the user.");
+    }
+
+    function loadEnd(e) {
+      console.log("The transfer finished (although we don't know if it succeeded or not).");
+    }
+    ```
+
+    >注意： 你需要在请求调用 `open()` 之前添加事件监听。否则 `progress` 事件将不会被触发。`progress` 事件在使用 `file:` 协议的情况下是无效的。
+
+    提交表单
+    - 使用 `Ajax`：更复杂、更灵活、更强大。
+    - 使用 `FormData API`：最简单最快捷的，但是缺点是被收集的数据无法使用 `JSON.stringify()` 转换为一个 `JSON` 字符串。
+    一个 html `<form>` 可以用以下四种方式发送：
+
+      - 使用 `POST` 方法，并将 `enctype` 属性设置为 `application/x-www-form-urlencoded` (默认)
+      - 使用 `POST` 方法，并将 `enctype` 属性设置为 `text/plain`
+      - 使用 `POST` 方法，并将 `enctype` 属性设置为 `multipart/form-data`
+      - 使用 `GET` 方法（这种情况下 `enctype` 属性会被忽略）
+
+        现在，我们提交一个表单，它里面有两个字段，分别被命名为 `foo` 和 `baz`。如果你用 `POST` 方法，那么服务器将会接收到一个字符串类似于下面三种情况之一，其中的区别依赖于你采用何种编码类型：
+        - `POST`；编码类型：`application/x-www-form-urlencoded`（默认）:
+
+        ```javascript
+        Content-Type: application/x-www-form-urlencoded
+
+        foo=bar&baz=The+first+line.%0D%0AThe+second+line.%0D%0A
+        ```
+
+        - `POST`；编码类型：`text/plain`：
+
+        ```javascript
+        Content-Type: text/plain
+
+        foo=bar
+        baz=The first line.
+        The second line.
+        ```
+
+        - `POST`；编码类型：`multipart/form-data`：
+
+        ```javascript
+        Content-Type: multipart/form-data; boundary=---------------------------314911788813839
+
+        -----------------------------314911788813839
+        Content-Disposition: form-data; name="foo"
+
+        bar
+        -----------------------------314911788813839
+        Content-Disposition: form-data; name="baz"
+
+        The first line.
+        The second line.
+
+        -----------------------------314911788813839--
+        ```
+
+        - `GET`：`?foo=bar&baz=The%20first%20line.%0AThe%20second%20line.`
+
+1. #### 使用 `Ajax` 的优缺点？
+
+    特点：
+
+    - 方便使用的。
+    - 它使网页更快。
+    - 不受服务器技术限制。
+    - 提高网页的性能。
+    - 支持实时数据绑定。
+    - 辅助数据视图控件。
+    - 协助客户端模板。
+    - 响应式用户界面。
+    - 服务器资源的使用较少。
+    - 使用 `JavaScript`，因此所有浏览器类型的处理都是相同的。
+    - `Ajax` 有助于开发更快、更具交互性的 `Web` 应用程序。
+    - 由于此服务器使用较少的带宽，因此不需要完全重新加载页面。
+
+    优点：
+
+    - **表单验证**：不用每次提交都刷新，可以动态提示。
+    - **维护状态**：部分 `JavaScript` 变量和 `DOM` 状态将得到保持，因为主容器页面未被重新加载。
+    - **无刷新更新数据**：`Ajax` 最大优点就是能在不刷新整个页面的前提下与服务器通信维护数据。这使得 `Web` 应用程序更为迅捷地响应用户交互，并避免了在网络上发送那些没有改变的信息，减少用户等待时间，带来非常好的用户体验。
+    - **异步与服务器通信**：`Ajax` 使用异步方式与服务器通信，不需要打断用户的操作，具有更加迅速的响应能力。优化了 `Browser` 和 `Server` 之间的沟通，减少不必要的数据传输、时间及降低网络上数据流量。
+    - **前端和后端负载平衡**：`Ajax` 可以把以前一些服务器负担的工作转嫁到客户端，利用客户端闲置的能力来处理，减轻服务器和带宽的负担，节约空间和宽带租用成本。并且减轻服务器的负担，`Ajax` 的原则是“按需取数据”，可以最大程度的减少冗余请求和响应对服务器造成的负担，提升站点性能。
+    - **基于标准被广泛支持**：`Ajax` 基于标准化的并被广泛支持的技术，不需要下载浏览器插件或者小程序，但需要客户允许 `JavaScript` 在浏览器上执行。随着 `Ajax` 的成熟，一些简化 `Ajax` 使用方法的程序库也相继问世。同样，也出现了另一种辅助程序设计的技术，为那些不支持 `JavaScript` 的用户提供替代功能。
+    - **界面与应用分离**：`Ajax` 使 `Web` 中的界面与应用分离（也可以说是数据与呈现分离），有利于分工合作、减少非技术人员对页面的修改造成的 `Web` 应用程序错误、提高效率、也更加适用于现在的发布系统。
+    - `SPA`(`Single Page Application`，单页富应用程序)
+
+    缺点：
+
+    - **动态网页很难收藏**。
+    - **禁用 `JavaScript` 的浏览器无法使用该应用程序**。
+    - **干掉了 `Back` 和 `History` 功能，即对浏览器机制的破坏**：在动态更新页面的情况下，用户无法回到前一个页面状态，因为浏览器仅能记忆历史记录中的静态页面。
+    - **安全问题**：`Ajax` 技术就如同对企业数据建立了一个直接通道。这使得开发者在不经意间会暴露比以前更多的数据和服务器逻辑。`Ajax` 的逻辑可以对客户端的安全扫描技术隐藏起来，允许黑客从远端服务器上建立新的攻击。`Ajax` 也难以避免一些已知的安全弱点，诸如跨站点脚本攻击、`SQL` 注入攻击和基于 `Credentials` 的安全漏洞等等。
+    - **对搜索引擎支持较弱**：对搜索引擎的支持比较弱。如果使用不当，`Ajax` 会增大网络数据的流量，从而降低整个系统的性能。
+    - **破坏程序的异常处理机制**
+    - **违背URL和资源定位的初衷**：例如，我给你一个URL地址，如果采用了 `Ajax` 技术，也许你在该 `URL` 地址下面看到的和我在这个 `URL` 地址下看到的内容是不同的。这个和资源定位的初衷是相背离的。
+    - **客户端过大**：编写复杂、容易出错；破坏了 `Web` 的原有标准。
+
+1. #### `Fetch` 和 `Ajax` 的区别？
+
+1. #### 请解释 `JSONP` 的工作原理
+
+    `JSONP`：是参数式（填充式）`JSON`，由两部分组成：**回调函数和数据。**回调函数是当响应到来时应该在页面中调用的函数。
+    实现：通过动态加载 `<script>` 元素来使用，使用时为src属性指定一个跨域 `URL`。
+    使用： `script.src="http://baidu.com/?callback=func"`;
+    特点：相比图像 `ping`，它能直接访问响应文本，支持在浏览器与服务器之间双向通信，支持老式浏览器。
+    缺点：`JSONP` 是动态创建的所以只能用 `GET` 不能 `POST`；`JSONP` 从其他域加载代码执行，不安全；要确定 `JSONP` 时候请求失败并不容易，可使用 `HTML5` 给 `<script>` 新增的 `onerror` 事件处理程序。
+
+    ```javascript
+    <!-- https://mydomain.com -->
+    <script>
+      function printData(data) {
+        console.log(`My name is ${data.name}!`);
+      }
+    </script>
+
+    <script src="https://example.com?callback=printData"></script>
+
+    // 文件加载自 https://example.com?callback=printData
+    printData({name: 'HeroMeiKong'});
+    ```
 
 1. #### 请解释变量声明提升 (`hoisting`)
 
+    变量提升：实际上变量和函数声明在代码里的位置是不会动的，而是在编译阶段被放入内存中时调换了先后顺序。变量可以在声明之前进行初始化和使用。但是如果没有初始化，就不能使用它们。
+    **注意：函数和变量相比，会被优先提升。这意味着函数会被提升到更靠前的位置。**
+    **只有声明被提升**：`JavaScript` 只会提升声明，不会提升其初始化。如果一个变量先被使用再被声明和赋值的话，使用时的值是 `undefined`
+
+    ```javascript
+    console.log(num); // Returns undefined
+    var num;
+    num = 6;
+
+    // 如果你先赋值、再使用、最后声明该变量，使用时能获取到所赋的值
+    num = 6;
+    console.log(num);               // returns 6
+    var num;
+
+    // Example 1 - only y is hoisted
+    var x = 1;                      // 声明 + 初始化 x
+    console.log(x + " " + y);       // '1 undefined'
+    var y = 2;                      // 声明 + 初始化 y
+
+    // Example 2 - Hoists
+    var num1 = 3;                   // Declare and initialize num1
+    num2 = 4;                       // Initialize num2
+    console.log(num1 + " " + num2); //'3 4'
+    var num2;                       // Declare num2 for hoisting
+
+    // Example 3 - Hoists
+    a = 'Cran';                    // Initialize a
+    b = 'berry';                   // Initialize b
+    console.log(a + "" + b);       // 'Cranberry'
+    var a, b;                      // Declare both a & b for hoisting
+
+    // 函数声明
+    console.log(foo);              // [Function: foo]
+    foo();                         // 'FOOOOO'
+    function foo() {
+      console.log('FOOOOO');
+    }
+    console.log(foo);              // [Function: foo]
+
+    // 函数表达式
+    console.log(bar);              // undefined
+    bar();                         // Uncaught TypeError: bar is not a function
+    var bar = function () {
+      console.log('BARRRR');
+    };
+    console.log(bar);              // [Function: bar]
+    ```
+
 1. #### 请描述事件冒泡机制 (`event bubbling`)
+
+    事件冒泡：事件开始时由最具体的元素（文档中嵌套层次最深的那个节点）接收，然后逐级向上传播到较为不具体的节点（`document`）。所有现代浏览器都支持事件冒泡。
 
 1. #### `attribute` 和 `property` 的区别是什么？
 
+    `attribute` 是在 `HTML` 中定义的，而 `property` 是在 `DOM` 上定义的。为了说明区别，假设我们在 `HTML` 中有一个文本框：`<input type="text" value="Hello">`
+
+    ```javascript
+    const input = document.querySelector('input');
+    console.log(input.getAttribute('value')); // Hello - attribute
+    console.log(input.value);                 // Hello - property
+
+    // 但是在文本框中键入“ World!”后:
+    console.log(input.getAttribute('value')); // Hello - attribute
+    console.log(input.defaultValue);          // Hello - attribute
+    console.log(input.value);                 // Hello World! - property
+    ```
+
 1. #### 为什么扩展 `JavaScript` 内置对象不是好的做法？
+
+    扩展 `JavaScript` 内置（原生）对象意味着将属性或方法添加到其 `prototype` 中。代码可能会相互覆盖，导致代码不能正常运行。
+
+    扩展内置对象的唯一使用场景是创建 `polyfill`，本质上为老版本浏览器缺失的方法提供自己的实现，该方法是由 `JavaScript` 规范定义的。
 
 1. #### 请指出 `document load` 和 `document DOMContentLoaded` 两个事件的区别
 
+    `DOMContentLoaded`：当初始的 `HTML` 文档被完全加载和解析完成之后，`DOMContentLoaded` 事件被触发，而无需等待样式表、图像和子框架的完全加载。即只要页面 `DOM` 加载完成就触发，无需等待依赖资源的加载。
+    `load`：当整个页面及所有依赖资源如样式表和图片都已完成加载时，将触发 `load` 事件。
+
 1. #### `==` 和 `===` 有什么不同？
+
+    `==` 是抽象相等运算符，而 `===` 是严格相等运算符。`==` 运算符是在进行必要的类型转换后，再比较。`===` 运算符不会进行类型转换，所以如果两个值不是相同的类型，会直接返回 `false`。使用 `==` 时，可能发生一些特别的事情，例如：
+
+    ```javascript
+    1 == '1'; // true
+    1 == [1]; // true
+    1 == true; // true
+    0 == ''; // true
+    0 == '0'; // true
+    0 == false; // true
+
+    // 我的建议是从不使用 == 运算符，除了方便与 null 或 undefined 比较时，a == null 如果 a 为 null 或 undefined 将返回 true。
+    var a = null;
+    console.log(a == null); // true
+    console.log(a == undefined); // true
+    ```
 
 1. #### 请解释 `JavaScript` 的同源策略 (`same-origin policy`)
 
+    同源策略可防止 `JavaScript` 发起跨域请求。源被定义为 `URI`、主机名和端口号的组合。此策略可防止页面上的恶意脚本通过该页面的文档对象模型，访问另一个网页上的敏感数据。
+
 1. #### 如何实现下列代码：`[1,2,3,4,5].duplicator(); // [1,2,3,4,5,1,2,3,4,5]`
 
-1. #### 什么是三元表达式 (`Ternary expression`)？“三元 (`Ternary`)” 表示什么意思？
+    `function duplicate(arr) { return arr.concat(arr); }`
 
 1. #### 什么是 `"use strict";` ? 使用它的好处和坏处分别是什么？
 
+    `'use strict'` 是用于对整个脚本或单个函数启用严格模式的语句。严格模式是可选择的一个限制 `JavaScript` 的变体一种方式。
+
+    - 优点：
+      - 无法再意外创建全局变量。
+      - 会使引起静默失败（`silently fail`，即：不报错也没有任何效果）的赋值操抛出异常。
+      - 试图删除不可删除的属性时会抛出异常（之前这种操作不会产生任何效果）。
+      - 要求函数的参数名唯一。
+      - 全局作用域下，`this` 的值为 `undefined`。
+      - 捕获了一些常见的编码错误，并抛出异常。
+      - 禁用令人困惑或欠佳的功能。
+
+    - 缺点：
+      - 缺失许多开发人员已经习惯的功能。
+      - 无法访问 `function.caller` 和 `function.arguments`。
+      - 以不同严格模式编写的脚本合并后可能导致问题。
+
 1. #### 请实现一个遍历至 100 的 `for loop` 循环，在能被 3 整除时输出 `"fizz"`，在能被 5 整除时输出 `"buzz"`，在能同时被 3 和 5 整除时输出 `"fizzbuzz"`
+
+    ```javascript
+    for (let i = 1; i <= 100; i++) {
+      let f = i % 3 === 0,
+        b = i % 5 === 0;
+      console.log(f ? (b ? 'FizzBuzz' : 'Fizz') : b ? 'Buzz' : i);
+    }
+    ```
 
 1. #### 为何通常会认为保留网站现有的全局作用域 (`global scope`) 不去改变它，是较好的选择？
 
+    尽量少在全局作用域定义变量：
+    - 减少名称冲突
+    - 利于模块化
+
+    每个脚本都可以访问全局作用域，如果人人都使用全局命名空间来定义自己的变量，肯定会发生冲突。使用模块模式（`IIFE`）将变量封装在本地命名空间中。
+
 1. #### 为何你会使用 `load` 之类的事件 (`event`)？此事件有缺点吗？你是否知道其他替代品，以及为何使用它们？
+
+    - 原因：在文档装载完成后会触发 `load` 事件。此时，在文档中的所有对象都在 `DOM` 中，所有图像、脚本、链接和子框架都完成了加载。
+    - 缺点：可能因为加载的样式表、图像或子框架的卡顿而导致加载时间过长；无法异步加载
+    - 替代方案：使用 `DOMContentLoaded`，可以优化页面加载逻辑
 
 1. #### 请解释什么是单页应用 (`single page app`), 以及如何使其对搜索引擎友好 (`SEO-friendly`)
 
