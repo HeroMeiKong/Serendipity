@@ -2286,6 +2286,96 @@
 
 1. #### 请解释什么是单页应用 (`single page app`), 以及如何使其对搜索引擎友好 (`SEO-friendly`)
 
+    现如今，`Web` 开发人员将他们构建的产品称为 `Web` 应用，而不是网站。虽然这两个术语之间没有严格的区别，但网络应用往往具有高度的交互性和动态性，允许用户执行操作并接收他们的操作响应。在过去，浏览器从服务器接收 `HTML` 并渲染。当用户导航到其它 `URL` 时，需要整页刷新，服务器会为新页面发送新的 `HTML`。这被称为服务器端渲染。
+
+    然而，在现代的 `SPA` 中，使用客户端渲染取而代之。浏览器从服务器加载初始页面、整个应用程序所需的脚本（框架、库、应用代码）和样式表。当用户导航到其他页面时，不会触发页面刷新。该页面的 `URL` 通过 `HTML5 History API` 进行更新。浏览器通过 `AJAX` 请求向服务器检索新页面所需的数据（通常采用 `JSON` 格式）。然后，`SPA` 通过 `JavaScript` 来动态更新页面，这些 `JavaScript` 在初始页面加载时已经下载。这种模式类似于原生移动应用的工作方式。
+
+    - 好处：
+      - 用户感知响应更快，用户切换页面时，不再看到因页面刷新而导致的白屏。
+      - 对服务器进行的 `HTTP` 请求减少，因为对于每个页面加载，不必再次下载相同的资源。
+      - 客户端和服务器之间的关注点分离。可以为不同平台（例如手机、聊天机器人、智能手表）建立新的客户端，而无需修改服务器代码。只要 `API` 没有修改，可以单独修改客户端和服务器上的代码。
+
+    - 坏处：
+      - 由于加载了多个页面所需的框架、应用代码和资源，导致初始页面加载时间较长。
+      - 服务器还需要进行额外的工作，需要将所有请求路由配置到单个入口点，然后由客户端接管路由。
+      - `SPA` 依赖于 `JavaScript` 来呈现内容，但并非所有搜索引擎都在抓取过程中执行 `JavaScript`，他们可能会在你的页面上看到空的内容。这无意中损害了应用的搜索引擎优化（`SEO`）。然而，当你构建应用时，大多数情况下，搜索引擎优化并不是最重要的因素，因为并非所有内容都需要通过搜索引擎进行索引。
+
+    - `SPA` 页面的 `SEO`
+      背景：由于 `SPA` (单页应用程序 (`Single-Page Application`)) 返回的是大量 `JavaScript` 文件，且其中存在大量 `Dom` 操作，对于 `SEO` 的解析很不友好
+
+      1. `SSR` 服务器渲染
+
+          - 技术：[`Vue`](https://cn.vuejs.org/v2/guide/) + [`Vue-Router(history)`](https://router.vuejs.org/zh/guide/essentials/history-mode.html) + [`NuxtJS`](https://github.com/nuxt/nuxt.js) || [`React`](https://reactjs.org/) + [`React-Router`](https://reactrouter.com/) + [`Next.JS`](https://nextjs.org/)
+          - 原理：将服务器渲染后的页面返回给爬虫
+          - 优点：
+            - 更好的 `SEO`，由于搜索引擎爬虫抓取工具可以直接查看完全渲染的页面；
+            - 更快的内容到达时间 (`time-to-content`)，特别是对于缓慢的网络情况或运行缓慢的设备。
+          - 缺点：
+            - 开发条件所限，浏览器特定的代码，只能在某些生命周期钩子函数 (`lifecycle hook`) 中使用；一些外部扩展库 (`external library`) 可能需要特殊处理，才能在服务器渲染应用程序中运行；
+            - 环境和部署要求更高，需要 `Node.js server` 运行环境；
+            - 高流量的情况下，请准备相应的服务器负载，并明智地采用缓存策略。
+            - 环境问题，代码可能需要大量改动
+            - 服务器压力大
+          - 适用场景：公司官网，功能、交互简单的产品
+          - 相关文章：
+            - <https://ssr.vuejs.org/zh/>
+            - <https://zhuanlan.zhihu.com/p/95294219?from_voters_page=true>
+      2. 静态化([`JAMStack`](https://jamstack.wtf/) = `JavaScript + APIs + Markup`)
+
+          - 技术：[`Vue`](https://cn.vuejs.org/v2/guide/) + [`NuxtJS`](https://github.com/nuxt/nuxt.js) || [`React`](https://reactjs.org/) + [`Next.JS`](https://nextjs.org/)
+          - 原理：将 `SPA` 拆分成多个静态文件，根据不同请求返回不同静态文件
+          - 优点：
+            - 纯静态文件，访问速度超快；
+            - 对比 `SSR`，不涉及到服务器负载方面问题；
+            - 静态网页不宜遭到黑客攻击，安全性更高。
+            - 高性能
+            - 易部署
+            - 易开发
+          - 缺点：
+            - 不支持 [`Vue-Router`](https://router.vuejs.org/)
+            - 需要生成大量静态文件，占据空间
+            - 需要 `CDN，Money`
+            - 不支持太多动态功能
+            - 对内容编辑器不友好
+            - 更新 = `coding`
+            - 处理数据需要更的对工作
+            - 高度依赖第三方系统(生死不由己)
+          - 适用场景：公司官网，功能、交互简单的产品，对数据少的页面
+          - 相关文章：
+            - <https://www.nuxtjs.cn/api/configuration-generate>
+      3. 预渲染 [`prerender-spa-plugin`](https://github.com/chrisvfritz/prerender-spa-plugin), [`Prerenders(付费)`](https://github.com/chrisvfritz/prerender-spa-plugin), [`react-snap`](https://github.com/stereobooster/react-snap), [`snapshotify`](https://github.com/errorception/snapshotify), [`presite`](https://github.com/egoist/presite), [`prerenderer`](https://github.com/JoshTheDerf/prerenderer)
+
+          - 技术：[`Vue`](https://cn.vuejs.org/v2/guide/) + [`prerender-spa-plugin`](https://github.com/chrisvfritz/prerender-spa-plugin) + [`html5-histroy`](https://developer.mozilla.org/en-US/docs/Web/API/History)
+          - 原理：在 [`Webpack`](https://webpack.js.org/) 构建阶段的最后，在本地启动一个 [`Puppeteer`](https://github.com/puppeteer/puppeteer) 的服务，访问配置了预渲染的路由，然后将 [`Puppeteer`](https://github.com/puppeteer/puppeteer) 中渲染的页面输出到 `HTML` 文件中，并建立路由对应的目录
+          - 优点：
+            - 改动小，只需引入插件配置即可
+            - 纯静态文件，访问速度超快；
+          - 缺点：
+            - 不支持 [`Vue-Router`](https://router.vuejs.org/)
+            - 不适用于根据特定用户查看内容或其它动态源的内容
+            - 打包耗时，不适用于页面过多的情况
+          - 适用场景：公司官网，功能、交互简单的产品，对数据少的页面，路由较短的页面
+          - 相关文章：
+            - <https://github.com/chrisvfritz/prerender-spa-plugin>
+      4. 使用 [`Puppeteer`](https://github.com/puppeteer/puppeteer) ([`Phantomjs`](https://github.com/ariya/phantomjs) 问题较多，不选) 针对爬虫做处理
+
+          - 技术：[`Vue`](https://cn.vuejs.org/v2/guide/) + [`NodeJS`](https://nodejs.org/dist/latest-v14.x/docs/api/) + [`Puppeteer`](https://github.com/puppeteer/puppeteer)
+          - 原理：经过 [`Nginx`](https://www.nginx.com/) 使用 [`user-agent`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/User-Agent) 判断请求是否为爬虫，如果是，使用 [`Puppeteer`](https://github.com/puppeteer/puppeteer) 渲染页面返回给爬虫，如不是，正常返回 `JS`
+          - 优点：
+            - 无需修改已有 `SPA` 代码
+            - 速度快
+            - 安全高
+            - 稳定好
+            - 操作简单
+          - 缺点：
+            - 捆绑 [`Chromium`](https://www.chromium.org/) (默认最新)
+            - 对 [`NodeJS`](https://nodejs.org/dist/latest-v14.x/docs/api/) 版本要求较高
+            - 跨浏览器不支持
+            - 由于 [`Chromium`](https://www.chromium.org/) 的限制，对音频/视频支持不符合预期，视频播放，屏幕截图很可能会失败
+          - 适用场景：除去音频/视频页面
+          - 相关文章：
+            - <https://zhuanlan.zhihu.com/p/76237595>
+
 1. #### 你使用过 `Promises` 及其 `polyfills` 吗? 请写出 `Promise` 的基本用法（`ES6`）
 
 1. #### 使用 `Promises` 而非回调 (`callbacks`) 优缺点是什么？
