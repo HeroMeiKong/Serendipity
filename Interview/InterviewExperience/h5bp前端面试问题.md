@@ -6,9 +6,10 @@
 - 常见问题
 - `HTML` 相关问题
 - `CSS` 相关问题
-- `JS` 相关问题
+- `JavaScript` 相关问题
+- 无障碍问题（[Accessibility Questions](https://github.com/HeroMeiKong/Serendipity/tree/main/Interview/InterviewExperience/AccessibilityQuestions.md)）
 - 测试相关问题
-- 效能相关问题
+- 性能相关问题
 - 网络相关问题
 - 代码相关问题
 - 趣味问题
@@ -18,10 +19,13 @@
 - 你在昨天/本周学到了什么？
 - 编写代码的哪些方面能够使你兴奋或感兴趣？
 - 你最近遇到过什么技术挑战？你是如何解决的？
-- 在制作一个网页应用或网站的过程中，你是如何考虑其 `UI`、安全性、高性能、`SEO`、可维护性-以及技术因素的？
+- 在构建或维护一个新网站时，您能解释一下您用来提高性能的一些技术吗？
+- 您能描述一下您最近使用的一些 `SEO` 最佳实践或技术吗？
+- 您能解释一下前端安全方面的任何常见技术或最近解决的问题吗？
+- 您个人在最近的项目中采取了哪些措施来提高代码的可维护性？
 - 请谈谈你喜欢的开发环境。
-- 你最熟悉哪一套版本控制系统？
-- 你能描述当你制作一个网页的工作流程吗？
+- 您熟悉哪些版本控制系统？
+- 您能描述一下您创建网页时的工作流程吗？
 - 假若你有 5 个不同的样式文件 (`stylesheets`), 整合进网站的最好方式是?
 - 你能描述渐进增强 (`progressive enhancement`) 和优雅降级 (`graceful degradation`) 之间的不同吗?
 - 你如何对网站的文件和资源进行优化？
@@ -35,8 +39,13 @@
 - 请解释什么是 `ARIA` 和屏幕阅读器 (`screenreaders`)，以及如何使网站实现无障碍访问 (`accessible`)。
 - 请解释 `CSS` 动画和 `JavaScript` 动画的优缺点。
 - 什么是跨域资源共享 (`CORS`)？它用于解决什么问题？
+- 你是如何处理与你的老板或你的合作者的分歧的？
+- 您使用哪些资源来了解前端开发和设计的最新信息？
+- 成为一名优秀的前端开发人员需要哪些技能？
+- 你认为自己是什么角色？
+- 解释 `cookie`、会话存储和本地存储之间的区别？
 
-### HTML 相关问题
+### `HTML` 相关问题
 
 - `doctype`(文档类型) 的作用是什么？
 - 浏览器标准模式 (`standards mode`) 、几乎标准模式（`almost standards mode`）和怪异模式 (`quirks mode`) 之间的区别是什么？
@@ -90,7 +99,7 @@
 - 什么情况下，用 `translate()` 而不用绝对定位？什么时候，情况相反?
 - CSS3 新特性
 
-### JS 相关问题
+### `JavaScript` 相关问题
 
 - 请解释事件代理 (`event delegation`)。
 - 请解释 `JavaScript` 中 `this` 是如何工作的。
@@ -150,8 +159,9 @@
 - 你会用什么工具测试你的代码功能？
 - 单元测试与功能/集成测试的区别是什么？
 - 代码风格 `linting` 工具的作用是什么？
+- 有哪些测试最佳实践？
 
-### 效能相关问题
+### 性能相关问题
 
 - 你会用什么工具来查找代码中的性能问题？
 - 你会用什么方式来增强网站的页面滚动效能？
@@ -171,12 +181,18 @@
   - `X-Frame-Options`
 - 什么是 `HTTP method`？请罗列出你所知道的所有 `HTTP method`，并给出解释。
 - 请解释 `HTTP status 301` 与 `302` 的区别？
+- 什么是域预取以及它如何帮助提高性能？
+- 什么是 `CDN`，使用 `CDN` 有什么好处？
 
 ### 代码相关的问题
 
 - 问题：`foo` 的值是什么？
 
   `var foo = 10 + '20';`
+
+- 问题：下面代码会输出什么？
+
+  `console.log(0.1 + 0.2 == 0.3);`
 
 - 问题：如何实现以下函数？
 
@@ -227,7 +243,53 @@
   setTimeout(function() {
     console.log('two');
   }, 0);
-  console.log('three');
+  Promise.resolve().then(function() {
+    console.log('three');
+  })
+  console.log('four');
+  ```
+
+- 问题：下面四个 `Promises` 的区别是什么？
+
+  ```javascript
+  doSomething().then(function () {
+    return doSomethingElse();
+  });
+
+  doSomething().then(function () {
+    doSomethingElse();
+  });
+
+  doSomething().then(doSomethingElse());
+
+  doSomething().then(doSomethingElse);
+  ```
+
+- 问题：下面的代码输出什么？为什么？
+
+  ```javascript
+  (function(){
+    var a = b = 3;
+  })();
+
+  console.log("a defined? " + (typeof a !== 'undefined'));
+  console.log("b defined? " + (typeof b !== 'undefined'));
+  ```
+
+- 问题：下面两个函数会返回相同值吗？为什么？
+
+  ```javascript
+  function foo1() {
+    return {
+      bar: "hello"
+    };
+  }
+
+  function foo2() {
+    return {
+      bar: "hello"
+    };
+  }
   ```
 
 ### 趣味问题
@@ -236,5 +298,4 @@
 - 在你使用的开发工具中，最喜欢哪些方面？
 - 谁使你踏足了前端开发领域？
 - 你有什么业余项目吗？是哪种类型的？
-- 你最爱的 `IE` 特性是什么？
-- 你对咖啡有没有什么喜好？
+- 你最喜欢 `Internet Explorer` 的什么功能？
