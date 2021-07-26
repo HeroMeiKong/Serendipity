@@ -128,15 +128,20 @@
 - 为何通常会认为保留网站现有的全局作用域 (`global scope`) 不去改变它，是较好的选择？
 - 为何你会使用 `load` 之类的事件 (`event`)？此事件有缺点吗？你是否知道其他替代品，以及为何使用它们？
 - 请解释什么是单页应用 (`single page app`), 以及如何使其对搜索引擎友好 (`SEO-friendly`)。
-- 你使用过 `Promises` 及其 `polyfills` 吗? 请写出 `Promise` 的基本用法（`ES6`）。
-- 使用 `Promises` 而非回调 (`callbacks`) 优缺点是什么？
+- 你使用过 `Promise` 及其 `polyfills` 吗? 请写出 `Promise` 的基本用法（`ES6`）。
+- 使用 `Promise` 而非回调 (`callbacks`) 优缺点是什么？
 - 使用一种可以编译成 `JavaScript` 的语言来写 `JavaScript` 代码有哪些优缺点？
 - 你使用哪些工具和技术来调试 `JavaScript` 代码？
 - 你会使用怎样的语言结构来遍历对象属性 (`object properties`) 和数组内容？
-- 请解释可变 (`mutable`) 和不变 (`immutable`) 对象的区别。请举出 `JavaScript` 中一个不变性对象 (`immutable object`) 的例子？不变性 (`immutability`) 有哪些优缺点？如何用你自己的代码来实现不变性 (`immutability`)？
+- 请解释可变 (`mutable`) 和不可变 (`immutable`) 对象的区别。请举出 `JavaScript` 中一个不可变对象 (`immutable object`) 的例子？不可变性 (`immutability`) 有哪些优缺点？如何用你自己的代码来实现不可变性 (`immutability`)？
 - 请解释同步 (`synchronous`) 和异步 (`asynchronous`) 函数的区别。
 - 什么是事件循环 (`event loop`)？请问调用栈 (`call stack`) 和任务队列 (`task queue`) 的区别是什么？
 - 解释 `function foo() {}` 与 `var foo = function() {}` 用法的区别
+- 使用 `let`、`var` 和 `const` 创建变量有什么区别？
+- 在构造函数中使用箭头函数有什么好处？
+- 高阶函数（`higher-order`）的定义是什么？
+- 请给出一个解构（`destructuring`）对象或数组的例子
+- `ES6` 的模板字符串为生成字符串提供了很大的灵活性，你可以举个例子吗？
 - ES6-至今 新特性
 
 ### 测试相关问题

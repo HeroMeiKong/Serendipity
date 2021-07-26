@@ -2376,23 +2376,329 @@
           - 相关文章：
             - <https://zhuanlan.zhihu.com/p/76237595>
 
-1. #### 你使用过 `Promises` 及其 `polyfills` 吗? 请写出 `Promise` 的基本用法（`ES6`）
+1. #### 你使用过 `Promise` 及其 `polyfills` 吗? 请写出 `Promise` 的基本用法（`ES6`）
 
-1. #### 使用 `Promises` 而非回调 (`callbacks`) 优缺点是什么？
+1. #### 使用 `Promise` 而非回调 (`callbacks`) 优缺点是什么？
 
 1. #### 使用一种可以编译成 `JavaScript` 的语言来写 `JavaScript` 代码有哪些优缺点？
 
+    例如：`CoffeeScript`、`Elm`、`ClojureScript`、`PureScript` 和 `TypeScript`。
+
+    - 优点：
+      - 修复了 `JavaScript` 中的一些长期问题，并摒弃了 `JavaScript` 不好的做法。
+      - 在 `JavaScript` 的基础上提供一些语法糖，使我们能够编写更短的代码，我认为 `ES5` 缺乏语法糖的支持，但 `ES2015` 非常好。
+      - 对于需要长时间维护的大型项目，静态类型非常好用（针对 `TypeScript`）。
+
+    - 缺点：
+      - 由于浏览器只运行 `JavaScript`，所以需要构建、编译过程，在将代码提供给浏览器之前，需要将代码转译为 `JavaScript`。
+      - 如果 `source map` 不能很好地映射到预编译的源代码，调试会很痛苦。
+      - 大多数开发人员不熟悉这些语言，需要学习它。如果将其用于项目，会增加团队成本。
+      - 社区比较小（取决于语言），这意味着资源、教程、图书和工具难以找到。
+      - 可能缺乏 `IDE`（编辑器）的支持。
+      - 这些语言将始终落后于最新的 `JavaScript` 标准。
+      - 开发人员应该清楚代码正在被编译到什么地方——因为这是实际运行的内容，是最重要的。
+
 1. #### 你使用哪些工具和技术来调试 `JavaScript` 代码？
+
+    - `React` 和 `Redux`
+      - `React Devtools`
+      - `Redux Devtools`
+    - `Vue`
+      - `Vue Devtools`
+    - `JavaScript`
+      - `Chrome Devtools`
+      - `debugger` 声明
+      - 使用万金油 `console.log` 进行调试
 
 1. #### 你会使用怎样的语言结构来遍历对象属性 (`object properties`) 和数组内容？
 
-1. #### 请解释可变 (`mutable`) 和不变 (`immutable`) 对象的区别。请举出 `JavaScript` 中一个不变性对象 (`immutable object`) 的例子？不变性 (`immutability`) 有哪些优缺点？如何用你自己的代码来实现不变性 (`immutability`)？
+    - 对象：
+      - `for in`：`for (var property in obj) { console.log(property); }`。但是，这还会遍历到它的继承属性，在使用之前，你需要加入 `obj.hasOwnProperty(property)` 检查。
+      - `Object.keys()`：`Object.keys(obj).forEach(function (property) { ... })`。`Object.keys()` 方法会返回一个由一个给定对象的自身可枚举属性组成的数组。
+      - `Object.getOwnPropertyNames()`：`Object.getOwnPropertyNames(obj).forEach(function (property) { ... })`。`Object.getOwnPropertyNames()` 方法返回一个由指定对象的所有自身属性的属性名（包括不可枚举属性但不包括 `Symbol` 值作为名称的属性）组成的数组。
+
+    - 数组：
+      - `for`：`for (let i = 0; i < arr.length; i++)`，可以提前终止遍历。
+      - `forEach`：`arr.forEach(function (el, index) { ... })`，不能提前终止遍历。
+
+1. #### 请解释可变 (`mutable`) 和不可变 (`immutable`) 对象的区别。请举出 `JavaScript` 中一个不可变对象 (`immutable object`) 的例子？不可变性 (`immutability`) 有哪些优缺点？如何用你自己的代码来实现不可变性 (`immutability`)？
 
 1. #### 请解释同步 (`synchronous`) 和异步 (`asynchronous`) 函数的区别
 
 1. #### 什么是事件循环 (`event loop`)？请问调用栈 (`call stack`) 和任务队列 (`task queue`) 的区别是什么？
 
 1. #### 解释 `function foo() {}` 与 `var foo = function() {}` 用法的区别
+
+1. #### 使用 `let`、`var` 和 `const` 创建变量有什么区别？
+
+    用 `var` 声明的变量的作用域是它当前的执行上下文，它可以是嵌套的函数，也可以是声明在任何函数外的变量。`let` 和 `const` 是块级作用域，意味着它们只能在最近的一组花括号（`function`、`if-else` 代码块或 `for` 循环中）中访问。
+
+    ```javascript
+    function foo() {
+      // 所有变量在函数中都可访问
+      var bar = 'bar';
+      let baz = 'baz';
+      const qux = 'qux';
+
+      console.log(bar); // bar
+      console.log(baz); // baz
+      console.log(qux); // qux
+    }
+
+    console.log(bar); // ReferenceError: bar is not defined
+    console.log(baz); // ReferenceError: baz is not defined
+    console.log(qux); // ReferenceError: qux is not defined
+
+    -------------------------------------------------------
+
+    if (true) {
+      var bar = 'bar';
+      let baz = 'baz';
+      const qux = 'qux';
+    }
+
+    // 用 var 声明的变量在函数作用域上都可访问
+    console.log(bar); // bar
+    // let 和 const 定义的变量在它们被定义的语句块之外不可访问
+    console.log(baz); // ReferenceError: baz is not defined
+    console.log(qux); // ReferenceError: qux is not defined
+    ```
+
+    `var` 会使变量提升，这意味着变量可以在声明之前使用。`let` 和 `const` 不会使变量提升，提前使用会报错。
+
+    ```javascript
+    console.log(foo); // undefined
+
+    var foo = 'foo';
+
+    console.log(baz); // ReferenceError: can't access lexical declaration 'baz' before initialization
+
+    let baz = 'baz';
+
+    console.log(bar); // ReferenceError: can't access lexical declaration 'bar' before initialization
+
+    const bar = 'bar';
+    ```
+
+    用 `var` 重复声明不会报错，但 `let` 和 `const` 会。
+
+    ```javascript
+    var foo = 'foo';
+    var foo = 'bar';
+    console.log(foo); // "bar"
+
+    let baz = 'baz';
+    let baz = 'qux'; // Uncaught SyntaxError: Identifier 'baz' has already been declared
+    ```
+
+    `let` 和 `const` 的区别在于：`let` 允许多次赋值，而 `const` 只允许一次。
+
+    ```javascript
+    // 这样不会报错。
+    let foo = 'foo';
+    foo = 'bar';
+
+    // 这样会报错。
+    const baz = 'baz';
+    baz = 'qux';
+    ```
+
+1. #### 在构造函数中使用箭头函数有什么好处？
+
+    在构造函数里使用箭头函数的主要优点是它的 this 只与箭头函数创建时的 this 保持一致，并且不会修改。所以，当用构造函数去创建一个新的对象的时候，箭头函数的 this 总是指向新创建的对象。比如，假设我们有一个 Person 构造函数，它接受一个 firstName 参数，并且它有两个方法去调用 console.log 这个 firstName，一个是正常的函数，而另一个则是箭头函数:
+
+    ```javascript
+    const Person = function (firstName) {
+      this.firstName = firstName;
+      this.sayName1 = function () {
+        console.log(this.firstName);
+      };
+      this.sayName2 = () => {
+        console.log(this.firstName);
+      };
+    };
+
+    const john = new Person('John');
+    const dave = new Person('Dave');
+
+    john.sayName1(); // John
+    john.sayName2(); // John
+
+    // 普通函数的 this 可以被修改，而箭头函数则不会
+    john.sayName1.call(dave); // Dave (因为 "this" 现在指向了 dave 对象)
+    john.sayName2.call(dave); // John
+
+    john.sayName1.apply(dave); // Dave (因为 "this" 现在指向了 dave 对象)
+    john.sayName2.apply(dave); // John
+
+    john.sayName1.bind(dave)(); // Dave (因为 "this" 现在指向了 dave 对象)
+    john.sayName2.bind(dave)(); // John
+
+    var sayNameFromWindow1 = john.sayName1;
+    sayNameFromWindow1(); // undefined (因为 "this" 现在指向了 Window 对象)
+
+    var sayNameFromWindow2 = john.sayName2;
+    sayNameFromWindow2(); // John
+    ```
+
+    这里主要的区别是，正常函数的 `this` 是可以在执行过程中被改变的，而箭头函数的 `this` 则会一直保持一致。所以在使用箭头函数的时候，你就不需要担心它的上下文被改变了。
+
+    这在 `React` 的类组件里非常有用。如果你使用普通的函数来定义一个类方法，比如一个点击处理函数，然后你将这个点击处理函数通过 `prop` 的形式传递给子节点，你将必须在父组件的 `constroctor` 里使用 `fn.bind(this)` 的形式来确保该函数能正常工作。但是如果你使用箭头函数的话，你就不需要手动去绑定 `this` 了，因为箭头函数会自动绑定创建时的 `this`。
+
+1. #### 高阶函数（`higher-order`）的定义是什么？
+
+    高阶函数是将一个或多个函数作为参数的函数，它用于数据处理，也可能将函数作为返回结果。高阶函数是为了抽象一些重复执行的操作。一个典型的例子是 `map`，它将一个数组和一个函数作为参数。`map` 使用这个函数来转换数组中的每个元素，并返回一个包含转换后元素的新数组。`JavaScript` 中的其他常见示例是 `forEach、filter` 和 `reduce`。高阶函数不仅需要操作数组的时候会用到，还有许多函数返回新函数的用例。`Function.prototype.bind` 就是一个例子。
+
+    `Map` 示例：
+
+    假设我们有一个由名字组成的数组，我们需要将每个字符转换为大写字母。
+
+    ```javascript
+    const names = ['irish', 'daisy', 'anna'];
+
+    // 不使用高阶函数的方法是这样：
+    const transformNamesToUppercase = function (names) {
+      const results = [];
+      for (let i = 0; i < names.length; i++) {
+        results.push(names[i].toUpperCase());
+      }
+      return results;
+    };
+    transformNamesToUppercase(names); // ['IRISH', 'DAISY', 'ANNA']
+
+    // 使用.map(transformerFn)使代码更简明
+
+    const transformNamesToUppercase = function (names) {
+      return names.map((name) => name.toUpperCase());
+    };
+    transformNamesToUppercase(names); // ['IRISH', 'DAISY', 'ANNA']
+    ```
+
+1. #### 请给出一个解构（`destructuring`）对象或数组的例子
+
+    解构是 `ES6` 中新功能，它提供了一种简洁方便的方法来提取对象或数组的值，并将它们放入不同的变量中。
+
+    - 数组解构
+
+      ```javascript
+      // 变量赋值
+      const foo = ['one', 'two', 'three'];
+
+      const [one, two, three] = foo;
+      console.log(one); // "one"
+      console.log(two); // "two"
+      console.log(three); // "three"
+
+      // 变量交换
+      let a = 1;
+      let b = 3;
+
+      [a, b] = [b, a];
+      console.log(a); // 3
+      console.log(b); // 1
+      ```
+
+    - 对象解构
+
+      ```javascript
+      // 变量赋值
+      const o = { p: 42, q: true };
+      const { p, q } = o;
+
+      console.log(p); // 42
+      console.log(q); // true
+
+      // 变量不可换
+      const obj = { a: 1, b: 2, c: 3, d: 4 };
+      const { b, d, a, c } = obj;
+
+      console.log(a); // 1
+      console.log(b); // 2
+      console.log(c); // 3
+      console.log(d); // 4
+      ```
+
+1. #### `ES6` 的模板字符串为生成字符串提供了很大的灵活性，你可以举个例子吗？
+
+    **模板字面量**（`Template literals`） 是允许嵌入表达式的字符串字面量。你可以使用多行字符串和字符串插值功能。
+
+    语法
+
+    ```javascript
+    `string text`
+    
+    `string text line 1
+    string text line 2`
+    
+    `string text ${expression} string text`
+
+    tag`string text ${expression} string text`
+    ```
+
+    示例
+
+    ```javascript
+    console.log(`string text line 1
+    string text line 2`);
+    // "string text line 1
+    // string text line 2"
+
+    var a = 5;
+    var b = 10;
+    console.log(`Fifteen is ${a + b} and\nnot ${2 * a + b}.`);
+    // "Fifteen is 15 and
+    // not 20."
+    //show函数采用rest参数的写法如下：
+    ```
+
+    **带标签的模板字符串**
+    更高级的形式的模板字符串是带标签的模板字符串。标签使您可以用函数解析模板字符串。标签函数的第一个参数包含一个字符串值的数组。其余的参数与表达式相关。最后，你的函数可以返回处理好的的字符串（或者它可以返回完全不同的东西 , 如下个例子所述）。用于该标签的函数的名称可以被命名为任何名字。
+
+    ```javascript
+    function tag(strings, exp1, exp2, ...) { ... }
+    // strings.length === ...exps.length + 1
+
+    // 即 tag`hello` => strings = ["hello"]
+    // 即 tag`hello ${exp1}` => strings = ["hello ", ""]
+    // 即 tag`hello ${exp1}, ${exp2} ` => strings = ["hello ", ", ", " "]
+
+    let name = '张三',
+      age = 20,
+      message = show`我来给大家介绍:${name}的年龄是${age}.`;
+
+    function show(stringArr, ...values) {
+      let output = '';
+
+      let index = 0;
+
+      for (; index < values.length; index++) {
+        output += stringArr[index] + values[index];
+      }
+
+      output += stringArr[index];
+
+      return output;
+    }
+
+    message; //"我来给大家介绍:张三的年龄是20."
+    ```
+
+1. #### 了解柯里化函数（`curry function`）吗？它有哪些好处？
+
+    `currying` — 柯里化(把 `n` 个自变量的函数变成(`n - 1`)个自变量的偏函数的过程)
+
+    ```javascript
+    var cache = []
+    var add = function (n) {
+      if (n === undefined) {
+        return cache.reduce((p, n) => p + n, 0)
+      } else {
+        cache.push(n)
+        return add
+      }
+    }
+    add(1)(2)(3)(4)() // 10
+    ```
 
 1. #### ES6-至今 新特性
 
