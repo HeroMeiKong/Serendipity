@@ -1,18 +1,25 @@
 # CSS 面试题目汇总★
 
+****
+ℹ️：未完成
+★：常考
+★★：重点掌握
+★★★：高频，必背
+****
+
 1. CSS 中类 (`class`) 和 ID 的区别
 2. 请问 "`resetting`" 和 "`normalizing`" CSS 之间的区别？你会如何选择，为什么？
 
-    https://github.com/necolas/normalize.css
+    <https://github.com/necolas/normalize.css>
 
-    https://github.com/shannonmoeller/reset-css/blob/master/reset.css
+    <https://github.com/shannonmoeller/reset-css/blob/master/reset.css>
 
 3. ★★请解释浮动 (`Floats`) 及其工作原理
 4. ★清除浮动
 5. ★描述 `z-index` 和叠加上下文是如何形成的？
     重要，书上有，先理解。然后我推荐两个文章
-    https://www.w3cplus.com/css/what-no-one-told-you-about-z-index.html
-    http://www.zhangxinxu.com/wordpress/2016/01/understand-css-stacking-context-order-z-index/
+    <https://www.w3cplus.com/css/what-no-one-told-you-about-z-index.html>
+    <http://www.zhangxinxu.com/wordpress/2016/01/understand-css-stacking-context-order-z-index/>
 6. 请描述 `BFC(Block Formatting Context)` 及其如何工作？
 7. CSS `sprites`
     优点，缺点
@@ -70,3 +77,10 @@
 32. 圣杯布局，双飞翼布局
 
 33. 实现垂直居中和水平居中
+
+****
+ℹ️：未完成
+★：常考
+★★：重点掌握
+★★★：高频，必背
+****

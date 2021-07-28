@@ -1,5 +1,12 @@
 # webpack 面试题目汇总★
 
+****
+ℹ️：未完成
+★：常考
+★★：重点掌握
+★★★：高频，必背
+****
+
 1. `webpack` 与 `grunt`、`gulp` 的不同？
 
    三者都是前端构建工具，`grunt` 和 `gulp` 在早期比较流行，现在 `webpack` 相对来说比较主流，不过一些轻量化的任务还是会用 `gulp` 来处理，比如单独打包 `CSS` 文件等。
@@ -215,3 +222,10 @@
 
     1. 通过 `import(*)` 语句来控制加载时机，`webpack` 内置了对于 `import(*)` 的解析，会将 `import(*)` 中引入的模块作为一个新的入口在生成一个 `chunk`。 当代码执行到 `import(*)` 语句时，会去加载 `Chunk` 对应生成的文件。`import()` 会返回一个 `Promise` 对象，所以为了让浏览器支持，需要事先注入 `Promise polyfill`
     2. `vue-router` 的异步加载 `() => import(/* webpackChunkName: "group-foo" */ './Baz.vue')`
+
+****
+ℹ️：未完成
+★：常考
+★★：重点掌握
+★★★：高频，必背
+****

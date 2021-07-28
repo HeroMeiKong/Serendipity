@@ -1,5 +1,12 @@
 # 前端性能问题面试题目汇总★
 
+****
+ℹ️：未完成
+★：常考
+★★：重点掌握
+★★★：高频，必背
+****
+
 1. 你会用什么工具来查找代码中的性能问题？
 
 2. 增强网站的页面滚动效能
@@ -8,7 +15,7 @@
 
 4. 合成层
     我在这里理解了一个多星期，静下心来去理解。
-    http://taobaofed.org/blog/2016/04/25/performance-composite/
+    <http://taobaofed.org/blog/2016/04/25/performance-composite/>
 
 5. 前端优化方法
 
@@ -18,3 +25,10 @@ requestIdleCallback 闲时调用
 web worker 多线程调用
 IntersectionObserver 进入可视区调用
 setState是对单个组件的合并渲染，batchedUpdates是对多个组件的合并渲染。合并渲染是React最主要的优化手段。
+
+****
+ℹ️：未完成
+★：常考
+★★：重点掌握
+★★★：高频，必背
+****

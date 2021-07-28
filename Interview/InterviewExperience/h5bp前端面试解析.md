@@ -1,6 +1,13 @@
 
 # ★ h5bp Front-end Developer Interview Answer
 
+****
+ℹ️：未完成
+★：常考
+★★：重点掌握
+★★★：高频，必背
+****
+
 ## 目录
 
 - 常见问题
@@ -54,6 +61,9 @@
     需在页面开始处添加 `<!DOCTYPE html>`
 
 1. #### 浏览器标准模式 (`standards mode`) 、几乎标准模式（`almost standards mode`）和怪异模式 (`quirks mode`) 之间的区别是什么？
+
+    - 产生的历史原因是啥？
+    - 怪异模式有哪些怪异的行为？
 
 1. #### `HTML` 和 `XHTML` 有什么区别？
 
@@ -525,7 +535,7 @@
       @import url("bluish.css") projection, tv;
       @import 'custom.css';
       @import url("chrome://communicator/skin/");
-      /* @import "common.css" screen, projection; 可以使用，只是本地vscode会引起错误 */
+      /* @import "common.css" screen, projection; 可以使用，只是本地VS Code会引起错误 */
       @import url('landscape.css') screen and (orientation:landscape);
       ```
 
@@ -2875,3 +2885,10 @@
 - #### 你有什么业余项目吗？是哪种类型的？
 
 - #### 你最喜欢 `Internet Explorer` 的什么功能？
+
+****
+ℹ️：未完成
+★：常考
+★★：重点掌握
+★★★：高频，必背
+****
