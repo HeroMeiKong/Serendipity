@@ -427,7 +427,7 @@
        - `onclick` 是属性，只执行一次，易重复被覆盖(别人或自己)，唯一
        - `addEventListener` 是队列模式，先绑定就先触发，非唯一
      - ★**addEventListener('', function () {}, ?)：?处不填或者 false 表示冒泡事件，从小到大，若？处 true，则表示捕获事件，由大到小**
-     - 事件一定是先捕获后冒泡吗？**不一定**
+     - 事件一定是先捕获后冒泡吗？**不一定（2021.07.29现在浏览器做了处理，一定先捕获后冒泡）**
 ![事件模型示例图.jpeg](https://upload-images.jianshu.io/upload_images/5999132-0cdbd89fb90f1274.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 若在自己身上同时存在捕获冒泡事件，则按照事件代码书写顺序执行；若在父类或祖先类身上同时有捕获冒泡事件，则按照事件模型顺序：先捕获，后冒泡
 
