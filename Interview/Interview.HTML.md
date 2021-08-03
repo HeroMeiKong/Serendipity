@@ -76,7 +76,7 @@
 
       ```javascript
       var i;
-      var els = document.getElementsByTagName('*');
+      var els = document.getElementsByTagName("*");
 
       // 不要这样写匿名函数，不然无法调用 Element.removeEventListener
       for(i=0 ; i<els.length ; i++){
@@ -116,7 +116,135 @@
 
 1. 常⽤的 `meta` 标签有哪些？
 
-1. s
+    - `meta` 元素定义的元数据的类型包括以下几种：
+      - 如果设置了 `name` 属性，`meta` 元素提供的是文档级别（`document-level`）的元数据，应用于整个页面。
+      - 如果设置了 `http-equiv` 属性，`meta` 元素则是编译指令，提供的信息与类似命名的 `HTTP` 头部相同。
+      - 如果设置了 `charset` 属性，`meta` 元素是一个字符集声明，告诉文档使用哪种字符编码。
+      - 如果设置了 `itemprop` 属性，`meta` 元素提供用户定义的元数据。
+    - `meta` 属性
+      - `name`：`name` 和 `content` 属性可以一起使用，以 `key - value` 对的方式给文档提供元数据，其中 `name` 作为元数据的名称，`content` 作为元数据的值。
+      - `charset`：声明文档的字符编码。如果使用，其值必须是`<meta charset="utf-8">`
+      - `content`：包含 `http-equiv` 或 `name` 属性的值
+      - `http-equiv`：属性定义了一个编译指示指令。这个属性叫做 `http-equiv(alent)` 是因为所有允许的值都是特定 `HTTP` 头部的名称
+        - `content-security-policy`：允许定义当前页的内容策略。内容策略主要指定允许的服务器源和脚本端点，这有助于防止跨站点脚本攻击。
+        - `content-type`：如果使用，其值必须是 `<meta http-equiv="content-type" content="text/html;charset=utf-8">`。注意：该属性只能用于 `MIME type` 为 `text/html` 的文档，不能用于 `MIME` 类型为 `XML` 的文档。
+        - `default-style`：设置默认 `CSS` 样式表组的名称。
+        - `x-ua-compatible`：如果指定，则 `content` 属性必须具有值 "`IE=edge`"。用户代理必须忽略此指示。
+        - `refresh` 这个属性指定:
+          - 如果 `content` 只包含一个正整数，则为重新载入页面的时间间隔(秒)；
+          - 如果 `content` 包含一个正整数，并且后面跟着字符串 “`;url=`” 和一个合法的 `URL`，则是重定向到指定链接的时间间隔(秒)
+
+          ```html
+          <!-- Redirect page after 3 seconds -->
+          <meta http-equiv="refresh" content="3;url=https://www.mozilla.org">
+          ```
+
+    - 常见的 `meta` 标签：
+      - `<meta charset="UTF-8" >`：描述HTML文档的编码类型
+      - `<meta name="keywords" content="关键词" />`：页面关键词
+      - `<meta name="description" content="页面描述内容" />`：页面描述
+      - `<meta name="theme-color" content="#ffffff">`：表示当前页面的建议颜色，在自定义当前页面从或页面周围的用户界面的显示时，用户代理应当使用此颜色
+      - `<meta http-equiv="refresh" content="3;url=https://www.mozilla.org">`：页面重定向和刷新
+      - `<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">`：适配移动端，可以控制视口的大小和比例
+        - `width`：宽度(数值/`device-width`)
+        - `height`：高度(数值/`device-height`)
+        - `initial-scale`：初始缩放比例
+        - `maximum-scale`：最大缩放比例
+        - `minimum-scale`：最小缩放比例
+        - `user-scalable`：是否允许用户缩放(`yes/no`）
+        - `viewport-fit`：`auto | contain | cover`
+      - `<meta name="robots" content="index,follow" />`
+        - `all`：文件将被检索，且页面上的链接可以被查询；
+        - `none`：文件将不被检索，且页面上的链接不可以被查询；
+        - `index`：文件将被检索；
+        - `follow`：页面上的链接可以被查询；
+        - `noindex`：文件将不被检索；
+        - `nofollow`：页面上的链接不可以被查询。
+
+1. ℹ️`HTML5` 有哪些更新
+
+    - 语义化标签
+      - `header`：定义文档的页眉（头部）
+      - `nav`：定义导航链接的部分
+      - `footer`：定义文档或节的页脚（底部）
+      - `article`：定义文章内容
+      - `section`：定义文档中的节（`section`、区段）
+      - `aside`：定义其所处内容之外的内容（侧边）
+    - 媒体标签
+      - `audio`音频
+      `<audio src="" controls autoplay loop="true"></audio>`
+      属性：
+        - `controls` 控制面板
+        - `autoplay` 自动播放
+        - `loop="true"` 循环播放
+
+      - `video` 视频
+      `<video src="" poster="imgs/aa.jpg" controls></video>`
+      属性：
+        - `poster`：指定视频还没有完全下载完毕，或者用户还没有点击播放前显示的封面。默认显示当前视频文件的第一针画面，当然通过 `poster` 也可以自己指定。
+        - `controls` 控制面板
+        - `width`
+        - `height`
+      - `source` 标签
+      因为浏览器对视频格式支持程度不一样，为了能够兼容不同的浏览器，可以通过 `source` 来指定视频源。
+
+        ```html
+        <video>
+            <source src='aa.flv' type='video/flv'></source>
+            <source src='aa.mp4' type='video/mp4'></source>
+        </video>
+        ```
+
+    - 表单
+      - 表单类型：
+        - `email`：能够验证当前输入的邮箱地址是否合法
+        - `url`：验证 `URL`
+        - `number`：只能输入数字，其他输入不了，而且自带上下增大减小箭头，`max` 属性可以设置为最大值，`min` 可以设置为最小值，`value` 为默认值。
+        - `search`：输入框后面会给提供一个小叉，可以删除输入的内容，更加人性化。
+        - `range`：可以提供给一个范围，其中可以设置 `max` 和 `min` 以及 `value`，其中 `value` 属性可以设置为默认值
+        - `color`：提供了一个颜色拾取器
+        - `time`：时分秒
+        - `data`：日期选择年月日
+        - `datatime`：时间和日期(目前只有 `Safari` 支持)
+        - `datatime-local`：日期时间控件
+        - `week`：周控件
+        - `month`：月控件
+      - 表单属性：
+        - `placeholder`：提示信息
+        - `autofocus`：自动获取焦点
+        - `autocomplete="on"` 或者 `autocomplete="off"` 使用这个属性需要有两个前提：
+          - 表单必须提交过
+          - 必须有 `name` 属性。
+        - `required`：要求输入框不能为空，必须有值才能够提交。
+        - `pattern=""`：里面写入想要的正则模式，例如手机号 `patte="^(+86)?\d{10}$"`
+        - `multiple`：可以选择多个文件或者多个邮箱
+        - `form="formID"`
+
+      - 表单事件：
+        - `oninput`：每当input里的输入框内容发生变化都会触发此事件。
+        - `oninvalid`：当验证不通过时触发此事件。
+
+    - 进度条、度量器
+      - `<progress>`：用来表示任务的进度（`IE、Safari` 不支持），`max` 用来表示任务的进度，`value` 表示已完成多少
+      - `<meter>`：用来显示显示已知范围的标量值或者分数值（`IE、Safari` 不支持）
+        - `high/low`：规定被视作高/低的**范围**
+        - `max/min`：规定最大/小**值**
+        - `value`：规定当前度量值（`min < value < max`）
+        - `optimum`：指示最优/最佳取值。它必须在正确的值域内（`min < value < max`）。当使用了low和high属性时，它指明哪一个取值范围是更好的。例如 `min < optimum < low`，那么 `lower` 区间就被认为是更佳的取值范围。
+        - `form`：与对应的 `form` 元素关联。
+        - 设置规则：`min < low < high < max`
+    - `DOM` 查询操作
+      - `document.querySelector()`
+      - `document.querySelectorAll()`
+    - `Web` 存储
+      - `localStorage`
+      - `sessionStorage`
+    - 其它
+      - 拖放：拖放是一种常见的特性，即抓取对象以后拖到另一个位置。设置元素可拖放：`<img draggable="true" />`
+      - `canvas`：使用 `JavaScript` 在网页上绘制图像。画布是一个矩形区域，可以控制其每一像素。`canvas` 拥有多种绘制路径、矩形、圆形、字符以及添加图像的方法。
+      `<canvas id="myCanvas" width="200" height="100"></canvas>`
+      - `SVG`：可伸缩矢量图形，用于定义用于网络的基于矢量的图形，使用 `XML` 格式定义图形，图像在放大或改变尺寸的情况下其图形质量不会有损失，它是万维网联盟的标准
+      - 地理定位：`Geolocation`（地理定位）用于定位用户的位置。
 
 ****
 ℹ️：未完成
