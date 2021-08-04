@@ -582,7 +582,7 @@
 1. `clearInterval(timer)` 和 `timer = null` 的区别？
 1. `for...of` 和 `for...in` 的区别？
     <https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/for...of#for...of%E4%B8%8Efor...in%E7%9A%84%E5%8C%BA%E5%88%AB>
-1. s
+1. `hasOwnProperty` 与 `hasAttributes` 的区别？
 1. s
 1. s
 1. s
