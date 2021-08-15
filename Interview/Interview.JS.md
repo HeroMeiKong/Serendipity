@@ -579,12 +579,12 @@
     - `Object.getOwnPropertyNames()`: 返回一个由指定对象的**所有自身属性**的属性名（包括不可枚举属性但不包括 `Symbol` 值作为名称的属性）组成的**字符串数组**
     `console.log(Object.getOwnPropertyNames(arr));`
 
-1. `clearInterval(timer)` 和 `timer = null` 的区别？
-1. `for...of` 和 `for...in` 的区别？
+1. ℹ️`clearInterval(timer)` 和 `timer = null` 的区别？
+1. ℹ️`for...of` 和 `for...in` 的区别？
     <https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/for...of#for...of%E4%B8%8Efor...in%E7%9A%84%E5%8C%BA%E5%88%AB>
-1. `hasOwnProperty` 与 `hasAttributes` 的区别？
-1. s
-1. s
+1. ℹ️`hasOwnProperty` 与 `hasAttributes` 的区别？
+1. ℹ️`Object.freeze()` 和 `Object.seal()` 的区别？
+1. ℹ️`Proxy` 与 `Reflect` 的区别？
 1. s
 1. s
 1. s
