@@ -585,7 +585,7 @@
 1. ℹ️`hasOwnProperty` 与 `hasAttributes` 的区别？
 1. ℹ️`Object.freeze()` 和 `Object.seal()` 的区别？
 1. ℹ️`Proxy` 与 `Reflect` 的区别？
-1. s
+1. `MessageChannel` 和 `MutationObserver`
 1. s
 1. s
 1. s
