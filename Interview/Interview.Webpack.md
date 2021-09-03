@@ -233,6 +233,99 @@
     - [分离业务代码和第三方库](https://webpack.js.org/guides/code-splitting/#resource-splitting-for-caching-and-parallel-loads)（`vendor`）
     - [按需加载](https://webpack.js.org/guides/code-splitting/#resource-splitting-for-caching-and-parallel-loads)（利用 `import()` 语法）
 
+    分离 `Vendor`
+    - 最简单的方法：加一个 `entry`，并提取公共模块
+
+      ```javascript
+      // webpack.config.js
+      module.exports = {
+        entry: {
+          app: './src/main.js',
+          vendor: ['vue', 'axios'], // 如果引入的第三方库太多，难道要手写吗？
+        },
+        ...
+        plugins: [
+          ...
+          // 这样会把 app.js 和 vendor.js 中共有的模块抽取出来仅放在 vendoe.js 中
+          new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendor',
+          }),
+        ],
+      }
+      ```
+
+    - 自动化分离 `vendor`
+
+      ```javascript
+      // webpack.config.js
+      module.exports = {
+        entry: {
+          app: './src/main.js',
+          // vendor: ['vue', 'axios'], // 删除
+        },
+        ...
+        plugins: [
+          ...
+          // 这样会把 app.js 和 vendor.js 中共有的模块抽取出来仅放在 vendoe.js 中
+          new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendor',
+            minChunks: ({ resource }) => (
+              resource &&
+              resource.indexOf('node_modules') >= 0 &&
+              resource.match(/\.js$/)
+            ),
+          })
+        ],
+      }
+      ```
+
+    - `Dynamic Import`
+
+      ```javascript
+      // router.js
+      const Emoji = () => import(
+        /* webpackChunkName: "Emoji" */
+        './pages/Emoji.vue')
+
+      const Photos = () => import(
+        /* webpackChunkName: "Photos" */
+        './pages/Photos.vue')
+
+      // webpack.config.js
+      output: {
+        chunkFilename: '[name].chunk.js',
+      }
+
+      // .babelrc
+      {
+        "plugins": ["syntax-dynamic-import"]
+      }
+      ```
+
+    - async flag（第三方库只加载一次）
+
+      ```javascript
+      // webpack.config.js
+      // 不推荐写法
+      new webpack.optimize.CommonsChunkPlugin({
+        async: 'common-in-lazy',
+        // 如果不止 axios，那岂不是每个都要写？
+        minChunks: ({ resource } = {}) => (
+          resource &&
+          resource.includes('node_modules') &&
+          /axios/.test(resource)
+        ),
+      })
+
+      // 推荐写法，通过使用次数来控制
+      new webpack.optimize.CommonsChunkPlugin({
+        async: 'used-twice',
+        minChunks: (module, count) => (
+          count >= 2
+        ),
+      })
+      ```
+
 ****
 ℹ️：未完成
 ★：常考
