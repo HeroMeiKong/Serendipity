@@ -503,6 +503,8 @@
 
     `new String("str"); // -> [String: 'str']`
 
+1. s
+
 ****
 ℹ️：未完成
 ★：常考

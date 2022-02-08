@@ -586,7 +586,30 @@
 1. ℹ️`Object.freeze()` 和 `Object.seal()` 的区别？
 1. ℹ️`Proxy` 与 `Reflect` 的区别？
 1. `MessageChannel` 和 `MutationObserver`
-1. s
+1. 递归 `setTimeout()` 和 `setInterval()` 有何不同？
+
+    ```javascript
+    let i = 1;
+
+    setTimeout(function run() {
+      console.log(i);
+      i++;
+      setTimeout(run, 100);
+    }, 100);
+
+    setInterval(function run() {
+      console.log(i);
+      i++
+    }, 100);
+    ```
+
+   - 递归 `setTimeout()` 保证执行之间的延迟相同，例如在上述情况下为 `100ms`。 代码将运行，然后在它再次运行之前等待 `100ms`，因此无论代码运行多长时间，间隔都是相同的。
+   - 使用 `setInterval()` 的示例有些不同。 我们选择的间隔包括执行我们想要运行的代码所花费的时间。假设代码需要 `40ms` 才能运行 - 然后间隔最终只有 `60ms`。
+   - 当递归使用 `setTimeout()` 时，每次迭代都可以在运行下一次迭代之前计算不同的延迟。 换句话说，第二个参数的值可以指定在再次运行代码之前等待的不同时间（以毫秒为单位）。
+   <br>
+
+    当你的代码有可能比你分配的时间间隔，花费更长时间运行时，最好使用递归的 `setTimeout()` - 这将使执行之间的时间间隔保持不变，无论代码执行多长时间，你不会得到错误。
+
 1. s
 1. s
 1. s
