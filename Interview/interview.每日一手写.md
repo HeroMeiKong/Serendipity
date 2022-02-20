@@ -262,76 +262,53 @@ Promise.prototype.race = function(promiseArr) {
 };
 ```
 
+<br>
+
 ## 手写防抖
 
 ### 非立即执行
 
-作用是在短时间内多次触发同一个函数，只执行最后一次，或者只在开始时执行。 1.非立即执行:，如果你在一个事件触发的 n 秒内又触发了这个事件，那我就以新的事件的时间为准，n 秒后才执行
+作用是在短时间内多次触发同一个函数，只执行最后一次，或者只在开始时执行。
+非立即执行：如果在一个事件触发的 `n` 秒内又触发了此事件，那就以新事件的时间为准，`n` 秒后才执行
 
 ```js
 function debounce(fn, delay) {
-  let timeout;
-  return function() {
-    let context = this;
-    let args = arguments;
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      fn.apply(context, args);
-    }, delay);
-  };
-}
-const debounce = (fn, time) => {
-  let 回城计时器 = null
-  return (...args)=>{
-    if(回城计时器 !== null) {
-      clearTimeout(回城计时器) // 打断回城
-    }
-    // 重新回城
-    回城计时器 = setTimeout(()=>{
-      fn.call(undefined, ...args) // 回城后调用 fn
-      回城计时器 = null
-    }, time)
-  }
-}
-function debounce(func, wait) {
-  let timeout;
+  let timerId = null
   return function () {
-    let context = this;
-    let args = arguments;
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => {
-        func.apply(context, args)
-    }, wait);
+    let context = this
+    let args = arguments
+    if (timerId) clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      fn.apply(context, args)
+    }, delay)
   }
 }
 ```
 
 ### 立即执行
 
-我不希望非要等到事件停止触发后才执行，我希望立刻执行函数，然后等到停止触发 n 秒后，才可以重新触发执行, 我们也可以为 debounce 函数加一个参数，可以选择是否立即执行函数
+我不希望非要等到事件停止触发后才执行，我希望立刻执行函数，然后等到停止触发 `n` 秒后，才可以重新触发执行, 我们也可以为 `debounce` 函数加一个参数，可以选择是否立即执行函数
 
 ```js
 function debounce(fn, delay, immediate) {
-  let timeout = null;
-  return function() {
-    let context = this;
-    let args = arguments;
-    if (timeout) {
-      clearTimeout(timeout);
-    }
+  let timerId = null
+  return function () {
+    let context = this
+    let args = arguments
+    if (timerId) clearTimeout(timerId)
     if (immediate) {
-      const callNow = !timeout;
-      timeout = setTimeout(() => {
-        timeout = null;
-      }, delay);
+      const callNow = !timerId
+      timerId = setTimeout(() => {
+        timerId = null
+      }, delay)
 
       if (callNow) {
-        fn.apply(context, args);
+        fn.apply(context, args)
       }
     } else {
-      timeout = setTimeout(() => {
-        fn.apply(context, args);
-      }, delay);
+      timerId = setTimeout(() => {
+        fn.apply(context, args)
+      }, delay)
     }
   };
 }
@@ -342,56 +319,112 @@ function debounce(fn, delay, immediate) {
 持续触发事件，每隔一段时间，只执行一次事件。
 
 ```js
-function throttle(func, delay) {
-  var prev = Date.now();
+// 时间戳版
+function throttle(fn, delay) {
+  var prev = Date.now()
   return function() {
-    var context = this;
-    var args = arguments;
-    var now = Date.now();
+    var context = this
+    var args = arguments
+    var now = Date.now()
     if (now - prev >= delay) {
-      func.apply(context, args);
-      prev = Date.now();
+      fn.apply(context, args)
+      prev = now
     }
-  };
+  }
 }
 
-// 定时器实现
-var throttle = function(func, delay) {
-  let timer = null;
-  return function() {
-    const context = this;
-    const args = arguments;
-    if (!timer) {
-      timer = setTimeout(function() {
-        func.apply(context, args);
-        timer = null;
-      }, delay);
+// 定时器版
+function throttle(fn, delay) {
+  let timerId = null
+  return function () {
+    let context = this
+    let args = arguments
+    if (!timerId) {
+      timerId = setTimeout(() => {
+        timerId = null
+        fn.apply(context, args)
+      }, delay)
     }
-  };
-};
+  }
+}
 ```
+
+<br>
 
 ## 手写浅拷贝
 
 ```js
 function copy(obj) {
-  if (typeof obj !== "object" || obj === null) {
-    return obj;
-  }
-  let obj1 = {};
-  if (obj.constructor === Array) {
-    obj1 = [];
-  }
+  if (typeof obj !== "object" || obj === null) return obj
+  let newObj = {}
+  if (obj.constructor === Array) newObj = []
   for (let key in obj) {
     if (obj.hasOwnProperty(key)) {
-      obj1[key] = obj[key];
+      newObj[key] = obj[key]
     }
   }
-  return obj1;
+  return newObj
 }
 ```
 
+<br>
+
 ## 手写深拷贝
+
+### 方法一：`JSON`
+
+`const b = JSON.parse(JSON.stringify(a))`
+
+答题要点是指出这个方法有如下缺点：
+
+- 不支持 Date、正则、undefined、函数等数据
+- 不支持引用（即环状结构）
+- 必须说自己还会方法二
+
+### 方法二：递归
+
+要点：
+
+- 递归
+- 判断类型
+- 检查环
+- 不拷贝原型上的属性
+
+```js
+const deepClone = (a, cache) => {
+  if(!cache){
+    cache = new Map() // 缓存不能全局，最好临时创建并递归传递
+  }
+  if(a instanceof Object) { // 不考虑跨 iframe
+    if(cache.get(a)) { return cache.get(a) }
+    let result 
+    if(a instanceof Function) {
+      if(a.prototype) { // 有 prototype 就是普通函数
+        result = function(){ return a.apply(this, arguments) }
+      } else {
+        result = (...args) => { return a.call(undefined, ...args) }
+      }
+    } else if(a instanceof Array) {
+      result = []
+    } else if(a instanceof Date) {
+      result = new Date(a - 0)
+    } else if(a instanceof RegExp) {
+      result = new RegExp(a.source, a.flags)
+    } else {
+      result = {}
+    }
+    cache.set(a, result)
+    for(let key in a) { 
+      if(a.hasOwnProperty(key)){
+        result[key] = deepClone(a[key], cache) 
+      }
+    }
+    return result
+  } else {
+    return a
+  }
+}
+```
 
 该实现有可能引起爆栈，可考虑使用 weakMap 代替，应付面试足矣。
 
@@ -440,6 +473,8 @@ function deepClone(obj, hash = new WeakMap()) {
   return cloneObj;
 }
 ```
+
+<br>
 
 ## 手写 ajax
 
