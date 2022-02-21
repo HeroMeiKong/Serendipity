@@ -1827,12 +1827,13 @@
 
       // 源码实现, 用箭头函数不行，this 指向问题，区别在 args
       Function.prototype.apply = function (context, args) {
-        context = context || window;  // context 如果是 null，则指向 window
-        var fn = Symbol();
-        context[fn] = this;
-        var result = context[fn](...args);
-        delete context[fn];
-        return result;
+        context = context || window  // context 如果是 null，则指向 window
+        var fn = Symbol()
+        context[fn] = this
+        var result
+        args ? (result = context[fn](...args)) : (result = context[fn]())
+        delete context[fn]
+        return result
       }
       ```
 

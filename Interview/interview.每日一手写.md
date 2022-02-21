@@ -1,83 +1,116 @@
 # 每日一手写
 
-## JavaScript 基本数据类型
+1. ## `JavaScript` 基本数据类型
 
-```js
-// 7个基本类型 其中es6新增symbol ES2020引入了大整数BigInt
-boolean number string null undefined symbol BigInt
+    ```js
+    // 7个基本类型 其中es6新增symbol ES2020引入了大整数BigInt
+    boolean number string null undefined symbol bigint
 
-// 注意：对象 (object)也是 js 内置类型，非基本类型
-```
+    // 注意：对象 (object)也是 js 内置类型，非基本类型
+    ```
 
-<br>
+    <br>
 
-## instanceof 实现原理
+1. ## `instanceof` 实现原理
 
-用代码实现 如果 A 沿着原型链能找到 `B.prototype` 那么`A instanceof B` 为 true
-遍历 A 的原型链 找到 `B.prototype` 返回 true
+    如果 `A` 沿着原型链能找到 `B.prototype` 那么`A instanceof B` 为 `true`
+    遍历 `A` 的原型链找到 `B.prototype` 返回 `true`
 
-```js
-const instanceof = (A, B) => {
-  let p = A;
-  while (p) {
-    if (p === B.prototype) {
-      return true;
+    ```js
+    const instanceof = (A, B) => {
+      let p = A
+      while (p) {
+        if (p === B.prototype) return true
+        p = p.__proto__
+      }
+      return false
     }
-    p = p.__proto__;
-  }
-  return false;
-};
-```
+    ```
 
-## 手写 call
+    <br>
 
-```js
-Function.prototype.newCall = function(context) {
-  context = Object(context) || window;
-  context.fn = this;
-  let result = "";
-  const args = [...arguments].slice(1);
-  result = context.fn(...args);
-  delete context.fn;
-  return result;
-};
-```
+1. ## 手写 `call`
 
-## 手写 apply
+    ```js
+    Function.prototype.call = function (context, ...args) {
+      context = context || window  // context 如果是 null，则指向 window
+      var fn = Symbol()
+      context[fn] = this
+      var result = context[fn](...args)
+      delete context[fn]
+      return result
+    }
+    ```
 
-```js
-Function.prototype.newApply = function(context, args) {
-  context = Object(context) || window;
-  context.fn = this;
-  let result;
-  if (args) {
-    result = context.fn(...args);
-  } else {
-    result = context.fn();
-  }
-  delete context.fn;
-  return result;
-};
-```
+    <br>
 
-## 手写 bind
+1. ## 手写 `apply`
 
-bind 方法创建一个新的函数，在 bind() 被调用时，这个新函数的 this 被指定为 bind() 的第一个参数，而其余参数将作为新函数的参数
+    ```js
+    Function.prototype.apply = function (context, args) {
+      context = context || window  // context 如果是 null，则指向 window
+      var fn = Symbol()
+      context[fn] = this
+      var result
+      args ? (result = context[fn](...args)) : (result = context[fn]())
+      delete context[fn]
+      return result
+    }
+    ```
 
-```js
-Function.prototype.newBind = function(context) {
-  if (typeof this !== "function") {
-    throw new Error("不是一个函数");
-  }
-  const self = this;
-  const args1 = [...arguments].slice(1);
-  return function() {
-    // 函数科里化
-    const args2 = [...arguments];
-    self.apply(context, args1.concat(args2));
-  };
-};
-```
+    <br>
+
+1. ## 手写 `bind`
+
+    `bind` 方法创建一个新的函数，在 `bind()` 被调用时，这个新函数的 `this` 被指定为 `bind()` 的第一个参数，而其余参数将作为新函数的参数
+
+    ```js
+    Function.prototype.bind = function bind(that /* , ...args */) {
+      if (typeof this !== "function") throw new Error("不是一个函数")
+      var F = this
+      var Prototype = F.prototype
+      var partArgs = Array.prototype.slice.call(arguments, 1)
+      var boundFunction = function bound(/* args... */) {
+        var args = concat(partArgs, Array.prototype.slice.call(arguments))
+        return this instanceof boundFunction ? construct(F, args.length, args) : F.apply(that, args)
+      }
+      if (isObject(Prototype)) boundFunction.prototype = Prototype
+      return boundFunction
+    };
+
+    Function.prototype.bind = function (context, ...rest) {
+      if (typeof this !== "function") throw new Error("不是一个函数")
+      var self = this
+
+      return function F(...args) {
+        // 如果是 new 的，则不要之前的 context 啦
+        if (this instanceof F) return self(...rest, ...args)
+        // 两次的参数 rest，args 合并到一起，作为函数的参数
+        return self.apply(context, rest.concat(args))
+      }
+    }
+    
+    // 尤雨溪版本
+    Function.prototype.bind = function (context) {
+      if (typeof this !== 'function') {
+        throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable")
+      }
+      var fn  = this, // the function to bind
+        slice = Array.prototype.slice, // 缓存切片的方法
+        args  = slice.call(arguments, 1), // 获取附加参数的数组（将被柯里化）
+        noop  = function () {}, // 充当原型链连接器的中间函数（假设这里没有Object.create）
+        bound = function () {
+          var ctx = this instanceof noop && context
+            ? this
+            : context
+          return fn.apply(ctx, args.concat(slice.call(arguments)))
+        }
+      // 继承待绑定函数的原型
+      noop.prototype = fn.prototype
+      bound.prototype = new noop()
+      return bound
+    }
+    ```
 
 ## new 实现原理
 
