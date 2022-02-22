@@ -1858,39 +1858,37 @@
 
       // 如果使用 new 结果不一样
       // 原因：bind 返回的函数作为构造函数的时候，bind 时指定的 this 值会失效，但传入的参数依然生效
-      Function.prototype.bind = function (context, ...rest) {
-        var self = this;
-
-        return function F(...args) {
-          // 如果是 new 的，则不要之前的 context 啦
-          if (this instanceof F) {
-            return self(...rest, ...args);
+      
+      //bind实现要复杂一点  因为他考虑的情况比较多 还要涉及到参数合并(类似函数柯里化)
+      Function.prototype.bind = function (context, ...args) {
+        if (!context || context === null) {
+          context = window
+        }
+        // 创造唯一的key值  作为我们构造的context内部方法名
+        let fn = Symbol()
+        context[fn] = this
+        let _this = this
+        //  bind情况要复杂一点
+        const result = function (...innerArgs) {
+          // 第一种情况 :若是将 bind 绑定之后的函数当作构造函数，通过 new 操作符使用，则不绑定传入的 this，而是将 this 指向实例化出来的对象
+          // 此时由于new操作符作用  this指向result实例对象  而result又继承自传入的_this 根据原型链知识可得出以下结论
+          // this.__proto__ === result.prototype   //this instanceof result =>true
+          // this.__proto__.__proto__ === result.prototype.__proto__ === _this.prototype; //this instanceof _this =>true
+          if (this instanceof _this === true) {
+            // 此时this指向指向result的实例  这时候不需要改变this指向
+            this[fn] = _this
+            this[fn](...[...args, ...innerArgs]) //这里使用es6的方法让bind支持参数合并
+            delete this[fn]
+          } else {
+            // 如果只是作为普通函数调用  那就很简单了 直接改变this指向为传入的context
+            context[fn](...[...args, ...innerArgs])
+            delete context[fn]
           }
-          // 两次的参数 rest，args 合并到一起，作为函数的参数
-          return self.apply(context, rest.concat(args));
-        }
-      }
-
-      // 尤雨溪版本
-      Function.prototype.bind = function (context) {
-        if (typeof this !== 'function') {
-          throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
-        }
-        var fn    = this, // the function to bind
-            slice = Array.prototype.slice, // cache slice method
-            args  = slice.call(arguments, 1), // get the array of addtional arguments (to be curried)
-            noop = function () {}, // the intermediate function to serve as a prototype chain connector
-                                  // (assuming we don't have Object.create() here)
-            bound = function () {
-                var ctx = this instanceof noop && context
-                    ? this
-                    : context
-                return fn.apply(ctx, args.concat(slice.call(arguments)))
-            }
-        // inherit the prototype of the to-be-bound function
-        noop.prototype = fn.prototype
-        bound.prototype = new noop()
-        return bound
+        };
+        // 如果绑定的是构造函数 那么需要继承构造函数原型属性和方法
+        // 实现继承的方式: 使用Object.create
+        result.prototype = Object.create(this.prototype)
+        return result
       }
       ```
 
