@@ -98,71 +98,66 @@
     }
     ```
 
-## new 实现原理
+1. ## `new` 实现原理
 
-```js
-function Animal(type) {
-  this.type = type;
-}
-Animal.prototype.say = function() {
-  console.log("say");
-};
-
-function mockNew(Constructor, ...args) {
-  // let Constructor = arguments.shift(); // 取出构造函数
-  // new 执行会创建一个新对象
-  let obj = {};
-  obj.__proto__ = Object.create(Constructor.prototype);
-  Constructor.apply(obj, args);
-  return obj;
-}
-
-let animal = mockNew(Animal, "dog");
-console.log(animal.type); // dog
-```
-
-## 手写 Promise 简版
-
-符合 A+规范
-
-```js
-function myPromise(constructor) {
-  let self = this;
-  self.status = "pending";
-  self.resolveVal = undefined;
-  self.rejectedVal = undefined;
-  function resolve(value) {
-    if (self.status === "pending") {
-      self.resolveVal = value;
-      self.status = "resolved";
+    ```js
+    function myNew(fn, ...args) {
+      // 1.创建一个空对象，并将对象的 __proto__ 指向构造函数的 prototype 这里我两步一起做了
+      // var obj = new Object() | Object.create(null)
+      // obj.__proto__ = fn.prototype
+      
+      const obj = Object.create(fn.prototype)
+      // 2.将构造函数中的 this 指向 obj，执行构造函数代码，获取返回值
+      // const res = fn.call(obj, ...args)
+      const res = fn.apply(obj, args)
+      // 3.判断返回值类型
+      // return res && (typeof res === "object" || typeof res === "function") ? res : obj
+      return res instanceof Object ? res : obj
     }
-  }
-  function reject(reason) {
-    if (self.status === "pending") {
-      self.rejectedVal = reason;
-      self.status = "rejected";
+    ```
+
+1. ## 手写 `Promise` 简版
+
+    符合 A+规范
+
+    ```js
+    function myPromise(constructor) {
+      let self = this;
+      self.status = "pending";
+      self.resolveVal = undefined;
+      self.rejectedVal = undefined;
+      function resolve(value) {
+        if (self.status === "pending") {
+          self.resolveVal = value;
+          self.status = "resolved";
+        }
+      }
+      function reject(reason) {
+        if (self.status === "pending") {
+          self.rejectedVal = reason;
+          self.status = "rejected";
+        }
+      }
+      try {
+        constructor(resolve, reject);
+      } catch (e) {
+        reject(e);
+      }
     }
-  }
-  try {
-    constructor(resolve, reject);
-  } catch (e) {
-    reject(e);
-  }
-}
 
-myPromise.prototype.then = function(onFullfilled, onRejected) {
-  switch (this.status) {
-    case "resolved":
-      onFullfilled(this.resolveVal);
-      break;
-    case "rejected":
-      onRejected(this.rejectedVal);
-      break;
-  }
-};
-```
+    myPromise.prototype.then = function(onFullfilled, onRejected) {
+      switch (this.status) {
+        case "resolved":
+          onFullfilled(this.resolveVal);
+          break;
+        case "rejected":
+          onRejected(this.rejectedVal);
+          break;
+      }
+    };
+    ```
 
-## 手写 Promise （考虑异步）
+1. ## 手写 `Promise` （考虑异步）
 
 ```js
 const PENDING = 'pending';
