@@ -119,42 +119,6 @@
 1. ## 手写 `Promise` 及其所有方法
 
     ```js
-    // 简单版本
-    function myPromise(constructor) {
-      let self = this
-      self.status = "pending"
-      self.resolveVal = undefined
-      self.rejectedVal = undefined
-      function resolve(value) {
-        if (self.status === "pending") {
-          self.resolveVal = value
-          self.status = "fulfilled"
-        }
-      }
-      function reject(reason) {
-        if (self.status === "pending") {
-          self.rejectedVal = reason
-          self.status = "rejected"
-        }
-      }
-      try {
-        constructor(resolve, reject)
-      } catch (e) {
-        reject(e)
-      }
-    }
-
-    myPromise.prototype.then = function (onFullfilled, onRejected) {
-      switch (this.status) {
-        case "fulfilled":
-          onFullfilled(this.resolveVal)
-          break
-        case "rejected":
-          onRejected(this.rejectedVal)
-          break
-      }
-    };
-
     // 异步版本
     const PENDING = 'pending'
     const FULFILLED = 'fulfilled'
@@ -262,6 +226,144 @@
         }
       });
     };
+    ```
+
+    ```js
+    // 先定义三个常量表示状态
+    const PENDING = 'pending'
+    const FULFILLED = 'fulfilled'
+    const REJECTED = 'rejected'
+
+    class MyPromise {
+      constructor(executor) {
+        // executor 是个执行器，进入会立即执行
+        // 并传入 resolve 和 reject 方法
+        try {
+          executor(this.resolve, this.reject)
+        } catch (error) {
+          this.reject(error)
+        }
+      }
+
+      // 初始化储存状态的变量
+      status = PENDING
+
+      // resolve / reject 为什么曜使用箭头函数？
+      // 如果直接调用，普通函数 this 指向是 window 或 undefined
+      // 用箭头函数可以让 this 指向当前实例对象
+
+      // 成功之后的值
+      value = null
+      // 失败之后的原因
+      reason = null
+      // 存储成功回调函数
+      onFulfilledCallbacks = []
+      // 存储失败回调函数
+      onRejectedCallbacks = []
+
+      // 更改成功后的状态
+      resolve = value => {
+        // 只有状态是等待，才执行状态修改
+        if (this.status === PENDING) {
+          // 状态修改为成功
+          this.status = FULFILLED
+          // 保存成功之后的值
+          this.value = value
+          // 执行 resolve 里面所有成功回调
+          while (this.onFulfilledCallbacks.length) {
+            this.onFulfilledCallbacks.shift()(value)
+          }
+        }
+      }
+      // 更改失败后的状态
+      reject = reason => {
+        // 只有状态是等待，才执行状态修改
+        if (this.status === PENDING) {
+          // 状态修改为失败
+          this.status = REJECTED
+          // 保存失败后的原因
+          this.reason = reason
+          // 执行 rejecte 里面所有失败回调
+          while (this.onRejectedCallbacks.length) {
+            this.onRejectedCallbacks.shift()(reason)
+          }
+        }
+      }
+
+      then(onFulfilled, onRejected) {
+        // 如果不传，就使用默认函数
+        const realOnFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value
+        const realOnRejected = typeof onRejected === 'function' ? onRejected : reason => { throw reason }
+
+        const currentPromise = new MyPromise((resolve, reject) => {
+          const fulfilledMicrotask = () => {
+            // 创建一个微任务等待 currentPromise 完成初始化，否则会报错
+            queueMicrotask(() => {
+              // 新增错误捕获
+              try {
+                // 调用成功回调，并返回值
+                resolvePromise(currentPromise, realOnFulfilled(this.value), resolve, reject)
+              } catch (error) {
+                reject(error)
+              }
+            })
+          }
+
+          const rejectedMicrotask = () => {
+            // 创建一个微任务等待 currentPromise 完成初始化，否则会报错
+            queueMicrotask(() => {
+              try {
+                // 调用失败回调，并返回原因
+                resolvePromise(currentPromise, realOnRejected(this.reason), resolve, reject)
+              } catch(error) {
+                reject(error)
+              }
+            })
+          }
+          // 这里的内容在执行器中会立即执行
+          // 判断状态
+          if (this.status === FULFILLED) {
+            fulfilledMicrotask()
+          } else if (this.status === REJECTED) {
+            rejectedMicrotask()
+          } else if (this.status === PENDING) {
+            // 因为不知道后面状态的变化情况，所有将成功/失败回调存储起来，等待后续调用
+            this.onFulfilledCallbacks.push(fulfilledMicrotask)
+            this.onRejectedCallbacks.push(rejectedMicrotask)
+          }
+        })
+        return currentPromise
+      }
+
+      // resolve 静态方法，方便通过 MyPromise.resolve() 直接调用
+      static resolve(value) {
+        // 如果传入 MyPromise 就直接返回
+        if (value instanceof MyPromise) return value
+        return new MyPromise(resolve => resolve(value))
+      }
+
+      // reject 静态方法，方便通过 MyPromise.reject() 直接调用
+      static reject(reason) {
+        return new MyPromise((resolve, reject) => reject(reason))
+      }
+    }
+
+    function resolvePromise(currentPromise, x, resolve, reject) {
+      // return 自己，抛错
+      if (currentPromise === x) return reject(new TypeError('循环调用错误'))
+      // 判断 x 是不是 MyPromise 实例对象
+      if (x instanceof MyPromise) {
+        // 执行 x，调用 then 方法，目的是将其状态变成 fulfilled / rejected
+        // x.then(value => resolve(value), reason => reject(reason))
+        // 简化
+        x.then(resolve, reject)
+      } else {
+        // 普通值
+        resolve(x)
+      }
+    }
+
+    module.exports = MyPromise
     ```
 
     <br>
