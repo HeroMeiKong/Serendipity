@@ -484,10 +484,11 @@
 1. ## 手写浅拷贝
 
     ```js
+    // Array || Object
     function copy(obj) {
       if (typeof obj !== "object" || obj === null) return obj
-      let newObj = {}
-      if (obj.constructor === Array) newObj = []
+      let newObj
+      obj.constructor === Array ? newObj = [] : newObj = {}
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
           newObj[key] = obj[key]
@@ -495,6 +496,21 @@
       }
       return newObj
     }
+
+    // Array || Object
+    var copy = {...obj}
+
+    var copy = [...arr]
+
+    // Object
+    var copy = Object.assign({}, obj)
+
+    // Array
+    var copy = Array.from(arr)
+
+    var copy = arr.slice()
+
+    var copy = [].concat(arr)
     ```
 
     <br>
@@ -503,11 +519,11 @@
 
     - 方法一：`JSON`
 
-      `const b = JSON.parse(JSON.stringify(a))`
+      `const copy = JSON.parse(JSON.stringify(value))`
 
       答题要点是指出这个方法有如下缺点：
 
-      - 不支持 Date、正则、undefined、函数等数据
+      - 不支持 `Date`、正则、`undefined`、函数等数据
       - 不支持引用（即环状结构）
       - 必须说自己还会方法二
 
