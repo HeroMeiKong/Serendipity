@@ -537,86 +537,68 @@
       - 不拷贝原型上的属性
 
       ```js
-      const deepClone = (a, cache) => {
-        if(!cache){
-          cache = new Map() // 缓存不能全局，最好临时创建并递归传递
-        }
-        if(a instanceof Object) { // 不考虑跨 iframe
-          if(cache.get(a)) { return cache.get(a) }
-          let result 
-          if(a instanceof Function) {
-            if(a.prototype) { // 有 prototype 就是普通函数
-              result = function(){ return a.apply(this, arguments) }
-            } else {
-              result = (...args) => a.call(undefined, ...args)
-            }
-          } else if(a instanceof Array) {
-            result = []
-          } else if(a instanceof Date) {
-            result = new Date(a - 0)
-          } else if(a instanceof RegExp) {
-            result = new RegExp(a.source, a.flags)
-          } else {
-            result = {}
-          }
-          cache.set(a, result)
-          for(let key in a) { 
-            if(a.hasOwnProperty(key)){
-              result[key] = deepClone(a[key], cache) 
-            }
-          }
-          return result
-        } else {
-          return a
-        }
-      }
-      ```
-
-      该实现有可能引起爆栈，可考虑使用 weakMap 代替，应付面试足矣。
-
-      ```js
-      function deepClone(obj) {
-        // 如果是值类型或 null，则直接return
-        if (typeof obj !== "object" || obj === null) {
-          return obj;
-        }
-        if (obj instanceof Date) return new Date(obj);
-        if (obj instanceof RegExp) return new RegExp(obj);
-
-        // 定义结果对象
-        let copy = {};
-        // 如果对象是数组，则定义结果数组
-        if (obj.constructor === Array) {
-          copy = [];
-        }
-        // 遍历对象的key
-        for (let key in obj) {
-          // 如果key是对象的自有属性
-          if (obj.hasOwnProperty(key)) {
-            // 递归调用深拷贝方法
-            copy[key] = deepClone(obj[key]);
-          }
-        }
-        return copy;
-      }
-
       // weakMap
-      function deepClone(obj, hash = new WeakMap()) {
-        if (typeof obj !== "object" || obj === null) return obj;
-
-        if (obj instanceof Date) return new Date(obj);
-        if (obj instanceof RegExp) return new RegExp(obj);
-
-        if (hash.get(obj)) return hash.get(obj);
-
-        let cloneObj = new obj.constructor();
-        hash.set(obj, cloneObj);
-        for (let key in obj) {
-          if (obj.hasOwnProperty(key)) {
-            cloneObj[key] = deepClone(obj[key], hash);
+      function deepClone(target) {
+          const map = new WeakMap()
+          
+          function isObject(target) {
+              return (typeof target === 'object' && target ) || typeof target === 'function'
           }
-        }
-        return cloneObj;
+
+          function clone(data) {
+              if (!isObject(data)) {
+                  return data
+              }
+              if ([Date, RegExp].includes(data.constructor)) {
+                  return new data.constructor(data)
+              }
+              if (typeof data === 'function') {
+                  return new Function('return ' + data.toString())()
+              }
+              const exist = map.get(data)
+              if (exist) {
+                  return exist
+              }
+              if (data instanceof Map) {
+                  const result = new Map()
+                  map.set(data, result)
+                  data.forEach((val, key) => {
+                      if (isObject(val)) {
+                          result.set(key, clone(val))
+                      } else {
+                          result.set(key, val)
+                      }
+                  })
+                  return result
+              }
+              if (data instanceof Set) {
+                  const result = new Set()
+                  map.set(data, result)
+                  data.forEach(val => {
+                      if (isObject(val)) {
+                          result.add(clone(val))
+                      } else {
+                          result.add(val)
+                      }
+                  })
+                  return result
+              }
+              const keys = Reflect.ownKeys(data)
+              const allDesc = Object.getOwnPropertyDescriptors(data)
+              const result = Object.create(Object.getPrototypeOf(data), allDesc)
+              map.set(data, result)
+              keys.forEach(key => {
+                  const val = data[key]
+                  if (isObject(val)) {
+                      result[key] = clone(val)
+                  } else {
+                      result[key] = val
+                  }
+              })
+              return result
+          }
+
+          return clone(target)
       }
       ```
 
