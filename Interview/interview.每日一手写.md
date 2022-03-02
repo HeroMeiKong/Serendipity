@@ -538,67 +538,91 @@
 
       ```js
       // weakMap
+      // 解决的问题：
+      // 1. 不能处理循环引用：使用 WeakMap 作为 hash 来查询
+      // 2. 只考了 Object 对象：当参数为 Date、RegExp、Function、Map、Set 则直接生成一个新实例并返回
+      // 3. 属性名为 Symbol：针对能够遍历对象的不可枚举属性以及 Symbol 类型，可使用 Reflect.ownKeys()
+      // 相当于 Object.getOwnPropertyNames(target).concat(Object.getOwnPropertySymbols(target))
+      // 4. 原型上的属性：Object.getOwnPropertyDescriptors() 设置属性描述对象，以及 Object.create()
+      // 方式继承原型链
       function deepClone(target) {
-          const map = new WeakMap()
-          
-          function isObject(target) {
-              return (typeof target === 'object' && target ) || typeof target === 'function'
+        // 防止循环引用
+        const map = new WeakMap()
+        
+        // 是否为 Object 类型
+        function isObject(target) {
+          return (typeof target === 'object' && target ) || typeof target === 'function'
+        }
+
+        function clone(data) {
+          // 基础类型直接返回值
+          if (!isObject(data)) return data
+
+          // 日期/正则 直接构造一个新的对象返回
+          if ([Date, RegExp].includes(data.constructor)) return new data.constructor(data)
+
+          // 处理函数对象
+          // new Function('return ' + data.toString()) 会在函数外套一层空函数，调用 => copyFn()() 
+          if (typeof data === 'function') return new Function('return ' + data.toString())()
+
+          // 如果对象已存在，则直接返回对象
+          const exist = map.get(data)
+          if (exist) return exist
+
+          // 处理 Map 对象
+          if (data instanceof Map) {
+            const result = new Map()
+            map.set(data, result)
+            data.forEach((val, key) => {
+              // map 中的值为 Object 的话也需要深拷贝
+              if (isObject(val)) {
+                result.set(key, clone(val))
+              } else {
+                result.set(key, val)
+              }
+            })
+            return result
           }
 
-          function clone(data) {
-              if (!isObject(data)) {
-                  return data
+          // 处理 Set 对象
+          if (data instanceof Set) {
+            const result = new Set()
+            map.set(data, result)
+            data.forEach(val => {
+              // set 中的值为 Object 的话也需要深拷贝
+              if (isObject(val)) {
+                result.add(clone(val))
+              } else {
+                result.add(val)
               }
-              if ([Date, RegExp].includes(data.constructor)) {
-                  return new data.constructor(data)
-              }
-              if (typeof data === 'function') {
-                  return new Function('return ' + data.toString())()
-              }
-              const exist = map.get(data)
-              if (exist) {
-                  return exist
-              }
-              if (data instanceof Map) {
-                  const result = new Map()
-                  map.set(data, result)
-                  data.forEach((val, key) => {
-                      if (isObject(val)) {
-                          result.set(key, clone(val))
-                      } else {
-                          result.set(key, val)
-                      }
-                  })
-                  return result
-              }
-              if (data instanceof Set) {
-                  const result = new Set()
-                  map.set(data, result)
-                  data.forEach(val => {
-                      if (isObject(val)) {
-                          result.add(clone(val))
-                      } else {
-                          result.add(val)
-                      }
-                  })
-                  return result
-              }
-              const keys = Reflect.ownKeys(data)
-              const allDesc = Object.getOwnPropertyDescriptors(data)
-              const result = Object.create(Object.getPrototypeOf(data), allDesc)
-              map.set(data, result)
-              keys.forEach(key => {
-                  const val = data[key]
-                  if (isObject(val)) {
-                      result[key] = clone(val)
-                  } else {
-                      result[key] = val
-                  }
-              })
-              return result
+            })
+            return result
           }
 
-          return clone(target)
+          // 收集键名（考虑了以 Symbol 作为 key 以及不可枚举属性）
+          const keys = Reflect.ownKeys(data)
+          // 利用 Object 的 getOwnPropertyDescriptors 方法可以获取对象的所有属性以及对应的属性描述
+          const allDesc = Object.getOwnPropertyDescriptors(data)
+          // 结合 Object 的 create 方法创建一个新对象，并继承传入原对象的原型链，的到的 result 是对 data 的浅拷贝
+          const result = Object.create(Object.getPrototypeOf(data), allDesc)
+
+          // 新对象加入 map 中，进行记录
+          map.set(data, result)
+
+          // Object.create() 是浅拷贝，所以要判断并递归执行深拷贝
+          keys.forEach(key => {
+            const val = data[key]
+            if (isObject(val)) {
+              // 属性为 Object 的话也需要深拷贝
+              result[key] = clone(val)
+            } else {
+              result[key] = val
+            }
+          })
+          return result
+        }
+
+        return clone(target)
       }
       ```
 
