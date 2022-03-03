@@ -505,6 +505,8 @@
     // Object
     var copy = Object.assign({}, obj)
 
+    var copy = Object.create(obj)
+
     // Array
     var copy = Array.from(arr)
 
@@ -628,148 +630,225 @@
 
       <br>
 
-1. ## 手写 ajax
+1. ## 手写 `ajax`
 
-    (1)创建 XMLHttpRequest 对象,也就是创建一个异步调用对象.
-    (2)创建一个新的 HTTP 请求,并指定该 HTTP 请求的方法、URL 及验证信息.
-    (3)设置响应 HTTP 请求状态变化的函数.
-    (4)发送 HTTP 请求.
+    (1)创建 `XMLHttpRequest` 对象,也就是创建一个异步调用对象.
+    (2)创建一个新的 `HTTP` 请求,并指定该 `HTTP` 请求的方法、`URL` 及验证信息.
+    (3)设置响应 `HTTP` 请求状态变化的函数.
+    (4)发送 `HTTP` 请求.
     (5)获取异步调用返回的数据.
-    (6)使用 JavaScript 和 DOM 实现局部刷新.
+    (6)使用 `JavaScript` 和 `DOM` 实现局部刷新.
 
     ```js
     // 步骤
-    var XHR = new XMLHttpRequest();
-    XHR.open("get", "./a.php");
-    XHR.send(null);
-    XHR.onreadystatechange = function() {
-      if (XHR.readyState === 4) {
-        if (XHR.status === 200) {
-          alert(XHR.responseText);
+    var xhr = new XMLHttpRequest()
+    // xhr.open(method, url, [async, user, password])
+    // async：一个可选的布尔参数，表示是否异步执行操作，默认为 true。
+    // 如果值为 false，send() 方法直到收到答复前不会返回。如果 true，已完成事务的通知可供事件监听器使用。
+    // 如果 multipart 属性为 true 则这个必须为 true，否则将引发异常。
+    xhr.open("get", "./a.php")
+    xhr.send(null)
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          alert(xhr.responseText)
         }
       }
-    };
+    }
 
     // 封装
     function ajax(url, method, body, success, fail) {
-      let request = new XMLHttpRequest();
-      request.open(method, url);
-      request.onreadystatechange = () => {
-        if (request.readyState === 4) {
-          if (request.status >= 200 && request.status < 300) {
-            success.call(undefined, request.responseText);
-          } else if (request.status >= 400) {
-            fail.call(undefined, request);
+      let xhr = new XMLHttpRequest()
+      xhr.open(method, url)
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
+            success.call(undefined, xhr.responseText)
+          } else if (xhr.status >= 400) {
+            fail.call(undefined, xhr)
           }
         }
-      };
-      request.send(body);
+      }
+      xhr.send(body)
     }
-    ```
 
-    <br>
-
-1. ## 手写 Promise 版 ajax
-
-    ```js
-    window.ajax = function({ url, method }) {
-      return new Promise(function(resolve, reject) {
-        let request = new XMLHttpRequest();
-        request.open(method, url);
-        request.onreadystatechange = () => {
-          if (request.readyState === 4) {
-            if (request.status >= 200 && request.status < 300) {
-              resolve.call(undefined, request.responseText);
-            } else if (request.status >= 400) {
-              reject.call(undefined, request);
+    // Promise 版 ajax
+    window.ajax = function ({ url, method }) {
+      return new Promise((resolve, reject) => {
+        let xhr = new XMLHttpRequest()
+        xhr.open(method, url)
+        // xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4) {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              resolve.call(undefined, xhr.responseText)
+            } else if (xhr.status >= 400) {
+              reject.call(undefined, xhr)
             }
           }
-        };
-        request.send();
-      });
-    };
+        }
+        xhr.send()
+      })
+    }
     ```
 
     <br>
 
-1. ## es5 实现继承
+1. ## 实现继承
 
     ```js
+    // ES5 实现继承
+    // 原型链继承
+    function Gender() {
+      this.gender = 'male'
+    }
+
+    Gender.prototype.getGender = function () {
+      return this.gender
+    }
+
+    function Name() {
+      this.name = 'HeroMeiKong'
+    }
+
+    // 继承了 SuperType
+    Name.prototype = new Gender()
+    Name.prototype.getName = function () {
+      return this.name
+    }
+
+    var human = new Name()
+    console.log(human.getGender()) // 'male'
+
+    // human = {
+    //   name: "HeroMeiKong",
+    //   __proto__: {
+    //     gender: "male",
+    //     getName: f ()
+    //     __proto__: {
+    //       getGender: f (),
+    //       __proto__: Object
+    //     }
+    //   }
+    // }
+
+    
+    // 寄生组合式继承
+    function createObject(o) {
+      function F() {}
+      F.prototype = o
+      return new F()
+    }
+
+    function inheritPrototype(subType, superType) {
+      var _prototype = createObject(superType.prototype)
+      _prototype.coustructor = subType
+      subType.prototype = _prototype
+    }
+
+    function SuperType(name) {
+      this.name = name
+      this.colors = ['red', 'blue', 'green']
+    }
+
+    SuperType.prototype.sayName = function () {
+      console.log(this.name)
+    }
+
+    function SubType(name, age) {
+      // 继承属性
+      SuperType.call(this, name)
+      this.age = age
+    }
+
+    inheritPrototype(SubType, SuperType)
+
+    SubType.prototype.sayAge = function () {
+      console.log(this.age)
+    }
+
+    var person1 = new SuperType('SoulWalker', 26)
+    var person2 = new SubType('HeroMeiKong', 26)
+      
+    person1.sayName() // SoulWalker
+    // person1 = {
+    //   name: "SoulWalker",
+    //   colors: ["red", "blue", "green"],
+    //   __proto__: {
+    //     constructor: SuperType,
+    //     sayName: f (),
+    //     __proto__: Object
+    //   }
+    // }
+    person2.sayName() // HeroMeiKong
+    // person2 = {
+    //   age: 26,
+    //   colors: ["red", "blue", "green"],
+    //   name: "HeroMeiKong",
+    //   __proto__: {
+    //     constructor: SubType,
+    //     sayAge: f (),
+    //     __proto__: {
+    //       constructor: SuperType,
+    //       sayName: f (),
+    //       __proto__: Object
+    //     }
+    //   }
+    // }
+
+
     // 使用寄生组合继承
     function Person(name, like) {
-      this.name = name;
-      this.like = like;
-      this.money = 10000;
+      this.name = name
+      this.like = like
+      this.money = 10000
     }
-    Person.prototype.say = function() {
-      console.log(this.name);
+    Person.prototype.say = function () {
+      console.log(this.name)
     };
 
     function Person1(name, like) {
-      Person.call(this, name, like);
+      Person.call(this, name, like)
     }
-    Person1.prototype = Object.create(Person.prototype);
+    Person1.prototype = Object.create(Person.prototype)
+    Person1.prototype.constructor = Person1
 
-    let p = new Person1("明", "篮球");
-    p.say(); // 明
-    ```
+    let p = new Person1("明", "篮球")
+    p.say() // 明
 
-    <br>
 
-1. ## es6 实现继承
-
-    ```js
+    // ES6 实现继承
     class Father {
       constructor(name, like) {
-        this.name = name;
-        this.like = like;
+        this.name = name
+        this.like = like
       }
       say() {
-        console.log(this.name);
+        console.log(this.name)
       }
     }
 
     class Children extends Father {
       constructor(name, like) {
-        super(name, like);
+        super(name, like)
       }
     }
-    let p = new Children("C罗", "足球");
-    p.say(); // C罗
+
+    let p = new Children("C罗", "足球")
+    p.say() // C罗
     ```
 
     <br>
 
-1. ## TypeScript 中内置方法实现原理
+1. ## 实现一个函数组合 `compose`
 
     ```js
-    // Partial实现原理
-    type Partial<T> = { [P in keyof T]?: T[P] };
-
-    // Required实现原理
-    type Required<T> = { [P in keyof T]-?: T[P] };
-
-    // Pick实现原理
-    type Pick<T, K extends keyof T> = { [P in K]: T[P] };
-
-    // Exclude实现原理
-    type Exclude<T, U> = T extends U ? never : T;
-
-    // Omit实现原理
-    type Omit = Pick<T, Exclude<keyof T, K>>
-    ```
-
-    <br>
-
-1. ## 实现一个函数组合 compose
-
-    ```js
-    const a1 = (x) => x + 1;
-    const d2 = (x) => x / 2;
-    const m3 = (x) => x * 3;
-    d2(m3(a1(a1(0)))); // => 3
-
-    // 而这样的写法可读性明显太差了，我们可以构建一个compose函数,它接受任意多个函数作为参数（这些函数都只接受一个参数），然后compose返回的也是一个函数，达到以下的效果：
+    const a1 = x => x + 1
+    const d2 = x => x / 2
+    const m3 = x => x * 3
+    d2(m3(a1(a1(0)))) // => 3
+    // 此写法可读性明显太差，可以构建一个 compose 函数，它接受任意多个函数作为参数（这些函数都只接受一个参数），
+    // 然后 compose 返回的也是一个函数，达到以下的效果：
     const calcNum = compose(
       d2,
       m3,
@@ -779,15 +858,168 @@
     calcNum(0); // => d2(m3(a1(a(0))))
 
     function compose() {
-      let args = argumnets;
-      let start = args.length - 1;
-      return function() {
-        let i = start;
-        let result = args[i].apply(this, arguments);
+      let args = arguments
+      let start = args.length - 1
+      return function () {
+        let i = start
+        let result = args[i].apply(this, arguments)
         while (i-- && i >= 0) {
-          result = args[i].call(this, result);
+          result = args[i].call(this, result)
         }
-        return result;
-      };
+        return result
+      }
     }
+
+    function compose(...fn) {
+      if (!fn.length) return v => v
+      if (fn.length === 1) return fn[0]
+      return fn.reduce(
+        (pre, cur) =>
+          (...args) =>
+            pre(cur(...args)) // === a1(a2(a3()))
+            // cur(pre(...args)) === a3(a2(a1()))
+      )
+    }
+    ```
+
+    <br>
+
+1. ## 发布订阅
+
+    ```js
+    class EventHub {
+      constructor() {
+        this.events = {}
+      }
+      // 实现订阅
+      on(type, callBack) {
+        if (!this.events[type]) {
+          this.events[type] = [callBack]
+        } else {
+          this.events[type].push(callBack)
+        }
+      }
+      // 删除订阅
+      off(type, callBack) {
+        if (!this.events[type]) return
+        this.events[type] = this.events[type].filter(item => item !== callBack)
+      }
+      // 只执行一次订阅事件
+      once(type, callBack) {
+        function fn() {
+          callBack()
+          this.off(type, fn)
+        }
+        this.on(type, fn)
+      }
+      // 触发事件
+      emit(type, ...rest) {
+        this.events[type] && this.events[type].forEach(fn => fn.apply(this, rest))
+      }
+    }
+    ```
+
+    <br>
+
+1. ## 数组去重
+
+    ```js
+    // 使用 Set
+    Array.from(new Set(arr))
+    [...new Set(arr)]
+
+
+    // 使用 indexOf、for、push
+    var arr1 = [1,2,2,2,3,3,3,4,5,6], arr2 = []
+    for (let i = 0, length = arr1.length; i < length; i++) {
+      if (arr2.indexOf(arr1[i]) < 0) arr2.push(arr1[i])
+    }
+    console.log(arr2)
+
+
+    // object、push
+    function fn(arr) {
+      let tmp = {}, ret = []
+      for (let i = 0, length = arr.length; i < length; i++) {
+        if (!tmp[arr[i]]) {
+          tmp[arr[i]] = 1
+          ret.push(arr[i])
+        }
+      }
+      return ret
+    }
+
+    // indexOf、forEach
+    function fn(arr) {
+      let ret = []
+      arr.forEach((value, i) => {
+        if (arr.indexOf(value) === i) ret.push(value)
+      })
+      return ret
+    }
+
+
+    // 使用 Map
+    var uniq = function (arr) {
+      var map = new Map()
+      for (let i = 0, length = arr.length; i < length; i++) {
+        const number = arr[i]
+        if (number === undefined || map.has(number)) continue
+        map.set(number, true)
+        
+      }
+      return [...map.keys()]
+    }
+    ```
+
+    <br>
+
+1. ## 检测循环引用
+
+    ```js
+    // 对 传入的subject对象 内部存储的所有内容执行回调
+    function execRecursively(fn, subject, _refs = null) {
+      if (!_refs) _refs = new WeakSet()
+
+      // 避免无限递归
+      if (_refs.has(subject)) return
+
+      fn(subject)
+      if ("object" === typeof subject) {
+        _refs.add(subject)
+        for(let key in subject)
+          execRecursively(fn, subject[key], _refs)
+      }
+    }
+
+    const foo = {
+      foo: "Foo",
+      bar: {
+        bar: "Bar"
+      }
+    }
+
+    foo.bar.baz = foo // 循环引用!
+    execRecursively(obj => console.log(obj), foo)
+    ```
+
+    <br>
+
+1. ## `TypeScript` 中内置方法实现原理
+
+    ```ts
+    // Partial 实现原理
+    type Partial<T> = { [P in keyof T]?: T[P] };
+
+    // Required 实现原理
+    type Required<T> = { [P in keyof T]-?: T[P] };
+
+    // Pick 实现原理
+    type Pick<T, K extends keyof T> = { [P in K]: T[P] };
+
+    // Exclude 实现原理
+    type Exclude<T, U> = T extends U ? never : T;
+
+    // Omit 实现原理
+    type Omit = Pick<T, Exclude<keyof T, K>>
     ```
