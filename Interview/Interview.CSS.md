@@ -52,7 +52,7 @@
 
 1. 请解释 `relative、fixed、absolute` 和 `static` 元素的区别
 
-1. ★★★请问你有尝试过 CSS `Flexbox` 或者 `Grid` 标准规格吗
+1. 请问你有尝试过 CSS `Flexbox` 或者 `Grid` 标准规格吗 ★★★
 
     flex很重要，每个属性都要知道。建议去读阮一峰的flex文章
 

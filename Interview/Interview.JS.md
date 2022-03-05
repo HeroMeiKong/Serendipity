@@ -7,7 +7,7 @@
 ★★★：高频，必背
 ****
 
-1. 事件代理(事件委托)
+1. ## 事件代理(事件委托)
   
     将自生的事件监控交由父元素监控，主要利用事件冒泡原理。
 
@@ -15,14 +15,18 @@
     - 适合于: `click, mousedown, mouseup, keydown, keyup, keypress`
     - `mouseover` 和 `mouseout` 要经常计算它们的位置，处理起来麻烦。
     - 不适用于: `focu, blur` 之类的，自身没用冒泡特性。
+    <br>
 
-1. 请解释 JavaScript 中 `this` 是如何工作的
+1. ## 请解释 `JavaScript` 中 `this` 是如何工作的
+
     - `this` 永远指向函数运行时所在的对象，而不是函数创建时所在的对象
     - 匿名函数和不处于任何对象中的函数，`this` 指向 `window`
     - `call`, `apply`, `with` 指的 `this` 是谁就是谁
     - 普通函数调用，函数被谁调用，`this` 就指向谁
+    <br>
 
-1. ★★★JavaScript 继承
+1. ## `JavaScript` 继承 ★★★
+
     - 原型链
 
       ```javascript
@@ -312,96 +316,110 @@
       // }
       ```
 
-1. JavaScript 模块化
+      <br>
+
+1. ## `JavaScript` 模块化
+
     理解模块化发展过程，理解 `commonJS，AMD，CMD，ES6` 模块化
+    <br>
 
-1. `IIFE` 立即执行函数
+1. ## `IIFE` 立即执行函数
 
-1. `null undefined` 区别
+1. ## `null undefined` 区别
 
-1. ★★★闭包 与 作用域
+1. ## 闭包 与 作用域 ★★★
 
-1. 匿名函数
+1. ## 匿名函数
 
-1. 你是如何组织自己的代码？是使用模块模式，还是使用经典继承的方法？
+1. ## 你是如何组织自己的代码？是使用模块模式，还是使用经典继承的方法？
 
-1. 宿主对象 (`host objects`) 和原生对象 (`native objects`)
+1. ## 宿主对象 (`host objects`) 和原生对象 (`native objects`)
 
-1. 请指出以下代码的区别：`function Person() {}`、`var person = Person()`、`var person = new Person()`？
+1. ## 请指出以下代码的区别：`function Person() {}`、`var person = Person()`、`var person = new Person()`？
 
-1. `new`
-    源码如何实现的？
+1. ## `document.write()`
 
-1. `document.write()`
+1. ## 特性检测 特性推断 UA字符串嗅探
 
-1. 特性检测 特性推断 UA字符串嗅探
+1. ## `Ajax` 工作原理
 
-1. Ajax 工作原理
-    着重理解 XMLHttpRequest！！
+    着重理解 `XMLHttpRequest`！！
+    <br>
 
-1. ★★★跨域
+1. ## 跨域 ★★★
 
     图片`ping, JSONP, CORS`。
+    <br>
 
-1. 变量声明提升
+1. ## 变量声明提升
 
-1. 冒泡机制
+1. ## 冒泡机制
 
-1. `attribute` 和 `property`
+1. ## `attribute` 和 `property`
 
-1. ★★★`document load` 和 `document DOMContentLoaded`
+1. ## `document load` 和 `document DOMContentLoaded` ★★★
 
-1. `==` 和 `===` 有什么不同
+1. ## `==` 和 `===` 有什么不同
 
-1. 同源策略 (`same-origin policy`)
+1. ## 同源策略 (`same-origin policy`)
+
     `Cookie，iframe，AJAX` 同源
+    <br>
 
-1. `strict` 模式
+1. ## `strict` 模式
 
-1. 为何通常会认为保留网站现有的全局作用域 (`global scope`) 不去改变它，是较好的选择
+1. ## 为何通常会认为保留网站现有的全局作用域 (`global scope`) 不去改变它，是较好的选择
 
-1. 为何你会使用 `load` 之类的事件 (`event`)？此事件有缺点吗？你是否知道其他替代品，以及为何使用它们？
+1. ## 为何你会使用 `load` 之类的事件 (`event`)？此事件有缺点吗？你是否知道其他替代品，以及为何使用它们？
 
-1. ★★请解释什么是单页应用 (`single page app`), 以及如何使其对搜索引擎友好 (`SEO-friendly`)
+1. ## 请解释什么是单页应用 (`single page app`), 以及如何使其对搜索引擎友好 (`SEO-friendly`) ★★
 
-1. `Promise`
+1. ## `Promise`
+
     怎么用？源码如何实现的？
     推荐文章：[xieranmaya/blog#3](https://github.com/xieranmaya/blog/issues/3)
+    <br>
 
-1. 使用一种可以编译成 JavaScript 的语言来写 JavaScript 代码有哪些优缺点？
+1. ## 使用一种可以编译成 `JavaScript` 的语言来写 `JavaScript` 代码有哪些优缺点？
 
-1. JavaScript 调试工具
+1. ## `JavaScript` 调试工具
 
-1. 对象遍历 和 数组遍历
+1. ## 对象遍历 和 数组遍历
 
-1. 可变对象和不可变对象
+1. ## 可变对象和不可变对象
 
-1. ★★★什么是事件循环 (`event loop`)
+1. ## 什么是事件循环 (`event loop`) ★★★
+
     深入原理，宏任务，微任务等等
+    <br>
 
-1. `let var const`
+1. ## `let var const`
 
-1. 数组的方法
+1. ## 数组的方法
 
-1. `web worker`
+1. ## `web worker`
 
-1. 柯里化
+1. ## 柯里化
 
-1. 创建对象的三种方法
+1. ## 创建对象的三种方法
 
-1. 深拷贝和浅拷贝
+1. ## 深拷贝和浅拷贝
+
     可以实现手写深拷贝
+    <br>
 
-1. 图片懒加载
-    咋实现的？
+1. ## 图片懒加载
 
-1. 网页各种高度
+1. ## 网页各种高度
 
-1. 实现页面加载进度条
+1. ## 实现页面加载进度条
 
-1. 箭头函数 ES5 如何实现
+1. ## 箭头函数 `ES5` 如何实现
+
     箭头函数和普通函数的区别
-1. `Object.create` 做了什么？
+    <br>
+
+1. ## `Object.create` 做了什么？
 
     ```javascript
     const person = {
@@ -468,11 +486,14 @@
     }
     ```
 
-1. 不能使用 `__proto__` 与 `[[Prototype]]`，如何访问原型(父类)属性？
+    <br>
+
+1. ## 不能使用 `__proto__` 与 `[[Prototype]]`，如何访问原型(父类)属性？
 
     可以通过 `Object.getPrototypeOf()` 和 `Object.setPrototypeOf()` 访问器来访问
+    <br>
 
-1. 实现继承的方法(使用不同的方法来创建对象和生成原型链)
+1. ## 实现继承的方法(使用不同的方法来创建对象和生成原型链)
 
     [参考文章](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Inheritance_and_the_prototype_chain#%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%8C%E7%9A%84%E6%96%B9%E6%B3%95%E6%9D%A5%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E5%92%8C%E7%94%9F%E6%88%90%E5%8E%9F%E5%9E%8B%E9%93%BE)
     - 使用语法结构创建的对象
@@ -570,7 +591,10 @@
       var square = new Square(2);
       ```
 
-1. 列举原型链上属性的方法
+      <br>
+
+1. ## 列举原型链上属性的方法
+
     **注意：检查属性是否为 `undefined` 是不能够检查其是否存在的。该属性可能已存在，但其值恰好被设置成了 `undefined`。**
     - `Object.prototype.hasOwnProperty()`: 返回一个布尔值，指示对象自身属性中是否具有指定的属性（键）。**不会遍历原型链，只查询自身**
     `object1.hasOwnProperty('toString');`
@@ -578,15 +602,24 @@
     `console.log(Object.keys(arr));`
     - `Object.getOwnPropertyNames()`: 返回一个由指定对象的**所有自身属性**的属性名（包括不可枚举属性但不包括 `Symbol` 值作为名称的属性）组成的**字符串数组**
     `console.log(Object.getOwnPropertyNames(arr));`
+    <br>
 
-1. ℹ️`clearInterval(timer)` 和 `timer = null` 的区别？
-1. ℹ️`for...of` 和 `for...in` 的区别？
+1. ## ℹ️`clearInterval(timer)` 和 `timer = null` 的区别？
+
+1. ## ℹ️`for...of` 和 `for...in` 的区别？
+
     <https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/for...of#for...of%E4%B8%8Efor...in%E7%9A%84%E5%8C%BA%E5%88%AB>
-1. ℹ️`hasOwnProperty` 与 `hasAttributes` 的区别？
-1. ℹ️`Object.freeze()` 和 `Object.seal()` 的区别？
-1. ℹ️`Proxy` 与 `Reflect` 的区别？
-1. `MessageChannel` 和 `MutationObserver`
-1. 递归 `setTimeout()` 和 `setInterval()` 有何不同？
+    <br>
+
+1. ## ℹ️`hasOwnProperty` 与 `hasAttributes` 的区别？
+
+1. ## ℹ️`Object.freeze()` 和 `Object.seal()` 的区别？
+
+1. ## ℹ️`Proxy` 与 `Reflect` 的区别？
+
+1. ## `MessageChannel` 和 `MutationObserver`
+
+1. ## 递归 `setTimeout()` 和 `setInterval()` 有何不同？
 
     ```javascript
     let i = 1;
@@ -609,14 +642,39 @@
    <br>
 
     当你的代码有可能比你分配的时间间隔，花费更长时间运行时，最好使用递归的 `setTimeout()` - 这将使执行之间的时间间隔保持不变，无论代码执行多长时间，你不会得到错误。
+    <br>
 
-1. s
-1. s
-1. s
-1. s
-1. s
-1. s
-1. s
+1. ## `i++` 与 `++i` 的区别？
+
+    区别：
+    - `i++` 返回原来的值，`++i` 返回加 1 后的值。
+    - `i++` 不能作为左值，而 `++i` 可以。
+    <br>
+
+    什么是左值？
+    左值是对应内存中有确定存储地址的对象的表达式的值，而右值是所有不是左值的表达式的值。
+    一般来说，左值是可以放到赋值符号左边的变量。
+    但能否被赋值不是区分左值与右值的依据。比如，C++的const左值是不可赋值的；而作为临时对象的右值可能允许被赋值。左值与右值的根本区别在于是否允许取地址&运算符获得对应的内存地址。比如，int i = 0;
+    int *p1 = &(++i); //正确
+    int *p2 = &(i++); //错误
+
+    ++i = 1; //正确
+    i++ = 5; //错误
+    那么为什么『i++ 不能作为左值，而++i 可以』？看它们各自的实现就一目了然了：以下代码来自博客：为什么(i++)不能做左值，而(++i)可以// 前缀形式：
+    int& int::operator++() //这里返回的是一个引用形式，就是说函数返回值也可以作为一个左值使用
+    {//函数本身无参，意味着是在自身空间内增加1的
+      *this += 1;  // 增加
+      return *this;  // 取回值
+    }
+
+    //后缀形式:
+    const int int::operator++(int) //函数返回值是一个非左值型的，与前缀形式的差别所在。
+    {//函数带参，说明有另外的空间开辟
+      int oldValue = *this;  // 取回值
+      ++(*this);  // 增加
+      return oldValue;  // 返回被取回的值
+    }
+    如上所示，i++ 最后返回的是一个临时变量，而临时变量是右值。
 
 ****
 ℹ️：未完成

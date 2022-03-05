@@ -1,5 +1,12 @@
 # 每日一手写
 
+****
+ℹ️：未完成
+★：常考
+★★：重点掌握
+★★★：高频，必背
+****
+
 1. ## `JavaScript` 基本数据类型
 
     ```js
@@ -921,6 +928,370 @@
 
     <br>
 
+1. ## 用 `setTimeout` 实现 `setInterval`
+
+    ```js
+    // var timer = mySetInterval(fn, 1000), 在运行一次 timer() 清除
+    function mySetInterval(fn, time = 1000) {
+      let timer = null, isClear = false
+      function interval() {
+        if (isClear) {
+          isClear = false
+          clearTimeout(timer)
+          return
+        }
+        fn()
+        timer = setTimeout(interval, time)
+      }
+      timer = setTimeout(interval, time)
+      return () => { isClear = true }
+    }
+    ```
+
+    <br>
+
+1. ## 将虚拟 `DOM` 转化为真实 `DOM`
+
+    ```js
+    // 虚拟 DOM 结构
+    {
+      tag: 'DIV',
+      attrs: {
+        id:'app'
+      },
+      children: [
+        {
+          tag: 'SPAN',
+          children: [
+            { tag: 'A', children: [] }
+          ]
+        },
+        {
+          tag: 'SPAN',
+          children: [
+            { tag: 'A', children: [] },
+            { tag: 'A', children: [] }
+          ]
+        }
+      ]
+    }
+    ```
+
+    ```html
+    <!-- 需实现的 DOM 结构 -->
+    <div id="app">
+      <span>
+        <a></a>
+      </span>
+      <span>
+        <a></a>
+        <a></a>
+      </span>
+    </div>
+    ```
+
+    ```js
+    // 真正的渲染函数
+    function render(vnode) {
+      // 如果是数字类型转化为字符串
+      if (typeof vnode === "number") vnode = String(vnode)
+      // 字符串类型直接就是文本节点
+      if (typeof vnode === "string") return document.createTextNode(vnode)
+      // 普通DOM
+      const dom = document.createElement(vnode.tag)
+      if (vnode.attrs) {
+        // 遍历属性
+        Object.keys(vnode.attrs).forEach(key => dom.setAttribute(key, vnode.attrs[key]))
+      }
+      // 子数组进行递归操作 这一步是关键
+      vnode.children.forEach(child => dom.appendChild(render(child)))
+      return dom
+    }
+    ```
+
+    <br>
+
+1. ## 实现一个对象的 `flatten` 方法
+
+    ```js
+    const obj = {
+      a: {
+        b: 1,
+        c: 2,
+        d: { e: 5 }
+      },
+      b: [1, 3, { a: 2, b: 3 }],
+      c: 3
+    }
+
+    flatten(obj)
+    // 扁平化结果返回如下
+    // {
+    //  'a.b': 1,
+    //  'a.c': 2,
+    //  'a.d.e': 5,
+    //  'b[0]': 1,
+    //  'b[1]': 3,
+    //  'b[2].a': 2,
+    //  'b[2].b': 3
+    //   c: 3
+    // }
+
+    // 实现 flatten
+    function isObject(val) {
+      return typeof val === "object" && val !== null
+    }
+
+    function flatten(obj) {
+      if (!isObject(obj)) return
+
+      let res = {}
+      const dfs = (cur, prefix) => {
+        if (isObject(cur)) {
+          if (Array.isArray(cur)) {
+            cur.forEach((item, index) => dfs(item, `${prefix}[${index}]`))
+          } else {
+            for (let k in cur) {
+              dfs(cur[k], `${prefix}${prefix ? "." : ""}${k}`)
+            }
+          }
+        } else {
+          res[prefix] = cur
+        }
+      }
+      dfs(obj, "")
+
+      return res
+    }
+    ```
+
+    <br>
+
+1. ## 判断括号字符串是否有效
+
+    ```js
+    给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
+
+    有效字符串需满足：
+
+        - 左括号必须用相同类型的右括号闭合。
+        - 左括号必须以正确的顺序闭合。
+
+    示例 1：
+
+    输入：s = "()"
+    输出：true
+
+    示例 2：
+
+    输入：s = "()[]{}"
+    输出：true
+
+    示例 3：
+
+    输入：s = "(]"
+    输出：false
+
+
+    const isValid = function (s) {
+      if (s.length % 2 === 1) return false
+
+      const regObj = {
+        "{": "}",
+        "(": ")",
+        "[": "]",
+      }
+      let stack = []
+      for (let i = 0, length = s.length; i < length; i++) {
+        if (s[i] === "{" || s[i] === "(" || s[i] === "[") {
+          stack.push(s[i])
+        } else {
+          if (s[i] !== regObj[stack.pop()]) return false
+        }
+      }
+
+      if (stack.length) return false
+
+      return true
+    }
+    ```
+
+    <br>
+
+1. ## 查找数组公共前缀
+
+    ```js
+    编写一个函数来查找字符串数组中的最长公共前缀。
+    如果不存在公共前缀，返回空字符串 ""。
+
+    示例 1：
+
+    输入：strs = ["flower","flow","flight"]
+    输出："fl"
+
+    示例 2：
+
+    输入：strs = ["dog","racecar","car"]
+    输出：""
+
+
+    function longestCommonPrefix(strs) {
+      if (!strs.length) return ""
+      const str = strs[0]
+      let index = 0
+      while (index < str.length) {
+        const strCur = str.slice(0, index + 1)
+        for (let i = 0, length = strs.length; i < length; i++) {
+          if (!strs[i] || !strs[i].startsWith(strCur)) {
+            return str.slice(0, index)
+          }
+        }
+        index++
+      }
+      return str
+    }
+    ```
+
+    <br>
+
+1. ## 字符串中最长不重复子串
+
+    ```js
+    给定一个字符串 s ，请你找出其中不含有重复字符的 最长子串 的长度。
+
+    示例 1:
+
+    输入: s = "abcabcbb"
+    输出: 3
+    解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
+
+    示例 2:
+
+    输入: s = "bbbbb"
+    输出: 1
+    解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
+
+    示例 3:
+
+    输入: s = "pwwkew"
+    输出: 3
+    解释: 因为无重复字符的最长子串是 "wke"，所以其长度为 3。
+        请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
+
+    示例 4:
+
+    输入: s = ""
+    输出: 0
+
+
+    // 移动窗口
+    function lengthOfLongestSubstring(s) {
+      if (!s.length) return 0
+      let start = end = 0, max = length = 0, hash = {}
+      for (let i = 0, len = s.length; i < len; i++) {
+        if (hash[s[i]] > -1 && s.substring(start, i).indexOf(s[i]) > -1) {
+          start = hash[s[i]] + 1
+          end = i
+          length = end - start + 1
+        } else {
+          end = i
+          length ++
+          max = Math.max(max, length)
+        }
+        hash[s[i]] = i
+      }
+      return max
+    }
+
+    // 动态规划 + 哈希表
+    function lengthOfLongestSubstring(s) {
+      if (!s.length) return 0
+      if (s.length === 1) return 1
+      const hash = {}
+      let res = tmp = 0
+      for (let i = 0, length = s.length; i < length; i++) {
+        const index = hash[s[i]] === undefined ? -1 : hash[s[i]]
+        hash[s[i]] = i
+        tmp = tmp < i - index ? tmp + 1 : i - index
+        res = Math.max(res, tmp)
+      }
+      return res
+    }
+
+    // 动态规划 + 线性遍历
+    function lengthOfLongestSubstring(s) {
+      if (!s.length) return 0
+      if (s.length === 1) return 1
+      let res = tmp = i = 0
+      for (let j = 0, length = s.length; j < length; j++) {
+        i = j - 1
+        while (i >= 0 && s[i] !== s[j]) i = i - 1
+        tmp = tmp < j - i ? tmp + 1 : j - i
+        res = Math.max(res, tmp)
+      }
+      return res
+    }
+
+    // 双指针 + 哈希表
+    function lengthOfLongestSubstring(s) {
+      if (!s.length) return 0
+      if (s.length === 1) return 1
+      const hash = {}
+      let res = 0, i = -1
+      for (let j = 0, length = s.length; j < length; j++) {
+        if (hash[s[j]] !== undefined) i = Math.max(hash[s[j]], i)
+        hash[s[j]] = j
+        res = Math.max(res, j - i)
+      }
+      return res
+    }
+    ```
+
+    <br>
+
+1. ## 数组中未出现的最小正整数
+
+    ```js
+    给你一个未排序的整数数组 nums ，请你找出其中没有出现的最小的正整数。
+    请你实现时间复杂度为 O(n) 并且只使用常数级别额外空间的解决方案。
+
+    示例 1：
+
+    输入：nums = [1,2,0]
+    输出：3
+
+    示例 2：
+
+    输入：nums = [3,4,-1,1]
+    输出：2
+
+    示例 3：
+
+    输入：nums = [7,8,9,11,12]
+    输出：1
+
+    function firstMissingPositive(nums) {
+      for (let i = 0; i < nums.length; i++) {
+        while (
+          nums[i] >= 1 &&
+          nums[i] <= nums.length && // 对 1~nums.length 范围内的元素进行安排
+          nums[nums[i] - 1] !== nums[i] // 已经出现在理想位置的，就不用交换
+        ) {
+          const temp = nums[nums[i] - 1] // 交换
+          nums[nums[i] - 1] = nums[i]
+          nums[i] = temp
+        }
+      }
+      // 现在期待的是 [1,2,3,...]，如果遍历到不是放着该放的元素
+      for (let i = 0; i < nums.length; i++) {
+        if (nums[i] != i + 1) return i + 1
+      }
+      return nums.length + 1 // 发现元素 1~nums.length 占满了数组，一个没缺
+    }
+    ```
+
+    <br>
+
 1. ## 数组去重
 
     ```js
@@ -969,6 +1340,80 @@
         
       }
       return [...map.keys()]
+    }
+    ```
+
+    <br>
+
+1. ## 怎么在指定数据源里面生成一个长度为 `n` 的不重复随机数组？能有几种方法？时间复杂度多少？
+
+    - 时间复杂度为 `O(n^2)`
+
+    ```js
+    function getTenNum(testArray, n) {
+      let result = []
+      for (let i = 0; i < n; ++i) {
+        const random = Math.floor(Math.random() * testArray.length)
+        const cur = testArray[random]
+        if (result.includes(cur)) {
+          i--
+          break
+        }
+        result.push(cur)
+      }
+      return result
+    }
+    const testArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+    const resArr = getTenNum(testArray, 10)
+    ```
+
+    - 标记法 / 自定义属性法：时间复杂度为 `O(n)`
+
+    ```js
+    function getTenNum(testArray, n) {
+      let hash = {}
+      let result = []
+      let ranNum = n
+      while (ranNum > 0) {
+        const ran = Math.floor(Math.random() * testArray.length)
+        if (!hash[ran]) {
+          hash[ran] = true
+          result.push(ran)
+          ranNum--
+        }
+      }
+      return result
+    }
+    ```
+
+    - 交换法：时间复杂度为 `O(n)`
+
+    ```js
+    function getTenNum(testArray, n) {
+      const cloneArr = [...testArray]
+      let result = []
+      for (let i = 0; i < n; i++) {
+        const ran = Math.floor(Math.random() * (cloneArr.length - i))
+        result.push(cloneArr[ran])
+        cloneArr[ran] = cloneArr[cloneArr.length - i - 1]
+      }
+      return result
+    }
+    ```
+
+    - 边遍历边删除：时间复杂度为 `O(n)`
+
+    ```js
+    function getTenNum(testArray, n) {
+      const cloneArr = [...testArray]
+      let result = []
+      for (let i = 0; i < n; ++i) {
+        const random = Math.floor(Math.random() * cloneArr.length)
+        const cur = cloneArr[random]
+        result.push(cur)
+        cloneArr.splice(random, 1)
+      }
+      return result
     }
     ```
 
