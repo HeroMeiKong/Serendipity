@@ -1350,11 +1350,11 @@
     - 时间复杂度为 `O(n^2)`
 
     ```js
-    function getTenNum(testArray, n) {
+    function getTenNum(arr, n) {
       let result = []
-      for (let i = 0; i < n; ++i) {
-        const random = Math.floor(Math.random() * testArray.length)
-        const cur = testArray[random]
+      for (let i = 0; i < n; i++) {
+        const random = Math.floor(Math.random() * arr.length)
+        const cur = arr[random]
         if (result.includes(cur)) {
           i--
           break
@@ -1363,19 +1363,19 @@
       }
       return result
     }
-    const testArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
-    const resArr = getTenNum(testArray, 10)
+    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+    const resArr = getTenNum(arr, 10)
     ```
 
     - 标记法 / 自定义属性法：时间复杂度为 `O(n)`
 
     ```js
-    function getTenNum(testArray, n) {
+    function getTenNum(arr, n) {
       let hash = {}
       let result = []
       let ranNum = n
       while (ranNum > 0) {
-        const ran = Math.floor(Math.random() * testArray.length)
+        const ran = Math.floor(Math.random() * arr.length)
         if (!hash[ran]) {
           hash[ran] = true
           result.push(ran)
@@ -1389,8 +1389,8 @@
     - 交换法：时间复杂度为 `O(n)`
 
     ```js
-    function getTenNum(testArray, n) {
-      const cloneArr = [...testArray]
+    function getTenNum(arr, n) {
+      const cloneArr = [...arr]
       let result = []
       for (let i = 0; i < n; i++) {
         const ran = Math.floor(Math.random() * (cloneArr.length - i))
@@ -1404,10 +1404,10 @@
     - 边遍历边删除：时间复杂度为 `O(n)`
 
     ```js
-    function getTenNum(testArray, n) {
-      const cloneArr = [...testArray]
+    function getTenNum(arr, n) {
+      const cloneArr = [...arr]
       let result = []
-      for (let i = 0; i < n; ++i) {
+      for (let i = 0; i < n; i++) {
         const random = Math.floor(Math.random() * cloneArr.length)
         const cur = cloneArr[random]
         result.push(cur)
