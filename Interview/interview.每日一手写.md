@@ -72,34 +72,34 @@
     `bind` 方法创建一个新的函数，在 `bind()` 被调用时，这个新函数的 `this` 被指定为 `bind()` 的第一个参数，而其余参数将作为新函数的参数
 
     ```js
-    //bind实现要复杂一点  因为他考虑的情况比较多 还要涉及到参数合并(类似函数柯里化)
     Function.prototype.bind = function (context, ...args) {
-      if (!context || context === null) {
-        context = window
-      }
-      // 创造唯一的key值  作为我们构造的context内部方法名
+      context = context || window
       let fn = Symbol()
       context[fn] = this
       let _this = this
-      //  bind情况要复杂一点
       const result = function (...innerArgs) {
-        // 第一种情况 :若是将 bind 绑定之后的函数当作构造函数，通过 new 操作符使用，则不绑定传入的 this，而是将 this 指向实例化出来的对象
-        // 此时由于new操作符作用  this指向result实例对象  而result又继承自传入的_this 根据原型链知识可得出以下结论
-        // this.__proto__ === result.prototype   //this instanceof result =>true
-        // this.__proto__.__proto__ === result.prototype.__proto__ === _this.prototype; //this instanceof _this =>true
+        // 第一种情况：若是将 bind 绑定之后的函数当作构造函数，通过 new 操作符使用，则不绑定传入的 this，
+        // 而是将 this 指向实例化出来的对象，此时由于 new 操作符作用 this 指向 result 实例对象，
+        // 而 result 又继承自传入的 _this 根据原型链知识可得出以下结论
+
+        // 1. this instanceof result => true
+        // this.__proto__ === result.prototype
+
+        // 2. this instanceof _this => true
+        // this.__proto__.__proto__ === result.prototype.__proto__ === _this.prototype
         if (this instanceof _this === true) {
-          // 此时this指向指向result的实例  这时候不需要改变this指向
+          // 此时 this 指向指向 result 的实例，这时候不需要改变 this 指向
           this[fn] = _this
-          this[fn](...[...args, ...innerArgs]) //这里使用es6的方法让bind支持参数合并
+          this[fn](...[...args, ...innerArgs]) // 这里使用 es6 的方法让 bind 支持参数合并
           delete this[fn]
         } else {
-          // 如果只是作为普通函数调用  那就很简单了 直接改变this指向为传入的context
+          // 如果只是作为普通函数调用，直接改变 this 指向为传入的 context
           context[fn](...[...args, ...innerArgs])
           delete context[fn]
         }
       };
       // 如果绑定的是构造函数 那么需要继承构造函数原型属性和方法
-      // 实现继承的方式: 使用Object.create
+      // 实现继承的方式: 使用 Object.create
       result.prototype = Object.create(this.prototype)
       return result
     }
@@ -612,7 +612,8 @@
           const keys = Reflect.ownKeys(data)
           // 利用 Object 的 getOwnPropertyDescriptors 方法可以获取对象的所有属性以及对应的属性描述
           const allDesc = Object.getOwnPropertyDescriptors(data)
-          // 结合 Object 的 create 方法创建一个新对象，并继承传入原对象的原型链，的到的 result 是对 data 的浅拷贝
+          // 结合 Object 的 create 方法创建一个新对象，并继承传入原对象的原型链，的到的 result 是对 data
+          // 的浅拷贝
           const result = Object.create(Object.getPrototypeOf(data), allDesc)
 
           // 新对象加入 map 中，进行记录
