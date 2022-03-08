@@ -58,8 +58,7 @@
       context = context || window  // context 如果是 null，则指向 window
       var fn = Symbol()
       context[fn] = this
-      var result
-      args ? (result = context[fn](...args)) : (result = context[fn]())
+      var result = args ? context[fn](...args) : context[fn]()
       delete context[fn]
       return result
     }
@@ -87,10 +86,10 @@
 
         // 2. this instanceof _this => true
         // this.__proto__.__proto__ === result.prototype.__proto__ === _this.prototype
-        if (this instanceof _this === true) {
+        if (this instanceof _this) {
           // 此时 this 指向指向 result 的实例，这时候不需要改变 this 指向
           this[fn] = _this
-          this[fn](...[...args, ...innerArgs]) // 这里使用 es6 的方法让 bind 支持参数合并
+          this[fn](...[...args, ...innerArgs]) // 使用 es6 的方法让 bind 支持参数合并
           delete this[fn]
         } else {
           // 如果只是作为普通函数调用，直接改变 this 指向为传入的 context
@@ -439,9 +438,7 @@
             const callNow = !timerId
             timerId = setTimeout(() => timerId = null, delay)
 
-            if (callNow) {
-              fn.apply(context, args)
-            }
+            if (callNow) fn.apply(context, args)
           } else {
             timerId = setTimeout(() => fn.apply(context, args), delay)
           }
@@ -459,7 +456,7 @@
     // 时间戳版
     function throttle(fn, delay) {
       var prev = Date.now()
-      return function() {
+      return function () {
         var context = this
         var args = arguments
         var now = Date.now()
@@ -494,8 +491,7 @@
     // Array || Object
     function copy(obj) {
       if (typeof obj !== "object" || obj === null) return obj
-      let newObj
-      obj.constructor === Array ? newObj = [] : newObj = {}
+      let newObj = obj.constructor === Array ? [] : {}
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
           newObj[key] = obj[key]
@@ -560,7 +556,7 @@
         
         // 是否为 Object 类型
         function isObject(target) {
-          return (typeof target === 'object' && target ) || typeof target === 'function'
+          return (typeof target === 'object' && target) || typeof target === 'function'
         }
 
         function clone(data) {
@@ -656,7 +652,7 @@
     // 如果 multipart 属性为 true 则这个必须为 true，否则将引发异常。
     xhr.open("get", "./a.php")
     xhr.send(null)
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
           alert(xhr.responseText)
@@ -1433,7 +1429,7 @@
       fn(subject)
       if ("object" === typeof subject) {
         _refs.add(subject)
-        for(let key in subject)
+        for (let key in subject)
           execRecursively(fn, subject[key], _refs)
       }
     }
