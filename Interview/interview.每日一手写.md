@@ -113,11 +113,12 @@
       // 1.创建一个空对象，并将对象的 __proto__ 指向构造函数的 prototype 这里我两步一起做了
       // var obj = new Object() | Object.create(null)
       // obj.__proto__ = fn.prototype
-      
       const obj = Object.create(fn.prototype)
+
       // 2.将构造函数中的 this 指向 obj，执行构造函数代码，获取返回值
       // const res = fn.call(obj, ...args)
       const res = fn.apply(obj, args)
+
       // 3.判断返回值类型
       // return res && (typeof res === "object" || typeof res === "function") ? res : obj
       return res instanceof Object ? res : obj
