@@ -897,22 +897,22 @@
         this.events = {}
       }
       // 实现订阅
-      on(type, callBack) {
+      on(type, callback) {
         if (!this.events[type]) {
-          this.events[type] = [callBack]
+          this.events[type] = [callback]
         } else {
-          this.events[type].push(callBack)
+          this.events[type].push(callback)
         }
       }
       // 删除订阅
-      off(type, callBack) {
+      off(type, callback) {
         if (!this.events[type]) return
-        this.events[type] = this.events[type].filter(item => item !== callBack)
+        this.events[type] = this.events[type].filter(item => item !== callback)
       }
       // 只执行一次订阅事件
-      once(type, callBack) {
+      once(type, callback) {
         function fn() {
-          callBack()
+          callback()
           this.off(type, fn)
         }
         this.on(type, fn)
@@ -1339,6 +1339,52 @@
       }
       return [...map.keys()]
     }
+    ```
+
+    <br>
+
+1. ## 手写功能型函数管道 `pipe`
+
+    ```js
+    // Building-blocks to use for composition
+    const double = x => x + x
+    const triple = x => 3 * x
+    const quadruple = x => 4 * x
+
+    // Function composition enabling pipe functionality
+    const pipe = (...functions) => input => functions.reduce(
+      (acc, fn) => fn(acc),
+      input
+    )
+
+    // Composed functions for multiplication of specific values
+    const multiply6 = pipe(double, triple)
+    const multiply9 = pipe(triple, triple)
+    const multiply16 = pipe(quadruple, quadruple)
+    const multiply24 = pipe(double, triple, quadruple)
+
+    // Usage
+    multiply6(6) // 36
+    multiply9(9) // 81
+    multiply16(16) // 256
+    multiply24(10) // 240
+    ```
+
+    <br>
+
+1. ## 使用 `reduce` 实现 `map`
+
+    ```js
+    Array.prototype.mapUsingReduce = function (callback, thisArg) {
+      return this.reduce(function (mappedArray, currentValue, index, array) {
+        mappedArray[index] = callback.call(thisArg, currentValue, index, array)
+        return mappedArray
+      }, [])
+    }
+
+    [1, 2, , 3].mapUsingReduce(
+      (currentValue, index, array) => currentValue + index + array.length
+    ) // [5, 7, , 10]
     ```
 
     <br>
