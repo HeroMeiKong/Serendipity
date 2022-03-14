@@ -1092,7 +1092,7 @@
 
 
     const isValid = function (s) {
-      if (s.length % 2 === 1) return false
+      if (s.length % 2) return false
 
       const regObj = {
         "{": "}",
@@ -1216,20 +1216,6 @@
       return res
     }
 
-    // 动态规划 + 线性遍历
-    function lengthOfLongestSubstring(s) {
-      if (!s.length) return 0
-      if (s.length === 1) return 1
-      let res = tmp = i = 0
-      for (let j = 0, length = s.length; j < length; j++) {
-        i = j - 1
-        while (i >= 0 && s[i] !== s[j]) i = i - 1
-        tmp = tmp < j - i ? tmp + 1 : j - i
-        res = Math.max(res, tmp)
-      }
-      return res
-    }
-
     // 双指针 + 哈希表
     function lengthOfLongestSubstring(s) {
       if (!s.length) return 0
@@ -1240,6 +1226,20 @@
         if (hash[s[j]] !== undefined) i = Math.max(hash[s[j]], i)
         hash[s[j]] = j
         res = Math.max(res, j - i)
+      }
+      return res
+    }
+
+    // 动态规划 + 线性遍历
+    function lengthOfLongestSubstring(s) {
+      if (!s.length) return 0
+      if (s.length === 1) return 1
+      let res = tmp = i = 0
+      for (let j = 0, length = s.length; j < length; j++) {
+        i = j - 1
+        while (i >= 0 && s[i] !== s[j]) i = i - 1
+        tmp = tmp < j - i ? tmp + 1 : j - i
+        res = Math.max(res, tmp)
       }
       return res
     }
@@ -1282,7 +1282,7 @@
       }
       // 现在期待的是 [1,2,3,...]，如果遍历到不是放着该放的元素
       for (let i = 0; i < nums.length; i++) {
-        if (nums[i] != i + 1) return i + 1
+        if (nums[i] !== i + 1) return i + 1
       }
       return nums.length + 1 // 发现元素 1~nums.length 占满了数组，一个没缺
     }
@@ -1329,7 +1329,7 @@
 
 
     // 使用 Map
-    var uniq = function (arr) {
+    function uniq(arr) {
       var map = new Map()
       for (let i = 0, length = arr.length; i < length; i++) {
         const number = arr[i]
