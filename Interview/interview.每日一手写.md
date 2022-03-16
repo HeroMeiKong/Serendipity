@@ -1498,17 +1498,107 @@
 
     ```ts
     // Partial 实现原理
-    type Partial<T> = { [P in keyof T]?: T[P] };
+    // 将 T 的所有属性设置为可选类型，构造一个新类型（与 Required 相反）
+    // type Partial<T> = { [P in keyof T]?: T[P] };
+    type Partial<Type> = { [Prototype in keyof Type]?: Type[Prototype] };
+
+    interface Todo {
+      title: string;
+      description: string;
+    }
+    
+    function updateTodo(todo: Todo, fieldsToUpdate: Partial<Todo>) {
+      return { ...todo, ...fieldsToUpdate };
+    }
+    
+    const todo1 = {
+      title: "organize desk",
+      description: "clear clutter",
+    };
+    
+    const todo2 = updateTodo(todo1, {
+      description: "throw out trash",
+    });
+
 
     // Required 实现原理
-    type Required<T> = { [P in keyof T]-?: T[P] };
+    // 将 T 的所有属性设置为必选类型，构造一个新类型（与 Partial 相反）
+    // type Required<T> = { [P in keyof T]-?: T[P] };
+    type Required<Type> = { [Prototype in keyof Type]-?: Type[Prototype] };
+
+    interface Props {
+      a?: number;
+      b?: string;
+    }
+    
+    const obj: Props = { a: 5 };
+    
+    const obj2: Required<Props> = { a: 5 };
+    // Property 'b' is missing in type '{ a: number; }' but required in type 'Required<Props>'.
+
 
     // Pick 实现原理
-    type Pick<T, K extends keyof T> = { [P in K]: T[P] };
+    // 从 T 的选取一组属性，构造一个新类型
+    // type Pick<T, K extends keyof T> = { [P in K]: T[P] };
+    type Pick<Type, Keys extends keyof Type> = { [Prototype in Keys]: Type[Prototype] };
+
+    interface Todo {
+      title: string;
+      description: string;
+      completed: boolean;
+    }
+    
+    type TodoPreview = Pick<Todo, "title" | "completed">;
+    
+    const todo: TodoPreview = {
+      title: "Clean room",
+      completed: false,
+    };
+
 
     // Exclude 实现原理
-    type Exclude<T, U> = T extends U ? never : T;
+    // 通过从 UnionType 中排除所有可分配给 ExcludedMembers 的联盟成员来构造类型。
+    // type Exclude<T, U> = T extends U ? never : T;
+    type Exclude<Type, Union> = Type extends Union ? never : Type;
+
+    type T0 = Exclude<"a" | "b" | "c", "a">;
+    // type T0 = "b" | "c"
+
+    type T1 = Exclude<"a" | "b" | "c", "a" | "b">; 
+    // type T1 = "c"
+
+    type T2 = Exclude<string | number | (() => void), Function>;
+    // type T2 = string | number
+
 
     // Omit 实现原理
-    type Omit = Pick<T, Exclude<keyof T, K>>
+    // 通过从 Type 中选取所有属性，然后删除 Keys 来构造类型。
+    // type Omit = Pick<T, Exclude<keyof T, K>>
+    type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
+
+    interface Todo {
+      title: string;
+      description: string;
+      completed: boolean;
+      createdAt: number;
+    }
+    
+    type TodoPreview = Omit<Todo, "description">;
+    
+    const todo: TodoPreview = {
+      title: "Clean room",
+      completed: false,
+      createdAt: 1615544252770,
+    };
+    
+    todo;
+    
+    const todo: TodoPreview
+    
+    type TodoInfo = Omit<Todo, "completed" | "createdAt">;
+    
+    const todoInfo: TodoInfo = {
+      title: "Pick up kids",
+      description: "Kindergarten closes at 5pm",
+    };
     ```
