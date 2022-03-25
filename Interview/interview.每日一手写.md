@@ -28,7 +28,9 @@
       let p = A
       while (p) {
         if (p === B.prototype) return true
-        p = p.__proto__
+        // p.__proto__ === Object.getPrototypeOf(p)
+        // p = p.__proto__           // 不推荐
+        p = Object.getPrototypeOf(p) // 推荐
       }
       return false
     }
