@@ -1441,7 +1441,7 @@
         const ran = Math.floor(Math.random() * arr.length)
         if (!hash[ran]) {
           hash[ran] = true
-          result.push(ran)
+          result.push(arr[ran])
           ranNum--
         }
       }
