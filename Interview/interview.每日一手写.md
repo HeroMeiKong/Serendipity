@@ -110,6 +110,13 @@
 
 1. ## `new` 实现原理
 
+    `new` 关键字会进行如下的操作：
+
+    1. 创建一个空的简单 `JavaScript` 对象（即 `{}`）；
+    2. 为步骤1新创建的对象添加属性 `__proto__`，将该属性链接至构造函数的原型对象；
+    3. 将步骤1新创建的对象作为 `this` 的上下文 ；
+    4. 如果该函数没有返回对象，则返回 `this`。
+
     ```js
     function myNew(fn, ...args) {
       // 1.创建一个空对象，并将对象的 __proto__ 指向构造函数的 prototype 这里我两步一起做了
@@ -124,6 +131,8 @@
       // 3.判断返回值类型
       // return res && (typeof res === "object" || typeof res === "function") ? res : obj
       return res instanceof Object ? res : obj
+      // typeof null === 'object' // true
+      // null instanceof Object   // false
     }
     ```
 
