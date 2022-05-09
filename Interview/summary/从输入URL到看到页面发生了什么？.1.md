@@ -24,7 +24,7 @@
     <br>
 
     `DNS` 解析其实是一个递归的过程
-    ![DNS域名解析过程](../../images/Interview/summary/1-0.awebp)
+    ![DNS域名解析过程](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/Interview/summary/1-0.awebp)
 
     输入 `www.google.com` 网址后，首先在本地的域名服务器中查找，没找到去根域名服务器查找，没有再去 `com` 顶级域名服务器查找，如此的类推下去，直到找到 `IP` 地址，然后把它记录在本地，供下次使用。大致过程就是 `. -> .com -> google.com. -> www.google.com.`。 (你可能觉得我多写 `.`，并木有，这个 `.` 对应的就是根域名服务器，默认情况下所有的网址的最后一位都是 `.`，既然是默认情况下，为了方便用户，通常都会省略，浏览器在请求 `DNS` 的时候会自动加上)
     <br>
@@ -54,7 +54,7 @@
 2. ### 发起TCP连接
 
     `TCP` 提供一种可靠的传输，这个过程涉及到三次握手，四次挥手，下面我们详细看看`TCP` 提供一种面向连接的，可靠的字节流服务。其首部的数据格式如下
-    ![TCP首部数据格式](../../images/Interview/summary/1-1.awebp)
+    ![TCP首部数据格式](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/Interview/summary/1-1.awebp)
 
     **字段分析**
 
@@ -112,7 +112,7 @@
     <br>
 
       握手过程中传送的包里不包含数据，三次握手完毕后，客户端与服务器才正式开始传送数据。理想状态下，`TCP` 连接一旦建立，在通信双方中的任何一方主动关闭连接之前，`TCP` 连接都将被一直保持下去。
-      ![TCP三次握手](../../images/Interview/summary/1-2.awebp)
+      ![TCP三次握手](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/Interview/summary/1-2.awebp)
       <br>
 
     **为什么会采用三次握手，若采用二次握手可以吗？ 四次呢？**
@@ -132,7 +132,7 @@
     <br>
 
     数据传输完毕后，双方都可释放连接。最开始的时候，客户端和服务器都是处于 `ESTABLISHED` 状态，假设客户端主动关闭，服务器被动关闭。
-    ![TCP四次挥手](../../images/Interview/summary/1-3.awebp)
+    ![TCP四次挥手](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/Interview/summary/1-3.awebp)
     <br>
 
     - 第一次挥手：客户端发送一个 `FIN`，用来关闭客户端到服务器的数据传送，也就是客户端告诉服务器：我已经不会再给你发数据了(当然，在 `fin` 包之前发送出去的数据，如果没有收到对应的 `ack` 确认报文，客户端依然会重发这些数据)，但是，此时客户端还可以接受数据。`FIN = 1`，其序列号为 `seq = u`（等于前面已经传送过来的数据的最后一个字节的序号加 `1`），此时，客户端进入 `FIN-WAIT-1`（终止等待 `1`）状态。`TCP` 规定，`FIN` 报文段即使不携带数据，也要消耗一个序号。
@@ -202,7 +202,7 @@
     - **请求报头**
 
       请求报头允许客户端向服务器传递请求的附加信息和客户端自身的信息。
-      ![请求头信息](../../images/Interview/summary/1-4.awebp)
+      ![请求头信息](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/Interview/summary/1-4.awebp)
 
       从图中可以看出，请求报头中使用了 `Accept, Accept-Encoding, Accept-Language, Cache-Control, Connection, Cookie` 等字段。`Accept` 用于指定客户端用于接受哪些类型的信息，`Accept-Encoding` 与 `Accept` 类似，它用于指定接受的编码方式。`Connection` 设置为 `Keep-alive` 用于告诉客户端本次 `HTTP` 请求结束之后并不需要关闭 `TCP` 连接，这样可以使下次 `HTTP` 请求使用相同的 `TCP` 通道，节省 `TCP` 连接建立的时间。
       <br>
@@ -228,19 +228,19 @@
 
       - **强制缓存**
       当缓存数据库中有客户端需要的数据，客户端直接将数据从其中拿出来使用（如果数据未失效），当缓存服务器没有需要的数据时，客户端才会向服务端请求。
-      ![强制缓存](../../images/Interview/summary/1-5.awebp)
+      ![强制缓存](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/Interview/summary/1-5.awebp)
       <br>
 
       - **协商缓存**
       又称 **对比缓存**。客户端会先从缓存数据库拿到一个缓存的标识，然后向服务端验证标识是否失效，如果没有失效服务端会返回 `304`，这样客户端可以直接去缓存数据库拿出数据，如果失效，服务端会返回新的数据
-      ![对比缓存](../../images/Interview/summary/1-6.awebp)
+      ![对比缓存](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/Interview/summary/1-6.awebp)
 
       ***强制缓存的优先级高于协商缓存，若两种缓存皆存在，且强制缓存命中目标，则协商缓存不再验证标识。***
       <br>
 
     - **缓存的方案**
       上面的内容让我们大概了解了缓存机制是怎样运行的，但是，服务器是如何判断缓存是否失效呢？我们知道浏览器和服务器进行交互的时候会发送一些请求数据和响应数据，我们称之为 `HTTP` 报文。报文中包含首部 `header` 和主体部分 `body`。与缓存相关的规则信息就包含在 `header` 中。`boby` 中的内容是 `HTTP` 请求真正要传输的部分。举个 `HTTP` 报文 `header` 部分的例子如下：
-      ![响应头](../../images/Interview/summary/1-7.awebp)
+      ![响应头](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/Interview/summary/1-7.awebp)
 
       我们依旧分为强制缓存和协商缓存来分析。
       <br>
@@ -366,7 +366,7 @@
 
 5. ### 浏览器解析渲染页面
 
-    ![webkit解析渲染页面过程](../../images/Interview/summary/1-8.awebp)
+    ![webkit解析渲染页面过程](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/Interview/summary/1-8.awebp)
     这个图就是 `webkit` 解析渲染页面的过程。
 
     - 解析 `HTML` 形成 `DOM` 树

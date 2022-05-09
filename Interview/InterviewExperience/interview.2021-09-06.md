@@ -369,7 +369,7 @@
 
 1. ### `Vue diff` 原理
 
-    ![diff 算法图解](../../images/Interview/InterviewExperience/2021-09-06/diff算法.awebp)
+    ![diff 算法图解](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/Interview/InterviewExperience/2021-09-06/diff算法.awebp)
     [diff 算法详解](https://juejin.cn/post/6953433215218483236)
     <br>
 
@@ -652,10 +652,10 @@
 1. ### `require` 具体实现原理是什么？
 
     `require` 基本原理
-    ![require基本原理](../../images/Interview/InterviewExperience/2021-09-06/require基本原理.awebp)
+    ![require基本原理](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/Interview/InterviewExperience/2021-09-06/require基本原理.awebp)
 
     `require` 查找路径
-    ![require查找路径](../../images/Interview/InterviewExperience/2021-09-06/require查找路径.awebp)
+    ![require查找路径](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/Interview/InterviewExperience/2021-09-06/require查找路径.awebp)
 
     `require` 和 `module.exports` 干的事情并不复杂，我们先假设有一个全局对象 `{}`，初始情况下是空的，当你 `require` 某个文件时，就将这个文件拿出来执行，如果这个文件里面存在 `module.exports`，当运行到这行代码时将 `module.exports` 的值加入这个对象，键为对应的文件名，最终这个对象就长这样：
 

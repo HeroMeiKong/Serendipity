@@ -379,7 +379,7 @@
 
       如果只执行一次构建，以上阶段将会按照顺序各执行一次。但在开启监听模式下，流程将变为如下：
 
-      ![5-1监听模式的构建流程](../images/Interview/实现原理/5-1监听模式的构建流程.png)
+      ![5-1监听模式的构建流程](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/Interview/实现原理/5-1监听模式的构建流程.png)
 
       在每个大阶段中又会发生很多事件，`Webpack` 会把这些事件广播出来供给 `Plugin` 使用，下面来一一介绍。
       <br>

@@ -93,7 +93,7 @@
 
     `webpack` 的热更新又称热替换(`Hot Module Replacement`)，缩写为 `HMR`。 这个机制可以做到不用刷新浏览器而将新变更的模块替换掉旧的模块。
 
-    原理：![HMR](../images/webpack/HMR.png "图片来自饿了么前端")
+    原理：![HMR](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/webpack/HMR.png "图片来自饿了么前端")
 
     首先要知道 `server` 端和 `client` 端都做了处理工作
 
