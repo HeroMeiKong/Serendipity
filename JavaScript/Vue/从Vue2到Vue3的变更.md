@@ -329,6 +329,396 @@
 
 1. #### 生命周期钩子
 
+    选项式 API | Hook inside setup
+    -|-
+    beforeCreate | Not needed*
+    created | Not needed*
+    beforeMount | onBeforeMount
+    mounted | onMounted
+    beforeUpdate | onBeforeUpdate
+    updated | onUpdated
+    beforeUnmount | onBeforeUnmount
+    unmounted | onUnmounted
+    errorCaptured | onErrorCaptured
+    renderTracked | onRenderTracked
+    renderTriggered | onRenderTriggered
+    activated | onActivated
+    deactivated | onDeactivated
+
+    **因为 `setup` 是围绕 `beforeCreate` 和 `created` 生命周期钩子运行的，所以不需要显式地定义它们。换句话说，在这些钩子中编写的任何代码都应该直接在 `setup` 函数中编写。**
+
+    ```js
+    export default {
+      setup() {
+        // mounted
+        onMounted(() => {
+          console.log('Component is mounted!')
+        })
+      }
+    }
+    ```
+
+1. #### Provide / Inject
+
+    - eg:
+
+      ```js
+      <!-- src/components/MyMap.vue -->
+      <template>
+        <MyMarker />
+      </template>
+
+      <script>
+      import MyMarker from './MyMarker.vue'
+
+      export default {
+        components: {
+          MyMarker
+        },
+        provide: {
+          location: 'North Pole',
+          geolocation: {
+            longitude: 90,
+            latitude: 135
+          }
+        }
+      }
+      </script>
+
+      <!-- src/components/MyMarker.vue -->
+      <script>
+      export default {
+        inject: ['location', 'geolocation']
+      }
+      </script>
+      ```
+
+      <br>
+
+    - 使用 `provide`：`provide(name<String>, value)`
+
+      ```js
+      <!-- src/components/MyMap.vue -->
+      <template>
+        <MyMarker />
+      </template>
+
+      <script>
+      import { provide } from 'vue'
+      import MyMarker from './MyMarker.vue'
+
+      export default {
+        components: {
+          MyMarker
+        },
+        setup() {
+          provide('location', 'North Pole')
+          provide('geolocation', {
+            longitude: 90,
+            latitude: 135
+          })
+        }
+      }
+      </script>
+      ```
+
+      <br>
+
+    - 使用 `inject`：`inject(name[, default_value])`
+
+      ```js
+      <!-- src/components/MyMarker.vue -->
+      <script>
+      import { inject } from 'vue'
+
+      export default {
+        setup() {
+          const userLocation = inject('location', 'The Universe')
+          const userGeolocation = inject('geolocation')
+
+          return {
+            userLocation,
+            userGeolocation
+          }
+        }
+      }
+      </script>
+      ```
+
+      <br>
+
+    - 响应性
+    **当使用响应式 `provide / inject` 值时，建议尽可能将对响应式 `property` 的所有修改限制在定义 `provide` 的组件内部。** 当这两个 `property` 中有任何更改，`MyMarker` 组件也将自动更新！
+
+      ```js
+      <!-- src/components/MyMap.vue -->
+      <template>
+        <MyMarker />
+      </template>
+
+      <script>
+      import { provide, reactive, ref } from 'vue'
+      import MyMarker from './MyMarker.vue'
+
+      export default {
+        components: {
+          MyMarker
+        },
+        setup() {
+          const location = ref('North Pole')
+          const geolocation = reactive({
+            longitude: 90,
+            latitude: 135
+          })
+
+          provide('location', location)
+          provide('geolocation', geolocation)
+
+          return {
+            location
+          }
+        },
+        methods: {
+          updateLocation() {
+            this.location = 'South Pole'
+          }
+        }
+      }
+      </script>
+      ```
+
+      <br>
+
+      有时我们需要在注入数据的组件内部更新 `inject` 的数据。在这种情况下，我们建议 `provide` 一个方法来负责改变响应式 `property`
+
+      ```js
+      <!-- src/components/MyMap.vue -->
+      <template>
+        <MyMarker />
+      </template>
+
+      <script>
+      import { provide, reactive, ref } from 'vue'
+      import MyMarker from './MyMarker.vue'
+
+      export default {
+        components: {
+          MyMarker
+        },
+        setup() {
+          const location = ref('North Pole')
+          const geolocation = reactive({
+            longitude: 90,
+            latitude: 135
+          })
+
+          const updateLocation = () => {
+            location.value = 'South Pole'
+          }
+
+          provide('location', location)
+          provide('geolocation', geolocation)
+          provide('updateLocation', updateLocation)
+        }
+      }
+      </script>
+
+
+      <!-- src/components/MyMarker.vue -->
+      <script>
+      import { inject } from 'vue'
+
+      export default {
+        setup() {
+          const userLocation = inject('location', 'The Universe')
+          const userGeolocation = inject('geolocation')
+          const updateUserLocation = inject('updateLocation')
+
+          return {
+            userLocation,
+            userGeolocation,
+            updateUserLocation
+          }
+        }
+      }
+      </script>
+      ```
+
+      <br>
+
+      如果要确保通过 `provide` 传递的数据不会被 `inject` 的组件更改，我们建议对提供者的 `property` 使用 `readonly`。
+
+      ```js
+      <!-- src/components/MyMap.vue -->
+      <template>
+        <MyMarker />
+      </template>
+
+      <script>
+      import { provide, reactive, readonly, ref } from 'vue'
+      import MyMarker from './MyMarker.vue'
+
+      export default {
+        components: {
+          MyMarker
+        },
+        setup() {
+          const location = ref('North Pole')
+          const geolocation = reactive({
+            longitude: 90,
+            latitude: 135
+          })
+
+          const updateLocation = () => {
+            location.value = 'South Pole'
+          }
+
+          provide('location', readonly(location))
+          provide('geolocation', readonly(geolocation))
+          provide('updateLocation', updateLocation)
+        }
+      }
+      </script>
+      ```
+
+1. #### 模板引用
+
+    这里我们在渲染上下文中暴露 `root`，并通过 `ref="root"`，将其绑定到 `div` 作为其 `ref`。在虚拟 `DOM` 补丁算法中，如果 `VNode` 的 `ref` 键对应于渲染上下文中的 `ref`，则 `VNode` 的相应元素或组件实例将被分配给该 `ref` 的值。这是在虚拟 `DOM` 挂载/打补丁过程中执行的，因此模板引用只会在初始渲染之后获得赋值。
+
+    ```js
+    <template> 
+      <div ref="root">This is a root element</div>
+    </template>
+
+    <script>
+      import { ref, onMounted } from 'vue'
+
+      export default {
+        setup() {
+          const root = ref(null)
+
+          onMounted(() => {
+            // DOM 元素将在初始渲染后分配给 ref
+            console.log(root.value) // <div>This is a root element</div>
+          })
+
+          return {
+            root
+          }
+        }
+      }
+    </script>
+    ```
+
+    <br>
+
+    - `JSX` 中的用法
+
+      ```js
+      export default {
+        setup() {
+          const root = ref(null)
+
+          return () =>
+            h('div', {
+              ref: root
+            })
+
+          // with JSX
+          return () => <div ref={root} />
+        }
+      }
+      ```
+
+    - `v-for` 中的用法
+
+      ```js
+      <template>
+        <div v-for="(item, i) in list" :ref="el => { if (el) divs[i] = el }">
+          {{ item }}
+        </div>
+      </template>
+
+      <script>
+        import { ref, reactive, onBeforeUpdate } from 'vue'
+
+        export default {
+          setup() {
+            const list = reactive([1, 2, 3])
+            const divs = ref([])
+
+            // 确保在每次更新之前重置ref
+            onBeforeUpdate(() => {
+              divs.value = []
+            })
+
+            return {
+              list,
+              divs
+            }
+          }
+        }
+      </script>
+      ```
+
+    - 侦听模板引用
+
+      但与生命周期钩子的一个关键区别是，`watch()` 和 `watchEffect()` 在 `DOM` 挂载或更新之前运行副作用，所以当侦听器运行时，模板引用还未被更新。
+
+      ```js
+      <template>
+        <div ref="root">This is a root element</div>
+      </template>
+
+      <script>
+        import { ref, watchEffect } from 'vue'
+
+        export default {
+          setup() {
+            const root = ref(null)
+
+            watchEffect(() => {
+              // 这个副作用在 DOM 更新之前运行，因此，模板引用还没有持有对元素的引用。
+              console.log(root.value) // => null
+            })
+
+            return {
+              root
+            }
+          }
+        }
+      </script>
+      ```
+
+      因此，使用模板引用的侦听器应该用 `flush: 'post'` 选项来定义，这将在 `DOM` 更新后运行副作用，确保模板引用与 `DOM` 保持同步，并引用正确的元素。
+
+      ```js
+      <template>
+        <div ref="root">This is a root element</div>
+      </template>
+
+      <script>
+        import { ref, watchEffect } from 'vue'
+
+        export default {
+          setup() {
+            const root = ref(null)
+
+            watchEffect(() => {
+              console.log(root.value) // => <div>This is a root element</div>
+            }, 
+            {
+              flush: 'post'
+            })
+
+            return {
+              root
+            }
+          }
+        }
+      </script>
+      ```
+
 ### 1.  `Teleport`
 
 ### 1.  片段
