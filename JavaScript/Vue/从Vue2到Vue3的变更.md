@@ -797,11 +797,159 @@
 
 - #### 定义自定义事件
 
+    可以通过 `emits` 选项在组件上定义发出的事件。
+
+    ```js
+    app.component('custom-form', {
+      emits: ['inFocus', 'submit']
+    })
+    ```
+
+    当在 `emits` 选项中定义了原生事件 (如 `click`) 时，将使用组件中的事件替代原生事件侦听器。
+    <br>
+
+    **要添加验证，请为事件分配一个函数，该函数接收传递给 `$emit` 调用的参数，并返回一个布尔值以指示事件是否有效。**
+
+    ```js
+    app.component('custom-form', {
+      emits: {
+        // 没有验证
+        click: null,
+
+        // 验证 submit 事件
+        submit: ({ email, password }) => {
+          if (email && password) {
+            return true
+          } else {
+            console.warn('Invalid submit event payload!')
+            return false
+          }
+        }
+      },
+      methods: {
+        submitForm(email, password) {
+          this.$emit('submit', { email, password })
+        }
+      }
+    })
+    ```
+
 - #### `v-model` 参数
+
+    默认情况下，组件上的 `v-model` 使用 `modelValue` 作为 `prop` 和 `update:modelValue` 作为事件。我们可以通过向 `v-model` 传递参数来修改这些名称：
+
+    `<my-component v-model:title="bookTitle"></my-component>`
+    在本例中，子组件将需要一个 `title prop` 并发出 `update:title` 事件来进行同步：
+
+    ```js
+    app.component('my-component', {
+      props: {
+        title: String
+      },
+      emits: ['update:title'],
+      template: `
+        <input
+          type="text"
+          :value="title"
+          @input="$emit('update:title', $event.target.value)">
+      `
+    })
+    ```
 
 - #### 多个 `v-model` 绑定
 
+    ```js
+    <user-name
+      v-model:first-name="firstName"
+      v-model:last-name="lastName">
+    </user-name>
+
+    app.component('user-name', {
+      props: {
+        firstName: String,
+        lastName: String
+      },
+      emits: ['update:firstName', 'update:lastName'],
+      template: `
+        <input 
+          type="text"
+          :value="firstName"
+          @input="$emit('update:firstName', $event.target.value)">
+
+        <input
+          type="text"
+          :value="lastName"
+          @input="$emit('update:lastName', $event.target.value)">
+      `
+    })
+    ```
+
 - #### 处理 `v-model` 修饰符
+
+    `v-model` 有内置修饰符——`.trim`、`.number` 和 `.lazy`，还可自定义，eg：`capitalize`。
+
+    ***当组件的 `created` 生命周期钩子触发时，`modelModifiers prop` 会包含 `capitalize`，且其值为 `true`——因为 `capitalize` 被设置在了写为 `v-model.capitalize="myText"` 的 `v-model` 绑定上。***
+
+    我们可以检查 `modelModifiers` 对象键并编写一个处理器来更改发出的值。在下面的代码中，每当 `<input/>` 元素触发 `input` 事件时，我们都将字符串大写。
+
+    ```js
+    <div id="app">
+      <my-component v-model.capitalize="myText"></my-component>
+      {{ myText }}
+    </div>
+
+    const app = Vue.createApp({
+      data() {
+        return {
+          myText: ''
+        }
+      }
+    })
+
+    app.component('my-component', {
+      props: {
+        modelValue: String,
+        modelModifiers: {
+          default: () => ({})
+        }
+      },
+      emits: ['update:modelValue'],
+      methods: {
+        emitValue(e) {
+          let value = e.target.value
+          if (this.modelModifiers.capitalize) {
+            value = value.charAt(0).toUpperCase() + value.slice(1)
+          }
+          this.$emit('update:modelValue', value)
+        }
+      },
+      template: `<input
+        type="text"
+        :value="modelValue"
+        @input="emitValue">`
+    })
+
+    app.mount('#app')
+    ```
+
+    对于带参数的 `v-model` 绑定，生成的 `prop` 名称将为 `arg + "Modifiers"`：
+
+    ```js
+    <my-component v-model:description.capitalize="myText"></my-component>
+
+    app.component('my-component', {
+      props: ['description', 'descriptionModifiers'],
+      emits: ['update:description'],
+      template: `
+        <input type="text"
+          :value="description"
+          @input="$emit('update:description', $event.target.value)">
+      `,
+      created() {
+        console.log(this.descriptionModifiers) // { capitalize: true }
+      }
+    })
+    ```
 
 ### 5.  来自 `@vue/runtime-core` 的 `createRenderer API`，用于创建自定义渲染器
 
@@ -903,4 +1051,4 @@
 
 ### 47. `$destroy` 实例方法。用户不应再手动管理单个 `Vue` 组件的生命周期。
 
-### 48. 全局函数 `set` 和 `delete` 以及实例方法 `$set` 和 `$delete`。基于代理的变化检测已经不再需要它们了。
+### 48. 全局函数 `set` 和 `delete` 以及实例方法 `$set` 和 `$delete`。基于代理的变化检测已经不再需要它们了
