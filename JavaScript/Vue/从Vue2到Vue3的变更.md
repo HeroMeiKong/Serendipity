@@ -953,6 +953,27 @@
 
 ### 5.  来自 `@vue/runtime-core` 的 `createRenderer API`，用于创建自定义渲染器
 
+- #### 创建自定义渲染器
+
+  ```js
+  import { createRenderer } from '@vue/runtime-core'
+
+  const { render, createApp } = createRenderer({
+    patchProp,
+    insert,
+    remove,
+    createElement,
+    // ...
+  })
+
+  // `render` is the low-level API
+  // `createApp` returns an app instance with configurable context shared
+  // by the entire app tree.
+  export { render, createApp }
+
+  export * from '@vue/runtime-core'
+  ```
+
 ### 6.  单文件组件组合式 `API` 语法糖 (`<script setup>`)
 
 ### 7.  单文件组件状态驱动的 `CSS` 变量 (`<style>` 中的 `v-bind`)
