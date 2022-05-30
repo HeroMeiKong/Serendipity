@@ -976,6 +976,18 @@
 
 ### 6.  单文件组件组合式 `API` 语法糖 (`<script setup>`)
 
+- #### 基本语法
+- #### 响应式
+- #### 使用组件
+- #### 使用自定义指令
+- #### defineProps 和 defineEmits
+- #### defineExpose
+- #### useSlots 和 useAttrs
+- #### 与普通 `<script>` 一起使用
+- #### 顶层 await
+- #### 仅限 TypeScript 的功能
+- #### 限制：没有 Src 导入
+
 ### 7.  单文件组件状态驱动的 `CSS` 变量 (`<style>` 中的 `v-bind`)
 
 ### 8.  `SFC <style scoped>` 现在可以包含全局规则或只针对插槽内容的规则
