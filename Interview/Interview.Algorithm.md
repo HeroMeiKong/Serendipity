@@ -7,7 +7,7 @@
 ★★★：高频，必背
 ****
 
-1. 二叉树的层序遍历
+1. ## 二叉树的层序遍历
 
    **题目描述**：给你一个二叉树，请你返回其按 层序遍历 得到的节点值。 （即逐层地，从左到右访问所有节点）
 
@@ -112,7 +112,7 @@
    - 时间复杂度：o(n) => 最坏的情况下n是节点数
    - 空间复杂度：o(n) => 最坏的情况下n是节点数
 
-1. 二叉树的最大深度
+1. ## 二叉树的最大深度
 
     ```javascript
     /**
@@ -178,7 +178,7 @@
     };
     ```
 
-1. 两数之和
+1. ## 两数之和
 
    ```javascript
    给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出 和为目标值 的那 两个 整数，并返回它们的数组下标。
@@ -209,7 +209,7 @@
     };
    ```
 
-1. 两数之和 II - 输入有序数组
+1. ## 两数之和 II - 输入有序数组
 
    ```javascript
     给定一个已按照升序排列的有序数组，找到两个数使得它们相加之和等于目标数。
@@ -248,7 +248,8 @@
     };
    ```
 
-1. 不借助第三个数，让 `a, b` 两数值交换
+1. ## 不借助第三个数，让 `a, b` 两数值交换
+
     - 方法一：
 
       ```javascript
@@ -265,6 +266,204 @@
       b = a^b; // 11 ^ 10 = 01
       a = a^b; // 11 ^ 01 = 10
       ```
+
+1. ## LRU(最近最少使用)缓存
+
+    实现 `LRUCache` 类：
+    - `LRUCache(int capacity)` 以**正整数**作为容量 `capacity` 初始化 `LRU` 缓存
+    - `int get(int key)` 如果关键字 `key` 存在于缓存中，则返回关键字的值，否则返回 `-1`。
+    - `void put(int key, int value)` 如果关键字 `key` 已经存在，则变更其数据值 `value`；如果不存在，则向缓存中插入该组 `key-value`。如果插入操作导致关键字数量超过 `capacity`，则应该**逐出**最久未使用的关键字。
+
+    函数 `get` 和 `put` 必须以 `O(1)` 的平均时间复杂度运行。
+
+    示例：
+
+    ```js
+    输入
+    ["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
+    [[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+    输出
+    [null, null, null, 1, null, -1, null, -1, 3, 4]
+
+    解释
+    LRUCache lRUCache = new LRUCache(2);
+    lRUCache.put(1, 1); // 缓存是 {1=1}
+    lRUCache.put(2, 2); // 缓存是 {1=1, 2=2}
+    lRUCache.get(1);    // 返回 1
+    lRUCache.put(3, 3); // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
+    lRUCache.get(2);    // 返回 -1 (未找到)
+    lRUCache.put(4, 4); // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
+    lRUCache.get(1);    // 返回 -1 (未找到)
+    lRUCache.get(3);    // 返回 3
+    lRUCache.get(4);    // 返回 4
+    ```
+
+    提示：
+
+    ```js
+    1 <= capacity <= 3000
+    0 <= key <= 10000
+    0 <= value <= 105
+    最多调用 2 * 105 次 get 和 put
+    ```
+
+    解答：
+
+    ```js
+    /// ES5
+
+    /**
+     * @param {number} capacity
+     */
+    var LRUCache = function (capacity) {
+      this.capacity = capacity
+      this.map = new Map()
+    }
+
+    /** 
+      * @param {number} key
+      * @return {number}
+      */
+    LRUCache.prototype.get = function (key) {
+      if (!this.map.has(key)) return -1
+
+      const temp = this.map.get(key)
+      this.map.delete(key)
+      this.map.set(key, temp)
+      return temp
+    }
+
+    /** 
+      * @param {number} key 
+      * @param {number} value
+      * @return {void}
+      */
+    LRUCache.prototype.put = function (key, value) {
+      if (this.map.has(key)) this.map.delete(key)
+      this.map.set(key, value)
+      if (this.map.size > this.capacity) this.map.delete(this.map.keys().next().value)
+    }
+
+    /**
+      * Your LRUCache object will be instantiated and called as such:
+      * var obj = new LRUCache(capacity)
+      * var param_1 = obj.get(key)
+      * obj.put(key,value)
+      */
+
+    /// ES6
+    // 一个 Map 对象在迭代时会根据对象中元素的插入顺序来进行
+    // 新添加的元素会被插入到 Map 的末尾，整个栈倒序查看
+    class LRUCache {
+      constructor(capacity) {
+        this.map = new Map()
+        this.capacity = capacity
+      }
+      get(key) {
+        if (!this.map.has(key)) retuen -1
+        const temp = this.map.get(key)
+        this.map.delete(key)
+        this.map.set(key, temp)
+        return temp
+      }
+      put(key, value) {
+        if (this.map.has(key)) this.map.delete(key)
+        this.map.set(key, value)
+        if (this.map.size > this.capacity) this.map.delete(this.map.keys().next().value)
+      }
+    }
+    ```
+
+1. ## LFU(最不经常使用)缓存
+
+    实现 `LFUCache` 类：
+    - `LFUCache(int capacity)` - 用数据结构的容量 `capacity` 初始化对象
+    - `int get(int key)` - 如果键 `key` 存在于缓存中，则获取键的值，否则返回 `-1`
+    - `void put(int key, int value)` - 如果键 `key` 已存在，则变更其值；如果键不存在，请插入键值对。当缓存达到其容量 `capacity` 时，则应该在插入新项之前，移除最不经常使用的项。在此问题中，当存在平局（即两个或更多个键具有相同使用频率）时，应该去除**最近最久未使用**的键
+
+    为了确定最不常使用的键，可以为缓存中的每个键维护一个**使用计数器**。使用计数最小的键是最久未使用的键。
+
+    当一个键首次插入到缓存中时，它的使用计数器被设置为 `1` (由于 `put` 操作)。对缓存中的键执行 `get` 或 `put` 操作，使用计数器的值将会递增。
+
+    函数 `get` 和 `put` 必须以 `O(1)` 的平均时间复杂度运行。
+
+    示例：
+
+    ```js
+    输入：
+    ["LFUCache", "put", "put", "get", "put", "get", "get", "put", "get", "get", "get"]
+    [[2], [1, 1], [2, 2], [1], [3, 3], [2], [3], [4, 4], [1], [3], [4]]
+    输出：
+    [null, null, null, 1, null, -1, 3, null, -1, 3, 4]
+
+    解释：
+    // cnt(x) = 键 x 的使用计数
+    // cache=[] 将显示最后一次使用的顺序（最左边的元素是最近的）
+    LFUCache lfu = new LFUCache(2);
+    lfu.put(1, 1);   // cache=[1,_], cnt(1)=1
+    lfu.put(2, 2);   // cache=[2,1], cnt(2)=1, cnt(1)=1
+    lfu.get(1);      // 返回 1
+                    // cache=[1,2], cnt(2)=1, cnt(1)=2
+    lfu.put(3, 3);   // 去除键 2 ，因为 cnt(2)=1 ，使用计数最小
+                    // cache=[3,1], cnt(3)=1, cnt(1)=2
+    lfu.get(2);      // 返回 -1（未找到）
+    lfu.get(3);      // 返回 3
+                    // cache=[3,1], cnt(3)=2, cnt(1)=2
+    lfu.put(4, 4);   // 去除键 1 ，1 和 3 的 cnt 相同，但 1 最久未使用
+                    // cache=[4,3], cnt(4)=1, cnt(3)=2
+    lfu.get(1);      // 返回 -1（未找到）
+    lfu.get(3);      // 返回 3
+                    // cache=[3,4], cnt(4)=1, cnt(3)=3
+    lfu.get(4);      // 返回 4
+                    // cache=[3,4], cnt(4)=2, cnt(3)=3
+     ```
+
+    提示：
+
+    ```js
+    0 <= capacity <= 104
+    0 <= key <= 105
+    0 <= value <= 109
+    最多调用 2 * 105 次 get 和 put 方法
+    ```
+
+    解答
+
+    ```js
+    /// ES5
+    /**
+     * @param {number} capacity
+     */
+    var LFUCache = function (capacity) {
+
+    }
+
+    /** 
+     * @param {number} key
+     * @return {number}
+     */
+    LFUCache.prototype.get = function (key) {
+
+    }
+
+    /** 
+     * @param {number} key 
+     * @param {number} value
+     * @return {void}
+     */
+    LFUCache.prototype.put = function (key, value) {
+
+    }
+
+    /**
+     * Your LFUCache object will be instantiated and called as such:
+     * var obj = new LFUCache(capacity)
+     * var param_1 = obj.get(key)
+     * obj.put(key,value)
+     */
+
+    /// ES6
+    ```
 
 ****
 ℹ️：未完成
