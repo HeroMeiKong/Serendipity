@@ -658,6 +658,37 @@
     为什么 `i++` 不能做左值，而 `++i` 可以？
     `i++` 最后返回的是一个临时变量，而临时变量是右值。
 
+1. ## `for of` 与 `for in` 的区别？
+
+    区别：
+    - 循环数组：`for in` 和 `for of` 都可以循环数组，`for in` 输出的是数组的 `index` 下标，而 `for of` 输出的是数组的每一项的值。
+    - 循环对象：`for in` 可以遍历对象，`for of` 不能遍历对象，只能遍历带有 `iterator` 接口的，例如 `Set, Map, String, Array`
+
+      ```js
+      const arr = [1, 2, 3, 4]
+      // for ... in
+      for (const key in arr) {
+        console.log(key) // 输出 0,1,2,3
+      }
+      
+      // for ... of
+      for (const key of arr) {
+        console.log(key) // 输出 1,2,3,4
+      }
+
+      const object = { name: 'lx', age: 23 }
+      // for ... in
+      for (const key in object) {
+        console.log(key) // 输出 name,age
+        console.log(object[key]) // 输出 lx,23
+      }
+
+      // for ... of
+      for (const key of object) {
+        console.log(key) // 报错 Uncaught TypeError: object is not iterable
+      }
+      ```
+
 ****
 ℹ️：未完成
 ★：常考
