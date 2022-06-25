@@ -689,6 +689,51 @@
       }
       ```
 
+1. ## for 循环中 let 和 var 的区别
+
+    ```js
+    // ES5
+    for (var i = 0; i < 5; i++) {
+      console.log(i)
+      setTimeout(function () {
+        console.log(i)
+      })
+    }
+    ///输出：
+    0 1 2 3 4
+    5 5 5 5 5
+
+    /*
+     *****
+     */
+    // ES6
+    for (let i = 0; i < 5; i++) {
+      console.log(i)
+      setTimeout(() => {
+        console.log(i)
+      })
+    }
+    ///输出：
+    0 1 2 3 4
+    0 1 2 3 4
+
+    /*
+     *****
+     */
+    // ES5 实现 let 功能
+    for (var i = 0; i < 5; i++) {
+      console.log(i)
+      !(function (i) {
+        setTimeout(function () {
+          console.log(i)
+        })
+      })(i)
+    }
+    ///输出：
+    0 1 2 3 4
+    0 1 2 3 4
+    ```
+
 ****
 ℹ️：未完成
 ★：常考
