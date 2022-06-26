@@ -576,6 +576,49 @@
     /// ES6
     ```
 
+1. ## 大数相加
+
+    ```js
+    const add = (a, b) => {
+      const maxLength = Math.max(a.length, b.length)
+      let overflow = false
+      let sum = ''
+      for(let i = 1; i <= maxLength; i++){
+        const ai = a[a.length-i] || '0'
+        const bi = b[b.length-i] || '0'
+        let ci = parseInt(ai) + parseInt(bi) + (overflow ? 1 : 0)
+        overflow = ci >= 10
+        ci = overflow ? ci - 10 : ci
+        sum = ci + sum 
+      }
+      sum = overflow ? '1' + sum : sum
+      return sum
+    }
+
+    console.log(add("11111111101234567","77777777707654321"))
+    console.log(add("911111111101234567","77777777707654321"))
+    ```
+
+1. ## 无重复字符的最长子串
+
+    ```js
+    var lengthOfLongestSubstring = function (s) {
+      const length = s.length
+      var max = current = start = 0, hash = {}
+      for (let i = 0; i < length; i++) {
+        if (hash[s[i]] > -1) {
+          start = hash[s[i]] + 1 <= start ? start : hash[s[i]] + 1
+          current = i - start + 1
+        } else {
+          current ++
+        }
+        hash[s[i]] = i
+        max = Math.max(max, current)
+      }
+      return max
+    };
+    ```
+
 ****
 ℹ️：未完成
 ★：常考
