@@ -107,4 +107,10 @@
     // expected output: 0
     ```
 
+1. `Array.prototype.sort()` 中排序顺序
+
+    `arr.sort()`：默认从小到大
+    `arr.sort((a, b) => a - b)`：从小到大
+    `arr.sort((a, b) => b - a)`：从大到小
+
 ★★★★★★★★★★

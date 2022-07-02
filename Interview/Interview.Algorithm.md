@@ -619,6 +619,54 @@
     };
     ```
 
+1. ## 模拟模板字符串
+
+    ```js
+    输入：
+    var str1 = 'I am { name }, I am { age } years old';
+    var obj1 = { name: 'zzz', age: 18 };
+    formatStr(str1, obj1);
+
+    var str2 = 'This is { country }';
+    var obj2 = { country: 'China' };
+    formatStr(str2, obj2);
+
+    输出：
+    I am zzz, I am 18 years old
+    This is China
+
+
+    function formatStr(str, obj) {
+      // {} 中匹配前后多个空格( *)，匹配多个字符串(\w+)
+      // return str.replace(/{ *\w+ *}/g, (match) => {})
+      // {} 中匹配前后多个空格( *)，匹配多个字符串(\w+)，如果不加()，那 key 为开始计算的位置：5，如果加上()，则展示()内的的内容：如 {sss} => key = sss
+      return str.replace(/{ *(\w+) *}/g, (match, key) => {
+        return obj[key]
+      })
+    }
+    ```
+
+1. ## 给你一个「有序」数组 nums ，请你「原地」删除重复出现的元素，使每个元素「只出现一次」，返回删除后数组的新长度。「不要使用额外的空间，你必须在原地修改输入数组并在使用 O(1) 额外空间的条件下完成」
+
+    - 关键信息：有序、原地、出现一次、长度、额外空间、O(1)
+    - 解题思路：快慢双指针，fast - 取值比较，slow - 替换并存储
+
+    ```js
+    var removeDuplicates = function (nums) {
+      const n = nums.length
+      if (n === 0) return 0
+      let fast = 1, slow = 1
+      while (fast < n) {
+        if (nums[fast] !== nums[fast - 1]) {
+          nums[slow] = nums[fast]
+          ++slow
+        }
+        ++fast
+      }
+      return slow
+    }
+    ```
+
 ****
 ℹ️：未完成
 ★：常考
