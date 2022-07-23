@@ -15,6 +15,26 @@
     - 在浏览器上执行 `App(./src)`
     - 本地环境 `Node`
 
+1. ### Vite 在哪里可以定义全局变量？
+
+    ```js
+    import { defineConfig } from 'vite';
+
+    export default defineConfig(({ command, mode }) => {
+      // 用 dotenv 支持
+      const { VITE_USE_MOCK } = viteEnv;
+      const isBuild = command === 'build';
+
+      return {
+        // 定义全局变量
+        define: {
+          isBuild: isBuild,
+          __IS_MOCK__: VITE_USE_MOCK
+        },
+      }
+    })
+    ```
+
 ## 未归类
 
 1. ### `devDependencies` 和 `dependencies` 区别
