@@ -74,22 +74,22 @@
 
     - 内存问题
 
-      ```javascript
+      ```js
       var i;
       var els = document.getElementsByTagName("*");
 
       // 不要这样写匿名函数，不然无法调用 Element.removeEventListener
-      for(i=0 ; i<els.length ; i++){
-        els[i].addEventListener("click", function(e){/*do something*/}, false});
+      for (i = 0; i < els.length; i++) {
+        els[i].addEventListener("click", function (e) { /*do something*/ }, false);
       }
 
       // 建议这样写
-      function processEvent(e){
+      function processEvent(e) {
         /*do something*/
       }
 
-      for(i=0 ; i<els.length ; i++){
-        els[i].addEventListener("click", processEvent, false});
+      for (i = 0; i < els.length; i++) {
+        els[i].addEventListener("click", processEvent, false);
       }
       ```
 
