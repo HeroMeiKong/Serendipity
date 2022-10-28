@@ -1170,9 +1170,7 @@
         }
       }
 
-      if (stack.length) return false
-
-      return true
+      return !stack.length
     }
     ```
 
