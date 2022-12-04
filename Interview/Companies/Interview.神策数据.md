@@ -9,7 +9,7 @@
    - 可以用媒体查询。
    - 可以使用rem或者vh、vw相对单位
 3. rem为什么可以自适应？
-   - rem相对于body标签的字体大小，如果body的font-size:16px;那么1rem = 16px
+   - rem相对于html标签的字体大小，如果html的font-size:16px;那么1rem = 16px
 4. em的大小相对于谁？
    - 相对于父级元素。
 5. 讲一下flex与grid布局。
