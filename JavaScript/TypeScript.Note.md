@@ -40,7 +40,7 @@
 
 1. ## 如何防止 `for in / for of` 对象定义报错
 
-    ```js
+    ```ts
     for (const param in params) {
       console.log("param: ", param)
     }
@@ -48,6 +48,52 @@
     export interface paramsObj {
       [key: string]: any;
     }
+    ```
+
+1. ## 如何在定义 type 类型时，保证其只能取 enum 中的值？
+
+    ```ts
+    enum LogLevel {
+      ERROR,
+      WARN,
+      INFO,
+      DEBUG,
+    }
+    
+    /**
+    * This is equivalent to:
+    * type LogLevelStrings = 'ERROR' | 'WARN' | 'INFO' | 'DEBUG';
+    */
+    type LogLevelStrings = keyof typeof LogLevel;
+    ```
+
+1. ## 仅表示类型，但在此处却作为值使用 ts(2693)
+
+    ```ts
+    <script setup lang="ts">
+    import { User } from "#/users";
+
+    defineProps({
+      user: {
+        type: User, //ERROR: 'User' only refers to a type, but is being used as a value here. ts(2693)
+        required: true,
+      },
+    });
+    </script>
+    ```
+
+    ```ts
+    <script setup lang="ts">
+    import { PropType } from "vue";
+    import { User } from "#/users";
+
+    defineProps({
+      user: {
+        type: String as PropType<User>,
+        required: true,
+      },
+    });
+    </script>
     ```
 
 ★★★★★★★★★★
