@@ -1,5 +1,7 @@
 # Vite 问题总结及解决方案
+
 1. ## 关于 Vite3.x 中 globEager 已弃用以及 TS 报错问题
+
     `const modules = import.meta.globEager('./zh-CN/**/*.ts');`
     遇到问题：globEager 已弃用问题
     ![importGlob](https://raw.githubusercontent.com/HeroMeiKong/Images/main/Serendipity/JavaScript/Vite/globEager.png)
