@@ -1,19 +1,49 @@
 # 为什么我推荐使用 pnpm 作为包管理工具？
 
-- ## 选择原因
+## 目录
+
+- [什么是 `pnpm`？]()
+- 推荐原因
+  - 与其它包管理工具的比较
+  - 什么是 `Monorepo`？
+  - `Monorepo` 支持
+- 存储管理
+- 依赖管理
+- 安全
+- 日常使用指南
+
+- ## 什么是 `pnpm`？
+
+  简介：速度快、节省磁盘空间的**软件包管理器**
+  含义：`pnpm = performant npm`
+  初衷：
+  - 节省磁盘空间
+  使用 npm 时，依赖每次被不同的项目使用，都会重复安装一次。  而在使用 pnpm 时，依赖会被存储在内容可寻址的存储中，所以：
+
+  - 如果你用到了某依赖项的不同版本，只会将不同版本间有差异的文件添加到仓库。 例如，如果某个包有100个文件，而它的新版本只改变了其中1个文件。那么 pnpm update 时只会向存储中心额外添加1个新文件，而不会因为仅仅一个文件的改变复制整新版本包的内容。
+  所有文件都会存储在硬盘上的某一位置。 当软件包被被安装时，包里的文件会硬链接到这一位置，而不会占用额外的磁盘空间。 这允许你跨项目地共享同一版本的依赖。
+  因此，您在磁盘上节省了大量空间，这与项目和依赖项的数量成正比，并且安装速度要快得多！
+  - 提高安装速度
+  - 创建一个非扁平的 `node_modules` 目录
+
+- ## 推荐原因
 
   1. 好
     特点：
-      1. 快速：pnpm 比其他包管理器快 2 倍
-      1. 高效：node_modules 中的文件为复制或链接自特定的内容寻址存储库
-      1. 支持 Monorepos：pnpm 内置支持单仓多包
-      1. 严格：pnpm 默认创建了一个非平铺的 node_modules，因此代码无法访问任意包
-  1. Vue 生态项目的迁移
-  1. Vite 支持 pnpm
-  1. 大势所趋：所接触的大部分主要库都开始使用
+      1. 快速：`pnpm` 比其他包管理器快 `2` 倍
+      2. 高效：`node_modules` 中的所有文件均克隆或硬链接自单一存储位置
+      3. 支持 `Monorepos：pnpm` 内置了对单个源码仓库中包含多个软件包的支持
+      4. 权限严格：pnpm 默认创建了一个非平铺的 `node_modules`，因此代码无法访问任意包
+  2. `Vue` 生态项目的迁移
+  3. `Vite` 支持 `pnpm`
+  4. 大势所趋：所接触的大部分主要库都开始使用
   ![使用 pnpm 的库]()
 
-- ## 什么是 Monorepo？
+- ### 与其它包管理工具的比较
+
+  ![s](https://pnpm.io/img/benchmarks/alotta-files.svg)
+
+- ### 什么是 Monorepo？
 
   Monorepo 是一个单一的存储库，包含多个不同的项目，和明确的关系。
   与之对应的是传统的是 Polyrepo 模式，每个项目对应一个单独的仓库来分散管理。
@@ -36,13 +66,98 @@
   1. 可以快速定位问题：由于所有的代码都在同一个代码库中进行开发，debugger 可以很快找出问题所在的代码文件和行数，便于开发人员调试问题
   1. 一个版本：无需担心因为项目依赖于第三方库的冲突版本而导致的不兼容问题
 
-- ## 为什么 Vite 要从 yarn 迁移到 pnpm？
+- ### Monorepo 支持
 
-  因为底层使用 esbuild 打包，而在 v0.13 之后使用了 optionalDependencies 来安装某些不同平台的依赖，而 yarn 1/2 并不会根据对应的 optional 规则去下载对应平台的包而是会去选择下载所有的包
+  **[workspace 支持](https://pnpm.io/zh/workspaces)**
+  Monorepo 的缺点：**Phantom dependencies（幽灵依赖）** 和 **NPM doppelgangers（NPM 分身）**
+  **Phantom dependencies**
+  即某个包没有被安装（package.json 中并没有，但是用户却能够引用到这个包）
 
-- ## 与其它包管理工具的比较
+  引发这个现象的原因一般是因为 node_modules 结构所导致的，例如使用 yarn 对项目安装依赖，依赖里面有个依赖叫做 foo，foo 这个依赖同时依赖了 bar，yarn 会对安装的 node_modules 做一个扁平化结构的处理(npm v3 之后也是这么做的)，会把依赖在 node_modules 下打平，这样相当于 foo 和 bar 出现在同一层级下面。那么根据 nodejs 的寻径原理，用户能 require 到 foo，同样也能 require 到 bar。
 
-  ![s](https://pnpm.io/img/benchmarks/alotta-files.svg)
+  ```bash
+  package.json -> foo(bar 为 foo 依赖)
+  node_modules
+    /foo
+    /bar -> 幽灵依赖
+  ```
+
+  那么这里这个 bar 就成了一个幽灵依赖，如果某天某个版本的 foo 依赖不再依赖 bar 或者 foo 的版本发生了变化，那么 require bar 的模块部分就会抛错。
+
+  以上其实只是一个简单的例子，但是根据笔者在字节内部见到的一些 monorepo(主要为 lerna + yarn )项目中，这其实是个比较常见的现象，甚至有些包会直接去利用这种残缺的引入方式去减轻包体积。
+
+  还有一种场景就是在 lerna + yarn workspace 的项目里面，因为 yarn 中提供了 hoist 机制(即一些底层子项目的依赖会被提升到顶层的 node_modules 中)，这种 phantom dependencies 会更多，一些底层的子项目经常会去 require 一些在自己里面没有引入的依赖，而直接去找顶层 node_modules 的依赖(nodejs 这里的寻径是个递归上下的过程)并使用。
+
+  而根据前面提到的 pnpm 的 node_modules 依赖结构，这种现象是显然不会发生的，因为被打平的依赖会被放到 .pnpm 这个虚拟磁盘目录下面去，用户通过 require 是根本找不到的。
+
+  >值得一提的是，pnpm 本身其实也提供了将依赖提升并且按照 yarn 那种形式组织的 node_modules 结构的 Option，作者将其命名为 --shamefully-hoist ，即 "羞耻的 hoist".....
+
+  **NPM doppelgangers**
+  会导致有大量的依赖的被重复安装，举个例子:
+
+  例如有个 package，下面依赖有 lib_a、lib_b、lib_c、lib_d，其中 a 和 b 依赖 util_e@1.0.0，而 c 和 d 依赖 util_e@2.0.0。
+
+  那么早期 npm 的依赖结构应该是这样的:
+
+  ```bash
+  - package
+  - package.json
+  - node_modules
+  - lib_a
+    - node_modules <- util_e@1.0.0
+  - lib_b
+    - node_modules <- util_e@1.0.0
+  _ lib_c
+    - node_modules <- util_e@2.0.0
+  - lib_d
+    - node_modules <- util_e@2.0.0
+  ```
+
+  这样必然会导致很多依赖被重复安装，于是就有了 hoist 和打平依赖的操作:
+
+  ```bash
+  - package
+  - package.json
+  - node_modules
+  - util_e@1.0.0
+  - lib_a
+  - lib_b
+  _ lib_c
+    - node_modules <- util_e@2.0.0
+  - lib_d
+    - node_modules <- util_e@2.0.0
+  ```
+
+  但是这样也只能提升一个依赖，如果两个依赖都提升了会导致冲突，这样同样会导致一些不同版本的依赖被重复安装多次，这里就会导致使用 npm 和 yarn 的性能损失。
+
+  如果是 pnpm 的话，这里因为依赖始终都是存在 store 目录下的 hard links ，一份不同的依赖始终都只会被安装一次，因此这个是能够被彻彻底底的消除的。
+
+- ## 存储管理
+  
+  - `symlink` 和 `hard link` 机制
+
+  在前面知道了 `pnpm` 是通过 `hardlink` 在全局里面搞个 `store` 目录来存储 `node_modules` 依赖里面的 `hard link` 地址，然后在引用依赖的时候则是通过 `symlink` 去找到对应虚拟磁盘目录下（`.pnpm` 目录）的依赖地址
+
+  这两者结合在一起工作之后，假如有一个项目依赖了 `bar@1.0.0` 和 `foo@1.0.0`，那么最后的 `node_modules` 结构呈现出来的依赖结构可能会是这样的:
+
+  ```bash
+  node_modules
+  └── bar // symlink to .pnpm/bar@1.0.0/node_modules/bar
+  └── foo // symlink to .pnpm/foo@1.0.0/node_modules/foo
+  └── .pnpm
+      ├── bar@1.0.0
+      │   └── node_modules
+      │       └── bar -> <store>/bar
+      │           ├── index.js
+      │           └── package.json
+      └── foo@1.0.0
+          └── node_modules
+              └── foo -> <store>/foo
+                  ├── index.js
+                  └── package.json
+  ```
+
+  `node_modules` 中的 `bar` 和 `foo` 两个目录会软连接到 `.pnpm` 这个目录下的真实依赖中，而这些真实依赖则是通过 `hard link` 存储到全局的 `store` 目录中
 
 - ## 依赖管理
 
@@ -116,97 +231,8 @@
     - 安装快
     - 节省磁盘
 
-- ## symlink 和 hard link 机制
+- ## 为什么 Vite 要从 yarn 迁移到 pnpm？
 
-  在前面知道了 pnpm 是通过 hardlink 在全局里面搞个 store 目录来存储 node_modules 依赖里面的 hard link 地址，然后在引用依赖的时候则是通过 symlink 去找到对应虚拟磁盘目录下(.pnpm 目录)的依赖地址。
+  因为底层使用 esbuild 打包，而在 v0.13 之后使用了 optionalDependencies 来安装某些不同平台的依赖，而 yarn 1/2 并不会根据对应的 optional 规则去下载对应平台的包而是会去选择下载所有的包
 
-  这两者结合在一起工作之后，假如有一个项目依赖了 bar@1.0.0 和 foo@1.0.0 ，那么最后的 node_modules 结构呈现出来的依赖结构可能会是这样的:
-
-  ```bash
-  node_modules
-  └── bar // symlink to .pnpm/bar@1.0.0/node_modules/bar
-  └── foo // symlink to .pnpm/foo@1.0.0/node_modules/foo
-  └── .pnpm
-      ├── bar@1.0.0
-      │   └── node_modules
-      │       └── bar -> <store>/bar
-      │           ├── index.js
-      │           └── package.json
-      └── foo@1.0.0
-          └── node_modules
-              └── foo -> <store>/foo
-                  ├── index.js
-                  └── package.json
-  ```
-
-  node_modules 中的 bar 和 foo 两个目录会软连接到 .pnpm 这个目录下的真实依赖中，而这些真实依赖则是通过 hard link 存储到全局的 store 目录中。
-
-- ## Monorepo 支持
-
-  **[workspace 支持](https://pnpm.io/zh/workspaces)**
-  Monorepo 的缺点：**Phantom dependencies（幽灵依赖）** 和 **NPM doppelgangers（NPM 分身）**
-  **Phantom dependencies**
-  即某个包没有被安装（package.json 中并没有，但是用户却能够引用到这个包）
-
-  引发这个现象的原因一般是因为 node_modules 结构所导致的，例如使用 yarn 对项目安装依赖，依赖里面有个依赖叫做 foo，foo 这个依赖同时依赖了 bar，yarn 会对安装的 node_modules 做一个扁平化结构的处理(npm v3 之后也是这么做的)，会把依赖在 node_modules 下打平，这样相当于 foo 和 bar 出现在同一层级下面。那么根据 nodejs 的寻径原理，用户能 require 到 foo，同样也能 require 到 bar。
-
-  ```bash
-  package.json -> foo(bar 为 foo 依赖)
-  node_modules
-    /foo
-    /bar -> 幽灵依赖
-  ```
-
-  那么这里这个 bar 就成了一个幽灵依赖，如果某天某个版本的 foo 依赖不再依赖 bar 或者 foo 的版本发生了变化，那么 require bar 的模块部分就会抛错。
-
-  以上其实只是一个简单的例子，但是根据笔者在字节内部见到的一些 monorepo(主要为 lerna + yarn )项目中，这其实是个比较常见的现象，甚至有些包会直接去利用这种残缺的引入方式去减轻包体积。
-
-  还有一种场景就是在 lerna + yarn workspace 的项目里面，因为 yarn 中提供了 hoist 机制(即一些底层子项目的依赖会被提升到顶层的 node_modules 中)，这种 phantom dependencies 会更多，一些底层的子项目经常会去 require 一些在自己里面没有引入的依赖，而直接去找顶层 node_modules 的依赖(nodejs 这里的寻径是个递归上下的过程)并使用。
-
-  而根据前面提到的 pnpm 的 node_modules 依赖结构，这种现象是显然不会发生的，因为被打平的依赖会被放到 .pnpm 这个虚拟磁盘目录下面去，用户通过 require 是根本找不到的。
-
-  >值得一提的是，pnpm 本身其实也提供了将依赖提升并且按照 yarn 那种形式组织的 node_modules 结构的 Option，作者将其命名为 --shamefully-hoist ，即 "羞耻的 hoist".....
-
-  **NPM doppelgangers**
-  会导致有大量的依赖的被重复安装，举个例子:
-
-  例如有个 package，下面依赖有 lib_a、lib_b、lib_c、lib_d，其中 a 和 b 依赖 util_e@1.0.0，而 c 和 d 依赖 util_e@2.0.0。
-
-  那么早期 npm 的依赖结构应该是这样的:
-
-  ```bash
-  - package
-  - package.json
-  - node_modules
-  - lib_a
-    - node_modules <- util_e@1.0.0
-  - lib_b
-    - node_modules <- util_e@1.0.0
-  _ lib_c
-    - node_modules <- util_e@2.0.0
-  - lib_d
-    - node_modules <- util_e@2.0.0
-  ```
-
-  这样必然会导致很多依赖被重复安装，于是就有了 hoist 和打平依赖的操作:
-
-  ```bash
-  - package
-  - package.json
-  - node_modules
-  - util_e@1.0.0
-  - lib_a
-  - lib_b
-  _ lib_c
-    - node_modules <- util_e@2.0.0
-  - lib_d
-    - node_modules <- util_e@2.0.0
-  ```
-
-  但是这样也只能提升一个依赖，如果两个依赖都提升了会导致冲突，这样同样会导致一些不同版本的依赖被重复安装多次，这里就会导致使用 npm 和 yarn 的性能损失。
-
-  如果是 pnpm 的话，这里因为依赖始终都是存在 store 目录下的 hard links ，一份不同的依赖始终都只会被安装一次，因此这个是能够被彻彻底底的消除的。
-
-- ## 一些问题的回答
-
-  [为什么使用硬链接？ 为什么不直接创建到全局存储的符号链接？](https://github.com/nodejs/node-eps/issues/46)
+- ## [一些常见的问题](https://pnpm.io/zh/faq)
