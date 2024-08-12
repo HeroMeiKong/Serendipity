@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    @keyframes active {
+      0%, 100% {
+        color: #6f00ff;
+        border-color: #6f00ff;
+      }
+    }
+
+    html {
+      scroll-behavior: smooth;
+      margin: 0;
+    }
+    body {
+      padding: 0 15px;
+      margin: 0;
+      timeline-scope: --timeline1, --timeline2, --timeline3, --timeline4, --timeline5, --timeline6;
+    }
+    h2 {
+      margin: 0;
+      padding: .8em 0;
+      scroll-margin: 20px;
+    }
+    nav {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: #fff;
+      padding: 10px 0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    nav > a {
+      position: relative;
+      display: block;
+      line-height: 2;
+      padding: 0 15px;
+      font-size: 14px;
+      color: #191;
+      text-decoration: none;
+      border-left: 4px solid transparent;
+      animation: active;
+      animation-timeline: var(--customTimelineName);
+    }
+    nav > a:hover {
+      background-color: #d5d;
+    }
+    section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    section span {
+      width: 30%;
+      height: 100px;
+      border-radius: 4px;
+      background-color: #eee;
+    }
+    .content { 
+      view-timeline-name: var(--customTimelineName);
+      view-timeline-inset: 50%;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="#section1" style="--customTimelineName: --timeline1">一、标题一</a>
+    <a href="#section2" style="--customTimelineName: --timeline2">二、标题二</a>
+    <a href="#section3" style="--customTimelineName: --timeline3">三、标题三</a>
+    <a href="#section4" style="--customTimelineName: --timeline4">四、标题四</a>
+    <a href="#section5" style="--customTimelineName: --timeline5">五、标题五</a>
+    <a href="#section6" style="--customTimelineName: --timeline6">六、标题六</a>
+  </nav>
+  <h1>CSS 电梯导航</h1>
+  <div class="content" style="--customTimelineName: --timeline1">
+    <h2 id="section1">一、标题一</h2>
+    <section>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </section>
+  </div>
+  <div class="content" style="--customTimelineName: --timeline2">
+    <h2 id="section2">二、标题二</h2>
+    <section>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </section>
+  </div>
+  <div class="content" style="--customTimelineName: --timeline3">
+    <h2 id="section3">三、标题三</h2>
+    <section>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </section>
+  </div>
+  <div class="content" style="--customTimelineName: --timeline4">
+    <h2 id="section4">四、标题四</h2>
+    <section>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </section>
+  </div>
+  <div class="content" style="--customTimelineName: --timeline5">
+    <h2 id="section5">五、标题五</h2>
+    <section>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </section>
+  </div>
+  <div class="content" style="--customTimelineName: --timeline6">
+    <h2 id="section6">六、标题六</h2>
+    <section>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </section>
+  </div>  
+</body>
+</html>
