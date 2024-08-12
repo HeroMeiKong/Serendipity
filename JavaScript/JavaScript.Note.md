@@ -729,3 +729,54 @@
 
       export const addKeyResults = CashBook.prototype.addKeyResults;
       ```
+
+204. 如何将传入的字符串当做 `JavaScript` 代码进行执行？
+
+     - 使用 `Function`
+      由 `Function` 构造函数创建的函数不会创建当前环境的闭包，它们总是被创建于全局环境，因此在运行时它们只能访问全局变量和自己的局部变量，不能访问它们被 `Function` 构造函数创建时所在的作用域的变量。这一点与使用 `eval()` 执行创建函数的代码不同。
+
+        ```js
+        // 使用 `var` 创建一个全局属性
+        var x = 10;
+
+        function createFunction1() {
+          const x = 20;
+          return new Function("return x;"); // 这个 `x` 指的是全局 `x`
+        }
+
+        function createFunction2() {
+          const x = 20;
+          function f() {
+            return x; // 这个 `x` 指的是上面的局部 `x`
+          }
+          return f;
+        }
+
+        const f1 = createFunction1();
+        console.log(f1()); // 10
+        const f2 = createFunction2();
+        console.log(f2()); // 20
+        ```
+
+     - 使用 `eval()` - 永远不要使用
+       - `eval()` 是一个危险的函数，它使用与调用者相同的权限执行代码
+       - `eval()` 通常比其他替代方法更慢，因为它必须调用 `JS` 解释器
+
+        ```js
+        console.log(eval('2 + 2'));
+        // Expected output: 4
+
+        // 如果 eval() 的参数不是字符串， eval() 会将参数原封不动地返回
+        eval(new String("2 + 2")); // 返回了包含"2 + 2"的字符串对象
+        eval("2 + 2"); // returns 4
+
+        // eval() 作用域
+        function test() {
+          var x = 2,
+            y = 4;
+          console.log(eval("x + y")); // 直接调用，使用本地作用域，结果是 6
+          var geval = eval; // 等价于在全局作用域调用
+          console.log(geval("x + y")); // 间接调用，使用全局作用域，throws ReferenceError 因为 `x` 未定义
+          (0, eval)("x + y"); // 另一个间接调用的例子
+        }
+        ```

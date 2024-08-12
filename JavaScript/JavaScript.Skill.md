@@ -113,4 +113,8 @@
     `arr.sort((a, b) => a - b)`：从小到大
     `arr.sort((a, b) => b - a)`：从大到小
 
+1. 在使用 `EventSource` 的过程中注意：
+   - `eventSource.onmessage`：只能监听默认的 `type = message` 的事件
+   - `eventSource.addEventListener("custom", (event) => {})`：可以监听其它 `custom` 事件
+
 ★★★★★★★★★★
